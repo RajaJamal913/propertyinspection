@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     # Charts
     "apps.charts",
     "inspections",  # Inspections App
+    "inspects",
    
   
 
