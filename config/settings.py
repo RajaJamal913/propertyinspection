@@ -43,7 +43,6 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
     'admin_soft.apps.AdminSoftDashboardConfig',
     "django.contrib.admin",
     "django.contrib.auth",
@@ -62,13 +61,12 @@ INSTALLED_APPS = [
     "apps.dyn_api",
 
     # Charts
-    "apps.charts",
-    "Inspectionreport",
-
+    "apps.charts", 'jazzmin',
 
     # Tooling API-GEN
     'rest_framework',            # Include DRF           # <-- NEW 
-    'rest_framework.authtoken',  # Include DRF Auth      # <-- NEW     
+    'rest_framework.authtoken',  # Include DRF Auth      # <-- NEW    
+    'nested_admin', 
 ]
 
 MIDDLEWARE = [
