@@ -1,12 +1,12 @@
 from django.contrib import admin
 from .models import (
     Property,
+    SmokeDetector,
     Tenant,
     Utility,
-    Detector,
+    CoDetector,
     Key,
     Document,
-    Inspector,
     ExternalSurface,
     ExternalFeature,
     Boundary,
@@ -36,7 +36,11 @@ class TenantAdmin(LinkedToPropertyAdmin):
 class UtilityAdmin(LinkedToPropertyAdmin):
     pass
 
-@admin.register(Detector)
+@admin.register(CoDetector)
+class DetectorAdmin(LinkedToPropertyAdmin):
+    pass
+
+@admin.register(SmokeDetector)
 class DetectorAdmin(LinkedToPropertyAdmin):
     pass
 
@@ -46,10 +50,6 @@ class KeyAdmin(LinkedToPropertyAdmin):
 
 @admin.register(Document)
 class DocumentAdmin(LinkedToPropertyAdmin):
-    pass
-
-@admin.register(Inspector)
-class InspectorAdmin(LinkedToPropertyAdmin):
     pass
 
 @admin.register(ExternalSurface)
