@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Report - {{ property.address }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a4f72;
+            --secondary: #6c757d;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --accent: #1e88e5;
+            --success: #28a745;
+            --warning: #ffc107;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            background: #f8fafc;
+            color: #334155;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .report-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .report-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #0d3a5d 100%);
+            color: white;
+            padding: 2rem 3rem;
+            position: relative;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a4f72"/><path d="M0 50 L100 50 M50 0 L50 100" stroke="%231d5680" stroke-width="1" stroke-opacity="0.3"/></svg>');
+            opacity: 0.15;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+        
+        .section-header {
+            background: #f1f5f9;
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-icon {
+            background: rgba(30, 136, 229, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--accent);
+        }
+        
+        .section-body {
+            padding: 1.5rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .summary-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        .summary-icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+        }
+        
+        .summary-count {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-label {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .photo-item {
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            height: 150px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            padding: 0.85rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .room-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+        
+        .room-header {
+            background: #e6f0ff;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .room-icon {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .sub-section {
+            margin: 1.5rem 0;
+            page-break-inside: avoid;
+        }
+        
+        .sub-section-header {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+        }
+        
+        .badge-count {
+            background: var(--accent);
+            color: white;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+        
+        .print-btn {
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .print-btn i {
+            margin-right: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--secondary);
+            border-top: 1px solid var(--border);
+            background: #f8fafc;
+            page-break-before: avoid;
+        }
+        
+        .kv { 
+            font-weight: 600; 
+            width: 35%; 
+            color: #475569;
+        }
+        
+        .val { 
+            color: #1e293b; 
+        }
+        
+        .thumb {
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .photo-display-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .photo-display-item {
+            flex: 0 0 calc(50% - 0.5rem);
+            max-width: calc(50% - 0.5rem);
+            position: relative;
+            page-break-inside: avoid;
+        }
+        
+        .photo-display-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .photo-display-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px;
+            font-size: 0.8rem;
+            text-align: center;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .photo-placeholder {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            border-radius: 8px;
+            color: #6c757d;
+            flex-direction: column;
+        }
+        
+        .photo-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .thumbnail-container {
+            max-width: 200px;
+            position: relative;
+        }
+        
+        .thumbnail-container img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        @media (max-width: 768px) {
+            .photo-display-item {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+        
+        .intro-section {
+            background: #f0f8ff;
+            border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .intro-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .intro-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .intro-card-header {
+            background: #e6f2ff;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+        }
+        
+        .intro-icon {
+            background: rgba(30, 136, 229, 0.15);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .intro-card-body {
+            padding: 1.25rem;
+            font-size: 0.95rem;
+        }
+        
+        .intro-title {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        
+        .disclaimer-box {
+            background: #fff8e6;
+            border: 1px solid #ffecb3;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        
+        .disclaimer-header {
+            font-weight: 600;
+            color: #e65100;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        /* NEW: Utility card styling */
+        .utility-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            page-break-inside: avoid;
+        }
+        
+        .utility-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .utility-type {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .utility-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .utility-detail {
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        /* NEW: Signature section styling */
+        .signature-section {
+            border-top: 2px dashed var(--border);
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .signature-header {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .signature-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .signature-box {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        .signature-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .signature-pad {
+            width: 100%;
+            height: 150px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: crosshair;
+            margin-bottom: 1rem;
+            touch-action: none; /* Fix for touch devices */
+        }
+        
+        .signature-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .signature-btn {
+            flex: 1;
+        }
+        
+        .signature-preview {
+            width: 100%;
+            height: 150px;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+        
+        .signature-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .signature-date {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .signature-name {
+            font-weight: 500;
+            text-align: center;
+            margin-top: 0.5rem;
+            color: var(--primary);
+        }
+        
+        /* ENHANCED PRINT STYLES */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 12pt;
+                line-height: 1.4;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .report-container {
+                box-shadow: none !important;
+                margin: 0 !important;
+                border: none !important;
+                border-radius: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .report-header {
+                background: var(--primary) !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 1.5rem !important;
+            }
+            
+            .header-pattern {
+                display: none !important;
+            }
+            
+            .section-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .section-header {
+                background: #f1f5f9 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                border-bottom: 1px solid #ddd !important;
+                padding: 0.8rem 1rem !important;
+            }
+            
+            .print-btn {
+                display: none !important;
+            }
+            
+            .summary-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 0.5rem !important;
+                margin: 1rem 0 !important;
+            }
+            
+            .summary-item {
+                padding: 0.8rem !important;
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+            }
+            
+            .photo-item, .photo-display-item {
+                height: 180px !important;
+            }
+            
+            .footer {
+                border-top: 1px solid #ddd !important;
+                background: #f8fafc !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 1rem !important;
+            }
+            
+            .photo-gallery {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.5rem !important;
+            }
+            
+            .thumbnail-container img {
+                height: 120px !important;
+            }
+            
+            .data-table th, .data-table td {
+                padding: 0.5rem !important;
+                font-size: 11pt;
+            }
+            
+            .room-card {
+                margin-bottom: 1rem !important;
+            }
+            
+            .summary-count, .section-header, .room-header, .sub-section-header,
+            .badge-count, .text-primary, .text-success, .text-warning, .text-danger {
+                color: inherit !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .summary-icon.text-primary {
+                color: #1a4f72 !important;
+            }
+            .summary-icon.text-info {
+                color: #1e88e5 !important;
+            }
+            .summary-icon.text-warning {
+                color: #ffc107 !important;
+            }
+            .summary-icon.text-success {
+                color: #28a745 !important;
+            }
+            .summary-icon.text-secondary {
+                color: #6c757d !important;
+            }
+            .summary-icon.text-danger {
+                color: #dc3545 !important;
+            }
+            
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            img {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            
+            .intro-section {
+                background: #f0f8ff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                border-left: 4px solid var(--accent) !important;
+                padding: 1.5rem !important;
+            }
+            
+            .intro-card {
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .intro-card-header {
+                background: #e6f2ff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 0.8rem !important;
+            }
+            
+            .disclaimer-box {
+                background: #fff8e6 !important;
+                border: 1px solid #ffecb3 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 1rem !important;
+            }
+            
+            a[href]::after {
+                content: none !important;
+            }
+            
+            .p-4, .p-lg-5 {
+                padding: 1rem !important;
+            }
+            
+            .section-body {
+                padding: 1rem !important;
+            }
+            
+            /* Utility card print adjustments */
+            .utility-card {
+                border: 1px solid #ddd !important;
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .utility-details {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .photo-display-item {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .photo-display-item img {
+                height: 150px !important;
+            }
+            
+            /* Signature section print adjustments */
+            .signature-section {
+                border-top: 2px dashed #ddd !important;
+                padding-top: 1rem !important;
+            }
+            
+            .signature-pad {
+                display: none !important;
+            }
+            
+            .signature-actions {
+                display: none !important;
+            }
+            
+            .signature-preview {
+                border: 1px solid #ddd !important;
+                height: 100px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <!-- Report Header -->
+        <div class="report-header">
+            <div class="header-pattern"></div>
+            <div class="header-content">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h1 class="h2 mb-3">LI Services Inventory Report</h1>
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                            <span class="badge bg-light bg-opacity-25 text-white py-2 px-3">
+                                <i class="bi bi-house me-1"></i> {{ property.property_type }}
+                            </span>
+                            <span class="badge bg-light bg-opacity-25 text-white py-2 px-3">
+                                <i class="bi bi-building me-1"></i> {{ property.detachment }}
+                            </span>
+                            <span class="badge bg-light bg-opacity-25 text-white py-2 px-3">
+                                <i class="bi bi-geo-alt me-1"></i> {{ property.postcode }}
+                            </span>
+                        </div>
+                        <h2 class="h4 mb-0">{{ property.address }}</h2>
+                        <p class="mb-0 opacity-75">Generated on {{ now|date:"F j, Y" }}</p>
+                    </div>
+                    
+                    <div class="text-end no-print">
+                        <button class="print-btn" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Print Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- About This Report Section -->
+        <div class="p-4 p-lg-5 intro-section">
+            <h3 class="intro-title">
+                <i class="bi bi-info-circle me-2"></i>About This Inventory Report
+            </h3>
+            
+            <div class="row g-4">
+                <!-- Card 1: What is this report? -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-icon">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </div>
+                            What is this Report?
+                        </div>
+                        <div class="intro-card-body">
+                            <p>The LI Services Inventory Check-in Report provides an accurate, impartial record of the property's condition at the start of a tenancy.</p>
+                            <p class="mb-0">It documents both the overall state of the premises and the condition of individual items where applicable.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2: Why is it valuable? -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            Why is it Valuable?
+                        </div>
+                        <div class="intro-card-body">
+                            <p>This report is essential for avoiding deposit disputes at the end of a tenancy.</p>
+                            <p class="mb-0">Official guidance recommends independent inventory services to record the property's state at both start and end of the rental period.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 3: Who can use it? -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            Who Can Use This?
+                        </div>
+                        <div class="intro-card-body">
+                            <p>As an impartial report from an independent provider, it can be relied upon by:</p>
+                            <ul class="mb-0">
+                                <li>Landlords</li>
+                                <li>Tenants</li>
+                                <li>Letting Agents</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 4: What's included? -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-icon">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            What's Included?
+                        </div>
+                        <div class="intro-card-body">
+                            <ul>
+                                <li>Room-by-room breakdown of condition</li>
+                                <li>Documented defects with photos</li>
+                                <li>Items not mentioned are assumed in good condition</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 5: What's not covered? -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-icon">
+                                <i class="bi bi-x-circle"></i>
+                            </div>
+                            What's Not Covered?
+                        </div>
+                        <div class="intro-card-body">
+                            <ul>
+                                <li>Safety compliance assessments</li>
+                                <li>Structural soundness checks</li>
+                                <li>Valuation or building survey</li>
+                                <li>Personal belongings or valuables</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 6: Inspection scope -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-icon">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            Inspection Scope
+                        </div>
+                        <div class="intro-card-body">
+                            <p><strong>Includes:</strong> Visible areas of main building, accessible outbuildings and gardens</p>
+                            <p class="mb-0"><strong>Excludes:</strong> Common areas in flats, roof spaces, locked areas, and overfilled storage spaces</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Disclaimer Box -->
+            <div class="disclaimer-box">
+                <div class="disclaimer-header">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Important Disclaimer
+                </div>
+                <p class="mb-0">Every effort has been made to ensure the accuracy of this inventory; however, LI Services cannot guarantee absolute accuracy.
+It is the responsibility of both the landlord and tenant to review this document carefully and confirm its correctness by signing below.
+
+This report records the furniture, furnishings, and landlord-owned items present in the property on the date of inspection. It does not provide a guarantee of adequacy, safety, or compliance — it simply confirms the existence and observed condition of these items at the time of the inventory.
+
+By signing this document, the undersigned agree that, subject to any notes or amendments, it represents a fair and accurate record of the property’s condition and contents.
+
+The tenant and/or landlord has seven (7) days from receipt of this report to notify the landlord, agent, or LI Services of any discrepancies.</p>
+            </div>
+        </div>
+        
+        <!-- Report Content -->
+        <div class="p-4 p-lg-5">
+            <!-- Summary Section -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-clipboard-data"></i>
+                    </div>
+                    Property Summary
+                </div>
+                <div class="section-body">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-icon text-primary">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="summary-count">{{ property.tenants.count }}</div>
+                            <div class="summary-label">Tenants</div>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <div class="summary-icon text-info">
+                                <i class="bi bi-lightning-charge"></i>
+                            </div>
+                            <div class="summary-count">{{ property.utilities.count }}</div>
+                            <div class="summary-label">Utilities</div>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <div class="summary-icon text-warning">
+                                <i class="bi bi-alarm"></i>
+                            </div>
+                            <div class="summary-count">{{ property.detectors.count }}</div>
+                            <div class="summary-label">Detectors</div>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <div class="summary-icon text-success">
+                                <i class="bi bi-door-open"></i>
+                            </div>
+                            <div class="summary-count">{{ property.rooms.count }}</div>
+                            <div class="summary-label">Rooms</div>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <div class="summary-icon text-secondary">
+                                <i class="bi bi-files"></i>
+                            </div>
+                            <div class="summary-count">{{ property.documents.count }}</div>
+                            <div class="summary-label">Documents</div>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <div class="summary-icon text-danger">
+                                <i class="bi bi-key"></i>
+                            </div>
+                            <div class="summary-count">{{ property.keys.count }}</div>
+                            <div class="summary-label">Keys</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Property Details -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    Property Details
+                </div>
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless mb-0">
+                                <tr>
+                                    <td class="fw-medium text-muted" width="40%">Address</td>
+                                    <td>{{ property.address }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-medium text-muted">Postcode</td>
+                                    <td>{{ property.postcode }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-medium text-muted">Property Type</td>
+                                    <td>{{ property.property_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-medium text-muted">Detachment</td>
+                                    <td>{{ property.detachment }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless mb-0">
+                                <tr>
+                                    <td class="fw-medium text-muted" width="40%">Bedrooms</td>
+                                    <td>{{ property.bedrooms }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-medium text-muted">Bathrooms</td>
+                                    <td>{{ property.bathrooms }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-medium text-muted">Front Photos</td>
+                                    <td>
+                                        {% if property.front_elevation_photos %}
+                                            {{ property.front_elevation_photos|length }} available
+                                        {% else %}None{% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-medium text-muted">Other Views</td>
+                                    <td>
+                                        {% if property.other_views %}
+                                            {{ property.other_views|length }} available
+                                        {% else %}None{% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Photos -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-camera"></i>
+                    </div>
+                    Property Photos
+                </div>
+                <div class="section-body">
+                    <div class="photo-gallery">
+                        {% if property.front_elevation_photos %}
+                            {% for url in property.front_elevation_phones %}
+                                <div class="photo-item">
+                                    <img src="{{ url }}" alt="Front Elevation Photo">
+                                    <div class="photo-label">Front Elevation</div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        {% if property.other_views %}
+                            {% for url in property.other_views %}
+                                <div class="photo-item">
+                                    <img src="{{ url }}" alt="Property View">
+                                    <div class="photo-label">Property View</div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        {% if not property.front_elevation_photos and not property.other_views %}
+                            <div class="col-12 text-center py-4">
+                                <i class="bi bi-image text-muted fs-1"></i>
+                                <p class="text-muted mt-2">No photos available</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tenants -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    Tenants
+                    <span class="badge-count">{{ property.tenants.count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.tenants.exists %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in property.tenants.all %}
+                            <tr>
+                                <td>{{ t.name }}</td>
+                                <td>
+                                    <div>{{ t.mobile_phone }}</div>
+                                    <div class="small text-primary">
+                                        <a href="mailto:{{ t.email }}">{{ t.email }}</a>
+                                    </div>
+                                </td>
+                                <td>{{ t.notes|default:"—" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-person-x text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No tenants recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Utilities - FIXED SECTION -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    Utilities
+                    <span class="badge-count">{{ property.utilities.count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.utilities.exists %}
+                        {% for u in property.utilities.all %}
+                        <div class="utility-card">
+                            <div class="utility-header">
+                                <div class="utility-type">{{ u.type }}</div>
+                            </div>
+                            
+                            <div class="utility-details">
+                                <div class="utility-detail">
+                                    <div class="detail-label">Reading</div>
+                                    <div class="detail-value">{{ u.reading }}</div>
+                                </div>
+                                
+                                <div class="utility-detail">
+                                    <div class="detail-label">Serial Number</div>
+                                    <div class="detail-value">{{ u.serial_number }}</div>
+                                </div>
+                                
+                                <div class="utility-detail">
+                                    <div class="detail-label">Notes</div>
+                                    <div class="detail-value">{{ u.notes|default:"—" }}</div>
+                                </div>
+                            </div>
+                            
+                            {% if u.photo_url %}
+                            <div class="photo-display-container">
+                                <div class="photo-display-item">
+                                    <img src="{{ u.photo_url }}" alt="Utility photo">
+                                    <div class="photo-display-label">Utility Photo</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-plug text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No utilities recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Detectors -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-alarm"></i>
+                    </div>
+                    Detectors
+                    <span class="badge-count">{{ property.detectors.count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.detectors.exists %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Working</th>
+                                <th>Location</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in property.detectors.all %}
+                            <tr>
+                                <td>{{ d.type }}</td>
+                                <td>{{ d.working|yesno:"Yes,No" }}</td>
+                                <td>{{ d.location }}</td>
+                                <td>{{ d.notes|default:"—" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-shield-exclamation text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No detectors recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Rooms -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-door-open"></i>
+                    </div>
+                    Rooms
+                    <span class="badge-count">{{ property.rooms.count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.rooms.exists %}
+                        {% for r in property.rooms.all %}
+                        <div class="room-card">
+                            <div class="room-header">
+                                <i class="bi bi-house-door room-icon"></i>
+                                {{ r.name }}
+                            </div>
+                            <div class="p-3 p-lg-4">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless small mb-0">
+                                            <tr>
+                                                <td class="text-muted">Notes</td>
+                                                <td>{{ r.notes|default:"—" }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless small mb-0">
+                                            <tr>
+                                                <td class="text-muted">Photo</td>
+                                                <td>
+                                                    {% if r.photo_url %}
+                                                        <div class="photo-display-container">
+                                                            <div class="photo-display-item">
+                                                                <img src="{{ r.photo_url }}" alt="Room photo">
+                                                                <div class="photo-display-label">Room Photo</div>
+                                                            </div>
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Doors -->
+                                {% if r.doors.exists %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-door-closed me-2"></i>
+                                        Doors
+                                        <span class="badge-count">{{ r.doors.count }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Finish</th>
+                                                <th>Color</th>
+                                                <th>Condition</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for d in r.doors.all %}
+                                            <tr>
+                                                <td>{{ d.type }}</td>
+                                                <td>{{ d.finish }}</td>
+                                                <td>{{ d.colour }}</td>
+                                                <td>{{ d.condition }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Windows -->
+                                {% if r.windows.exists %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-window me-2"></i>
+                                        Windows
+                                        <span class="badge-count">{{ r.windows.count }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Glass</th>
+                                                <th>Frame Type</th>
+                                                <th>Condition</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for w in r.windows.all %}
+                                            <tr>
+                                                <td>{{ w.type }}</td>
+                                                <td>{{ w.glass_type }}</td>
+                                                <td>{{ w.frame_type }}</td>
+                                                <td>{{ w.condition }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-door-closed text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No rooms recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Documents -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-files"></i>
+                    </div>
+                    Documents
+                    <span class="badge-count">{{ property.documents.count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.documents.exists %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Notes</th>
+                                <th>Photo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for doc in property.documents.all %}
+                            <tr>
+                                <td>{{ doc.description }}</td>
+                                <td>{{ doc.notes|default:"—" }}</td>
+                                <td>
+                                    {% if doc.photo_url %}
+                                        <div class="thumbnail-container">
+                                            <img src="{{ doc.photo_url }}" alt="Document photo">
+                                        </div>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-file-earmark-x text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No documents recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Keys -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-key"></i>
+                    </div>
+                    Keys
+                    <span class="badge-count">{{ property.keys.count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.keys.exists %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Notes</th>
+                                <th>Photo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for k in property.keys.all %}
+                            <tr>
+                                <td>{{ k.description }}</td>
+                                <td>{{ k.notes|default:"—" }}</td>
+                                <td>
+                                    {% if k.photo_url %}
+                                        <div class="thumbnail-container">
+                                            <img src="{{ k.photo_url }}" alt="Key photo">
+                                        </div>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-key text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No keys recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- NEW: Digital Signature Section -->
+               <div class="signature-container">
+            <!-- Landlord Signature -->
+            <div class="signature-box">
+                <div class="signature-label">Landlord/Agent Signature</div>
+                <!-- Changed from div to canvas -->
+                <canvas class="signature-pad" id="landlord-signature-pad"></canvas>
+                <div class="signature-actions">
+                    <button class="btn btn-secondary signature-btn" id="landlord-clear">Clear</button>
+                    <button class="btn btn-primary signature-btn" id="landlord-save">Save Signature</button>
+                </div>
+                <div class="signature-preview" id="landlord-preview">
+                    <span class="text-muted">Signature will appear here</span>
+                </div>
+                <div class="signature-name">Landlord / Agent: {{ property.landlord.name|default:"[Landlord/ AgentName]" }}</div>
+                <div class="signature-date" id="landlord-date"></div>
+            </div>
+            
+            <!-- Tenant Signature -->
+            <div class="signature-box">
+                <div class="signature-label">Tenant Signature</div>
+                <!-- Changed from div to canvas -->
+                <canvas class="signature-pad" id="tenant-signature-pad"></canvas>
+                <div class="signature-actions">
+                    <button class="btn btn-secondary signature-btn" id="tenant-clear">Clear</button>
+                    <button class="btn btn-primary signature-btn" id="tenant-save">Save Signature</button>
+                </div>
+                <div class="signature-preview" id="tenant-preview">
+                    <span class="text-muted">Signature will appear here</span>
+                </div>
+                <div class="signature-name">Tenant: {{ property.tenants.first.name|default:"[Tenant Name]" }}</div>
+                <div class="signature-date" id="tenant-date"></div>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle me-2"></i> 
+            By signing this document, you acknowledge that you have reviewed and agree with the contents of this property inventory report.
+        </div>
+    </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <div class="d-flex align-items-center justify-content-center mb-2">
+                    <div class="bg-primary rounded-circle p-2 me-3"></div>
+                    <div class="bg-info rounded-circle p-2 me-3"></div>
+                    <div class="bg-success rounded-circle p-2"></div>
+                </div>
+                <div class="small">Property Full Report • Generated on {{ now|date:"M j, Y" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        // Initialize Signature Pads after page loads
+        window.addEventListener('load', function() {
+            console.log("Initializing signature pads...");
+            
+            // Declare variables for the signature pads
+            let landlordSignaturePad = null;
+            let tenantSignaturePad = null;
+
+            // Function to resize canvas for high DPI screens
+            function resizeCanvas(canvas) {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext('2d').scale(ratio, ratio);
+            }
+            
+            // Initialize landlord signature pad
+            const landlordCanvas = document.getElementById('landlord-signature-pad');
+            if (landlordCanvas) {
+                resizeCanvas(landlordCanvas);
+                landlordSignaturePad = new SignaturePad(landlordCanvas, {
+                    backgroundColor: 'rgba(255, 255, 255, 0)',
+                    penColor: 'rgb(0, 0, 0)',
+                    minWidth: 1,
+                    maxWidth: 3,
+                    throttle: 16
+                });
+                
+                // Landlord handlers
+                document.getElementById('landlord-clear').addEventListener('click', function() {
+                    landlordSignaturePad.clear();
+                });
+                
+                document.getElementById('landlord-save').addEventListener('click', function() {
+                    if (landlordSignaturePad.isEmpty()) {
+                        alert('Please provide a signature first.');
+                    } else {
+                        const dataURL = landlordSignaturePad.toDataURL();
+                        const preview = document.getElementById('landlord-preview');
+                        preview.innerHTML = `<img src="${dataURL}" alt="Landlord Signature">`;
+                        
+                        // Set date
+                        const now = new Date();
+                        document.getElementById('landlord-date').textContent = 
+                            `Date: ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                        
+                        alert('Landlord signature saved successfully!');
+                    }
+                });
+            }
+            
+            // Initialize tenant signature pad
+            const tenantCanvas = document.getElementById('tenant-signature-pad');
+            if (tenantCanvas) {
+                resizeCanvas(tenantCanvas);
+                tenantSignaturePad = new SignaturePad(tenantCanvas, {
+                    backgroundColor: 'rgba(255, 255, 255, 0)',
+                    penColor: 'rgb(0, 0, 0)',
+                    minWidth: 1,
+                    maxWidth: 3,
+                    throttle: 16
+                });
+                
+                // Tenant handlers
+                document.getElementById('tenant-clear').addEventListener('click', function() {
+                    tenantSignaturePad.clear();
+                });
+                
+                document.getElementById('tenant-save').addEventListener('click', function() {
+                    if (tenantSignaturePad.isEmpty()) {
+                        alert('Please provide a signature first.');
+                    } else {
+                        const dataURL = tenantSignaturePad.toDataURL();
+                        const preview = document.getElementById('tenant-preview');
+                        preview.innerHTML = `<img src="${dataURL}" alt="Tenant Signature">`;
+                        
+                        // Set date
+                        const now = new Date();
+                        document.getElementById('tenant-date').textContent = 
+                            `Date: ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                        
+                        alert('Tenant signature saved successfully!');
+                    }
+                });
+            }
+            
+            // Print button functionality
+            document.querySelector('.print-btn').addEventListener('click', function() {
+                // Check landlord signature
+                if (landlordSignaturePad && !landlordSignaturePad.isEmpty() && 
+                    document.getElementById('landlord-preview').innerHTML.includes('will appear')) {
+                    alert('Please save your landlord signature before printing.');
+                    return;
+                }
+                
+                // Check tenant signature
+                if (tenantSignaturePad && !tenantSignaturePad.isEmpty() && 
+                    document.getElementById('tenant-preview').innerHTML.includes('will appear')) {
+                    alert('Please save your tenant signature before printing.');
+                    return;
+                }
+                
+                window.print();
+            });
+        });
+    </script>
+</body>
+</html>

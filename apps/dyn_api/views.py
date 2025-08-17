@@ -200,3 +200,50 @@ class PropertyViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         property_obj = serializer.save()
         return Response(self.get_serializer(property_obj).data, status=status.HTTP_200_OK)
+    from django.views.generic import DetailView
+from .models import Property
+
+
+
+
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from .models import Property
+from django.db.models import Prefetch
+
+def property_report(request, pk):
+    # prefetch nested room children to minimize queries
+    prop = get_object_or_404(
+        Property.objects.select_related('detector_compliance', 'cleaning_standard')
+        .prefetch_related(
+            'tenants',
+            'utilities',
+            'detectors',
+            'keys',
+            'documents',
+            'inspectors',
+            'external_surfaces',
+            'external_features',
+            'boundaries',
+            Prefetch('rooms__doors'),
+            Prefetch('rooms__windows'),
+            Prefetch('rooms__ceilings'),
+            Prefetch('rooms__floors'),
+            Prefetch('rooms__walls'),
+            Prefetch('rooms__fixtures_fittings'),
+            Prefetch('rooms__furnishings'),
+            Prefetch('rooms__cupboards'),
+            Prefetch('rooms__kitchen_appliances'),
+        ),
+        pk=pk
+    )
+
+    # If you want inspector names as a comma list:
+    inspector_names = ", ".join(i.name for i in prop.inspectors.all())
+
+    context = {
+        "property": prop,
+        "now": timezone.localtime(timezone.now()),
+        "inspector_names": inspector_names,
+    }
+    return render(request, "reports/property.html", context)
