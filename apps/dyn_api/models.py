@@ -8,6 +8,7 @@ class Property(models.Model):
     postcode = models.CharField(max_length=20)
     property_type = models.CharField(max_length=50)
     detachment = models.CharField(max_length=50)
+    inspectedBy = models.CharField(max_length=100, default="Owner")
     front_elevation_photos = models.JSONField(default=list)  # List of URLs
     other_views = models.JSONField(default=list)
 
@@ -31,42 +32,75 @@ class Tenant(models.Model):
 # ----------- UTILITIES -----------
 
 class Utility(models.Model):
-    UTILITY_CHOICES = [
-        ("Gas", "Gas"),
-        ("Electricity", "Electricity"),
-        ("Water", "Water"),
-        ("Heat", "Heat"),
-        ("Other", "Other"),
-    ]
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="utilities")
-    type = models.CharField(max_length=20, choices=UTILITY_CHOICES)
-    reading = models.DecimalField(max_digits=10, decimal_places=2)
-    serial_number = models.CharField(max_length=50)
-    photo_url = models.URLField()
+    property = models.OneToOneField("Property", on_delete=models.CASCADE, related_name="utility")
+
+    # Gas
+    gasMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    gasMeterSerialNumber = models.CharField(max_length=50)
+    gasMeterPhoto = models.JSONField(default=list)  # list of URLs
+
+    # Electricity
+    electricityMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    electricityMeterSerialNumber = models.CharField(max_length=50)
+    electricityMeterPhoto = models.JSONField(default=list)
+
+    # Water
+    waterMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    waterMeterSerialNumber = models.CharField(max_length=50)
+    waterMeterPhoto = models.JSONField(default=list)
+
+    # Heat
+    heatMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    heatMeterSerialNumber = models.CharField(max_length=50)
+    heatMeterPhoto = models.JSONField(default=list)
+
+    # Other
+    otherMeterType = models.CharField(max_length=50)
+    otherMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    otherMeterSerialNumber = models.CharField(max_length=50)
+    otherMeterPhoto = models.JSONField(default=list)
+
+    # Stopcock
+    stopcokLocation = models.CharField(max_length=100)
+    stopcokPhoto = models.JSONField(default=list)
+
+    # Fusebox
+    fuseboxLocation = models.CharField(max_length=100)
+    fuseboxPhoto = models.JSONField(default=list)
+
     notes = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{self.type} - {self.property.address}"
-
+        return f"Utility Info - {self.property.address}"
 
 # ----------- DETECTOR COMPLIANCE -----------
 
 class DetectorCompliance(models.Model):
     property = models.OneToOneField(Property, on_delete=models.CASCADE, related_name="detector_compliance")
-    detector_compliance = models.BooleanField()
-    solid_fuel_device = models.BooleanField()
+    detectorCompliance = models.BooleanField()
+    solidFuelDevice = models.BooleanField()
 
 
 # ----------- DETECTORS -----------
 
-class Detector(models.Model):
-    DETECTOR_TYPE_CHOICES = [("Smoke", "Smoke"), ("CO", "CO")]
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="detectors")
-    type = models.CharField(max_length=10, choices=DETECTOR_TYPE_CHOICES)
+class SmokeDetector(models.Model):
+    property = models.ForeignKey("Property", on_delete=models.CASCADE, related_name="smoke_detectors")
+    smokeDetector= models.BooleanField(null=True)
     working = models.BooleanField()
     location = models.CharField(max_length=100)
     notes = models.TextField(blank=True)
+    photo = models.URLField(blank=True)
 
+class CoDetector(models.Model):
+    property = models.ForeignKey("Property", on_delete=models.CASCADE, related_name="co_detectors")
+    coDetector= models.BooleanField(null=True)
+    working = models.BooleanField()
+    location = models.CharField(max_length=100)
+    notes = models.TextField(blank=True)
+    photo = models.URLField(blank=True)
+
+    def __str__(self):
+        return f"CO Detector at {self.location} - {self.property.address}"
 
 # ----------- KEYS -----------
 
@@ -92,13 +126,6 @@ class CleaningStandard(models.Model):
     property = models.OneToOneField(Property, on_delete=models.CASCADE, related_name="cleaning_standard")
     standard = models.CharField(max_length=50)
     notes = models.TextField(blank=True)
-
-
-# ----------- INSPECTORS -----------
-
-class Inspector(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="inspectors")
-    name = models.CharField(max_length=100)
 
 
 # ----------- EXTERNAL SURFACE -----------

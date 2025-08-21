@@ -200,28 +200,26 @@ class PropertyViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         property_obj = serializer.save()
         return Response(self.get_serializer(property_obj).data, status=status.HTTP_200_OK)
-    from django.views.generic import DetailView
-from .models import Property
-
-
-
-
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from .models import Property
 from django.db.models import Prefetch
 
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Prefetch
+from django.utils import timezone
+from .models import Property
+from .serializers import PropertySerializer
+
 def property_report(request, pk):
-    # prefetch nested room children to minimize queries
     prop = get_object_or_404(
-        Property.objects.select_related('detector_compliance', 'cleaning_standard')
-        .prefetch_related(
+        Property.objects.select_related(
+            'utility', 'detector_compliance', 'cleaning_standard'
+        ).prefetch_related(
             'tenants',
-            'utilities',
-            'detectors',
+            'smoke_detectors',
+            'co_detectors',
             'keys',
             'documents',
-            'inspectors',
             'external_surfaces',
             'external_features',
             'boundaries',
@@ -238,12 +236,74 @@ def property_report(request, pk):
         pk=pk
     )
 
-    # If you want inspector names as a comma list:
-    inspector_names = ", ".join(i.name for i in prop.inspectors.all())
+    # Counts / summaries
+    tenant_count = prop.tenants.count()
+    total_rooms = prop.rooms.count()
+    smoke_detector_count = prop.smoke_detectors.count()
+    co_detector_count = prop.co_detectors.count()
+    detector_count = smoke_detector_count + co_detector_count
+    key_count = prop.keys.count()
+    document_count = prop.documents.count()
+    external_features_count = prop.external_features.count()
+    boundaries_count = prop.boundaries.count()
+
+    # OneToOne objects may be None if not created
+    utility = getattr(prop, 'utility', None)
+    cleaning_standard = getattr(prop, 'cleaning_standard', None)
+    detector_compliance = getattr(prop, 'detector_compliance', None)
+
+    # Handle JSON fields properly - ensure they are lists
+    front_photos = prop.front_elevation_photos or []
+    # If it's a string, try to parse it as JSON
+    if isinstance(front_photos, str):
+        try:
+            import json
+            front_photos = json.loads(front_photos)
+        except (json.JSONDecodeError, TypeError):
+            front_photos = [front_photos]  # Treat as single URL
+    
+    other_views = prop.other_views or []
+    # If it's a string, try to parse it as JSON
+    if isinstance(other_views, str):
+        try:
+            import json
+            other_views = json.loads(other_views)
+        except (json.JSONDecodeError, TypeError):
+            other_views = [other_views]  # Treat as single URL
+
+    # Ensure we're always working with lists
+    if not isinstance(front_photos, list):
+        front_photos = [front_photos]
+    if not isinstance(other_views, list):
+        other_views = [other_views]
+
+    # Serialized version - this is what the template expects
+    serialized_property = PropertySerializer(prop).data
 
     context = {
-        "property": prop,
+        # Use the serialized property data in the template
+        "property": serialized_property,
+        # Keep the original object for any direct model access needed
+        "property_obj": prop,
         "now": timezone.localtime(timezone.now()),
-        "inspector_names": inspector_names,
+        "inspected_by": prop.inspectedBy,
+        # summaries
+        "tenant_count": tenant_count,
+        "total_rooms": total_rooms,
+        "detector_count": detector_count,
+        "smoke_detector_count": smoke_detector_count,
+        "co_detector_count": co_detector_count,
+        "key_count": key_count,
+        "document_count": document_count,
+        "external_features_count": external_features_count,
+        "boundaries_count": boundaries_count,
+        # optional objects
+        "utility": utility,
+        "cleaning_standard": cleaning_standard,
+        "detector_compliance": detector_compliance,
+        # photos
+        "front_photos": front_photos,
+        "other_views": other_views,
     }
+
     return render(request, "reports/property.html", context)

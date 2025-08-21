@@ -6,8 +6,9 @@
     <title>Property Report - {{ property.address }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <style>
+     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+     <style>
+
         :root {
             --primary: #1a4f72;
             --secondary: #6c757d;
@@ -352,6 +353,7 @@
             background: #f0f8ff;
             border-left: 4px solid var(--accent);
             border-radius: 0 8px 8px 0;
+            page-break-inside: avoid;
         }
         
         .intro-card {
@@ -361,6 +363,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             height: 100%;
             transition: transform 0.3s ease;
+            page-break-inside: avoid;
         }
         
         .intro-card:hover {
@@ -409,6 +412,7 @@
             border-radius: 8px;
             padding: 1.25rem;
             margin-top: 1.5rem;
+            page-break-inside: avoid;
         }
         
         .disclaimer-header {
@@ -465,10 +469,12 @@
         }
         
         /* NEW: Signature section styling */
+       * Signature section styling */
         .signature-section {
             border-top: 2px dashed var(--border);
             padding-top: 2rem;
             margin-top: 2rem;
+            page-break-inside: avoid;
         }
         
         .signature-header {
@@ -499,16 +505,16 @@
         }
         
         .signature-pad {
-            width: 100%;
-            height: 150px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            background: white;
-            cursor: crosshair;
-            margin-bottom: 1rem;
-            touch-action: none; /* Fix for touch devices */
-        }
-        
+  width: 100%;
+  height: 150px;             /* visual size */
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  cursor: crosshair;
+  touch-action: none;        /* important for stylus/touch */
+  display: block;
+}
+
         .signature-actions {
             display: flex;
             gap: 0.5rem;
@@ -552,13 +558,10 @@
         
         /* ENHANCED PRINT STYLES */
         @media print {
-            body {
-                background: white !important;
-                color: black !important;
-                font-size: 12pt;
-                line-height: 1.4;
-                padding: 0;
-                margin: 0;
+            /* Fix for blank first page */
+            body, html {
+                height: auto !important;
+                overflow: visible !important;
             }
             
             .report-container {
@@ -568,24 +571,40 @@
                 border-radius: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
+                overflow: visible !important;
             }
             
+            /* Ensure header prints correctly */
             .report-header {
                 background: var(--primary) !important;
                 color: white !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 padding: 1.5rem !important;
+                position: relative !important;
+                page-break-after: avoid !important;
             }
             
             .header-pattern {
                 display: none !important;
             }
             
+            /* Fix intro section printing */
+            .intro-section {
+                background: #f0f8ff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                border-left: 4px solid var(--accent) !important;
+                padding: 1.5rem !important;
+                page-break-inside: avoid !important;
+                page-break-after: auto !important;
+            }
+            
             .section-card {
                 box-shadow: none !important;
                 border: 1px solid #ddd !important;
                 margin-bottom: 1rem !important;
+                page-break-inside: avoid !important;
             }
             
             .section-header {
@@ -610,6 +629,7 @@
                 padding: 0.8rem !important;
                 border: 1px solid #ddd !important;
                 box-shadow: none !important;
+                page-break-inside: avoid !important;
             }
             
             .photo-item, .photo-display-item {
@@ -640,6 +660,7 @@
             
             .room-card {
                 margin-bottom: 1rem !important;
+                page-break-inside: avoid !important;
             }
             
             .summary-count, .section-header, .room-header, .sub-section-header,
@@ -681,18 +702,11 @@
                 height: auto !important;
             }
             
-            .intro-section {
-                background: #f0f8ff !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                border-left: 4px solid var(--accent) !important;
-                padding: 1.5rem !important;
-            }
-            
             .intro-card {
                 border: 1px solid #ddd !important;
                 box-shadow: none !important;
                 margin-bottom: 0.5rem !important;
+                page-break-inside: avoid !important;
             }
             
             .intro-card-header {
@@ -708,6 +722,7 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 padding: 1rem !important;
+                page-break-inside: avoid !important;
             }
             
             a[href]::after {
@@ -727,6 +742,7 @@
                 border: 1px solid #ddd !important;
                 padding: 1rem !important;
                 margin-bottom: 1rem !important;
+                page-break-inside: avoid !important;
             }
             
             .utility-details {
@@ -747,6 +763,7 @@
             .signature-section {
                 border-top: 2px dashed #ddd !important;
                 padding-top: 1rem !important;
+                page-break-inside: avoid !important;
             }
             
             .signature-pad {
@@ -760,6 +777,37 @@
             .signature-preview {
                 border: 1px solid #ddd !important;
                 height: 100px !important;
+            }
+            
+            /* Prevent page breaks inside important elements */
+            .sub-section, .utility-detail, .utility-header {
+                page-break-inside: avoid !important;
+            }
+            
+            /* Force page breaks before major sections */
+            .section-card {
+                page-break-before: auto !important;
+            }
+            
+            /* Allow page breaks within room details if needed */
+            .room-card .p-3 {
+                page-break-inside: auto !important;
+            }
+            
+            /* Ensure tables don't break awkwardly */
+            table {
+                page-break-inside: auto !important;
+            }
+            
+            tr {
+                page-break-inside: avoid !important;
+                page-break-after: auto !important;
+            }
+            
+            /* Force longer elements to break when needed */
+            .utility-card, .room-card {
+                page-break-inside: auto !important;
+                page-break-after: auto !important;
             }
         }
     </style>
@@ -775,7 +823,7 @@
                         <h1 class="h2 mb-3">LI Services Inventory Report</h1>
                         <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                             <span class="badge bg-light bg-opacity-25 text-white py-2 px-3">
-                                <i class="bi bi-house me-1"></i> {{ property.property_type }}
+                                <i class="bi bi-house me-1"></i> {{ property.propertyType }}
                             </span>
                             <span class="badge bg-light bg-opacity-25 text-white py-2 px-3">
                                 <i class="bi bi-building me-1"></i> {{ property.detachment }}
@@ -925,7 +973,7 @@ This report records the furniture, furnishings, and landlord-owned items present
 
 By signing this document, the undersigned agree that, subject to any notes or amendments, it represents a fair and accurate record of the property’s condition and contents.
 
-The tenant and/or landlord has seven (7) days from receipt of this report to notify the landlord, agent, or LI Services of any discrepancies.</p>
+The tenant and/or landlord has seven (7) days from receipt of this report to notify the landlord, agent or LI Services of any discrepancies.</p>
             </div>
         </div>
         
@@ -945,7 +993,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             <div class="summary-icon text-primary">
                                 <i class="bi bi-people"></i>
                             </div>
-                            <div class="summary-count">{{ property.tenants.count }}</div>
+                            <div class="summary-count">{{ tenant_count }}</div>
                             <div class="summary-label">Tenants</div>
                         </div>
                         
@@ -953,7 +1001,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             <div class="summary-icon text-info">
                                 <i class="bi bi-lightning-charge"></i>
                             </div>
-                            <div class="summary-count">{{ property.utilities.count }}</div>
+                            <div class="summary-count">{% if utility %}1{% else %}0{% endif %}</div>
                             <div class="summary-label">Utilities</div>
                         </div>
                         
@@ -961,7 +1009,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             <div class="summary-icon text-warning">
                                 <i class="bi bi-alarm"></i>
                             </div>
-                            <div class="summary-count">{{ property.detectors.count }}</div>
+                            <div class="summary-count">{{ detector_count }}</div>
                             <div class="summary-label">Detectors</div>
                         </div>
                         
@@ -969,7 +1017,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             <div class="summary-icon text-success">
                                 <i class="bi bi-door-open"></i>
                             </div>
-                            <div class="summary-count">{{ property.rooms.count }}</div>
+                            <div class="summary-count">{{ total_rooms }}</div>
                             <div class="summary-label">Rooms</div>
                         </div>
                         
@@ -977,7 +1025,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             <div class="summary-icon text-secondary">
                                 <i class="bi bi-files"></i>
                             </div>
-                            <div class="summary-count">{{ property.documents.count }}</div>
+                            <div class="summary-count">{{ document_count }}</div>
                             <div class="summary-label">Documents</div>
                         </div>
                         
@@ -985,7 +1033,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             <div class="summary-icon text-danger">
                                 <i class="bi bi-key"></i>
                             </div>
-                            <div class="summary-count">{{ property.keys.count }}</div>
+                            <div class="summary-count">{{ key_count }}</div>
                             <div class="summary-label">Keys</div>
                         </div>
                     </div>
@@ -1014,7 +1062,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 </tr>
                                 <tr>
                                     <td class="fw-medium text-muted">Property Type</td>
-                                    <td>{{ property.property_type }}</td>
+                                    <td>{{ property.propertyType }}</td>
                                 </tr>
                                 <tr>
                                     <td class="fw-medium text-muted">Detachment</td>
@@ -1025,28 +1073,24 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                         <div class="col-md-6">
                             <table class="table table-borderless mb-0">
                                 <tr>
-                                    <td class="fw-medium text-muted" width="40%">Bedrooms</td>
-                                    <td>{{ property.bedrooms }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-medium text-muted">Bathrooms</td>
-                                    <td>{{ property.bathrooms }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-medium text-muted">Front Photos</td>
+                                    <td class="fw-medium text-muted" width="40%">Front Photos</td>
                                     <td>
-                                        {% if property.front_elevation_photos %}
-                                            {{ property.front_elevation_photos|length }} available
+                                        {% if front_photos %}
+                                            {{ front_photos|length }} available
                                         {% else %}None{% endif %}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="fw-medium text-muted">Other Views</td>
                                     <td>
-                                        {% if property.other_views %}
-                                            {{ property.other_views|length }} available
+                                        {% if other_views %}
+                                            {{ other_views|length }} available
                                         {% else %}None{% endif %}
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-medium text-muted">Inspected By</td>
+                                    <td>{{ inspected_by }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -1064,25 +1108,29 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
                 <div class="section-body">
                     <div class="photo-gallery">
-                        {% if property.front_elevation_photos %}
-                            {% for url in property.front_elevation_phones %}
+                        {% if front_photos %}
+                            {% for url in front_photos %}
+                                {% if url %}
                                 <div class="photo-item">
                                     <img src="{{ url }}" alt="Front Elevation Photo">
                                     <div class="photo-label">Front Elevation</div>
                                 </div>
+                                {% endif %}
                             {% endfor %}
                         {% endif %}
                         
-                        {% if property.other_views %}
-                            {% for url in property.other_views %}
+                        {% if other_views %}
+                            {% for url in other_views %}
+                                {% if url %}
                                 <div class="photo-item">
                                     <img src="{{ url }}" alt="Property View">
                                     <div class="photo-label">Property View</div>
                                 </div>
+                                {% endif %}
                             {% endfor %}
                         {% endif %}
                         
-                        {% if not property.front_elevation_photos and not property.other_views %}
+                        {% if not front_photos and not other_views %}
                             <div class="col-12 text-center py-4">
                                 <i class="bi bi-image text-muted fs-1"></i>
                                 <p class="text-muted mt-2">No photos available</p>
@@ -1099,10 +1147,10 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                         <i class="bi bi-people"></i>
                     </div>
                     Tenants
-                    <span class="badge-count">{{ property.tenants.count }}</span>
+                    <span class="badge-count">{{ tenant_count }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.tenants.exists %}
+                    {% if property.tenantDetails %}
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -1112,13 +1160,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             </tr>
                         </thead>
                         <tbody>
-                            {% for t in property.tenants.all %}
+                            {% for t in property.tenantDetails %}
                             <tr>
-                                <td>{{ t.name }}</td>
+                                <td>{{ t.tenantName }}</td>
                                 <td>
-                                    <div>{{ t.mobile_phone }}</div>
+                                    <div>{{ t.mobilePhone }}</div>
                                     <div class="small text-primary">
-                                        <a href="mailto:{{ t.email }}">{{ t.email }}</a>
+                                        <a href="mailto:{{ t.tenantEmail }}">{{ t.tenantEmail }}</a>
                                     </div>
                                 </td>
                                 <td>{{ t.notes|default:"—" }}</td>
@@ -1135,50 +1183,109 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
             </div>
             
-            <!-- Utilities - FIXED SECTION -->
+            <!-- Utilities -->
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
                         <i class="bi bi-lightning-charge"></i>
                     </div>
                     Utilities
-                    <span class="badge-count">{{ property.utilities.count }}</span>
+                    <span class="badge-count">{% if utility %}1{% else %}0{% endif %}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.utilities.exists %}
-                        {% for u in property.utilities.all %}
+                    {% if utility %}
                         <div class="utility-card">
                             <div class="utility-header">
-                                <div class="utility-type">{{ u.type }}</div>
+                                <div class="utility-type">Gas Meter</div>
+                                <div class="utility-type small text-muted">Serial: {{ utility.gasMeterSerialNumber }}</div>
                             </div>
                             
                             <div class="utility-details">
                                 <div class="utility-detail">
                                     <div class="detail-label">Reading</div>
-                                    <div class="detail-value">{{ u.reading }}</div>
+                                    <div class="detail-value">{{ utility.gasMeterReading }}</div>
                                 </div>
-                                
                                 <div class="utility-detail">
                                     <div class="detail-label">Serial Number</div>
-                                    <div class="detail-value">{{ u.serial_number }}</div>
+                                    <div class="detail-value">{{ utility.gasMeterSerialNumber }}</div>
                                 </div>
-                                
                                 <div class="utility-detail">
                                     <div class="detail-label">Notes</div>
-                                    <div class="detail-value">{{ u.notes|default:"—" }}</div>
+                                    <div class="detail-value">{{ utility.notes|default:"—" }}</div>
                                 </div>
                             </div>
-                            
-                            {% if u.photo_url %}
-                            <div class="photo-display-container">
-                                <div class="photo-display-item">
-                                    <img src="{{ u.photo_url }}" alt="Utility photo">
-                                    <div class="photo-display-label">Utility Photo</div>
+
+                            {% if utility.gasMeterPhoto %}
+                                <div class="photo-display-container">
+                                    {% for p in utility.gasMeterPhoto %}
+                                    <div class="photo-display-item">
+                                        <img src="{{ p }}" alt="Gas meter photo">
+                                        <div class="photo-display-label">Gas Meter Photo</div>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                            </div>
                             {% endif %}
+
+                            <!-- Electricity -->
+                            <hr>
+                            <div class="utility-header">
+                                <div class="utility-type">Electricity Meter</div>
+                                <div class="utility-type small text-muted">Serial: {{ utility.electricityMeterSerialNumber }}</div>
+                            </div>
+                            <div class="utility-details">
+                                <div class="utility-detail">
+                                    <div class="detail-label">Reading</div>
+                                    <div class="detail-value">{{ utility.electricityMeterReading }}</div>
+                                </div>
+                                <div class="utility-detail">
+                                    <div class="detail-label">Serial Number</div>
+                                    <div class="detail-value">{{ utility.electricityMeterSerialNumber }}</div>
+                                </div>
+                            </div>
+                            {% if utility.electricityMeterPhoto %}
+                                <div class="photo-display-container">
+                                    {% for p in utility.electricityMeterPhoto %}
+                                    <div class="photo-display-item">
+                                        <img src="{{ p }}" alt="Electricity meter photo">
+                                        <div class="photo-display-label">Electricity Meter Photo</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <!-- Water, Heat and Other -->
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="detail-label">Water Reading</div>
+                                    <div class="detail-value">{{ utility.waterMeterReading }}</div>
+                                    <div class="small text-muted">Serial: {{ utility.waterMeterSerialNumber }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Heat Reading</div>
+                                    <div class="detail-value">{{ utility.heatMeterReading }}</div>
+                                    <div class="small text-muted">Serial: {{ utility.heatMeterSerialNumber }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">Other Meter</div>
+                                    <div class="detail-value">{{ utility.otherMeterType }} - {{ utility.otherMeterReading }}</div>
+                                    <div class="small text-muted">Serial: {{ utility.otherMeterSerialNumber }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Stopcock & Fusebox -->
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="detail-label">Stopcock Location</div>
+                                    <div class="detail-value">{{ utility.stopcokLocation|default:"—" }}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">Fusebox Location</div>
+                                    <div class="detail-value">{{ utility.fuseboxLocation|default:"—" }}</div>
+                                </div>
+                            </div>
                         </div>
-                        {% endfor %}
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-plug text-muted fs-1"></i>
@@ -1195,36 +1302,96 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                         <i class="bi bi-alarm"></i>
                     </div>
                     Detectors
-                    <span class="badge-count">{{ property.detectors.count }}</span>
+                    <span class="badge-count">{{ detector_count }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.detectors.exists %}
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Working</th>
-                                <th>Location</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for d in property.detectors.all %}
-                            <tr>
-                                <td>{{ d.type }}</td>
-                                <td>{{ d.working|yesno:"Yes,No" }}</td>
-                                <td>{{ d.location }}</td>
-                                <td>{{ d.notes|default:"—" }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% else %}
-                    <div class="text-center py-4">
-                        <i class="bi bi-shield-exclamation text-muted fs-1"></i>
-                        <p class="text-muted mt-2">No detectors recorded</p>
+                    <!-- Smoke detectors -->
+                    <div class="sub-section">
+                        <div class="sub-section-header">
+                            <i class="bi bi-fire me-2"></i>
+                            Smoke Detectors
+                            <span class="badge-count">{{ smoke_detector_count }}</span>
+                        </div>
+                        {% if property.smokeDetectors %}
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Present</th>
+                                    <th>Working</th>
+                                    <th>Location</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d in property.smokeDetectors %}
+                                <tr>
+                                    <td>{{ d.smokeDetector|yesno:"Yes,No" }}</td>
+                                    <td>{{ d.working|yesno:"Yes,No" }}</td>
+                                    <td>{{ d.location }}</td>
+                                    <td>{{ d.notes|default:"—" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-shield-exclamation text-muted fs-1"></i>
+                            <p class="text-muted mt-2">No smoke detectors recorded</p>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
+
+                    <!-- CO detectors -->
+                    <div class="sub-section">
+                        <div class="sub-section-header">
+                            <i class="bi bi-thermometer me-2"></i>
+                            CO Detectors
+                            <span class="badge-count">{{ co_detector_count }}</span>
+                        </div>
+                        {% if property.coDetectors %}
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Present</th>
+                                    <th>Working</th>
+                                    <th>Location</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d in property.coDetectors %}
+                                <tr>
+                                    <td>{{ d.coDetector|yesno:"Yes,No" }}</td>
+                                    <td>{{ d.working|yesno:"Yes,No" }}</td>
+                                    <td>{{ d.location }}</td>
+                                    <td>{{ d.notes|default:"—" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-shield-exclamation text-muted fs-1"></i>
+                            <p class="text-muted mt-2">No CO detectors recorded</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Detector compliance (one-to-one) -->
+                    <div class="sub-section">
+                        <div class="sub-section-header">
+                            <i class="bi bi-check2-circle me-2"></i>
+                            Detector Compliance
+                        </div>
+                        {% if detector_compliance %}
+                        <table class="table table-borderless">
+                            <tr><td class="kv">Detectors Compliant</td><td class="val">{{ detector_compliance.detectorCompliance|yesno:"Yes,No" }}</td></tr>
+                            <tr><td class="kv">Solid Fuel Device Present</td><td class="val">{{ detector_compliance.solidFuelDevice|yesno:"Yes,No" }}</td></tr>
+                        </table>
+                        {% else %}
+                        <div class="text-muted">No detector compliance information recorded.</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             
@@ -1235,15 +1402,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                         <i class="bi bi-door-open"></i>
                     </div>
                     Rooms
-                    <span class="badge-count">{{ property.rooms.count }}</span>
+                    <span class="badge-count">{{ total_rooms }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.rooms.exists %}
-                        {% for r in property.rooms.all %}
+                    {% if property.rooms %}
+                        {% for r in property.rooms %}
                         <div class="room-card">
                             <div class="room-header">
                                 <i class="bi bi-house-door room-icon"></i>
-                                {{ r.name }}
+                                {{ r.roomType }}
                             </div>
                             <div class="p-3 p-lg-4">
                                 <div class="row mb-3">
@@ -1260,10 +1427,10 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             <tr>
                                                 <td class="text-muted">Photo</td>
                                                 <td>
-                                                    {% if r.photo_url %}
+                                                    {% if r.photo %}
                                                         <div class="photo-display-container">
                                                             <div class="photo-display-item">
-                                                                <img src="{{ r.photo_url }}" alt="Room photo">
+                                                                <img src="{{ r.photo }}" alt="Room photo">
                                                                 <div class="photo-display-label">Room Photo</div>
                                                             </div>
                                                         </div>
@@ -1277,12 +1444,12 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 </div>
                                 
                                 <!-- Doors -->
-                                {% if r.doors.exists %}
+                                {% if r.doors %}
                                 <div class="sub-section">
                                     <div class="sub-section-header">
                                         <i class="bi bi-door-closed me-2"></i>
                                         Doors
-                                        <span class="badge-count">{{ r.doors.count }}</span>
+                                        <span class="badge-count">{{ r.doors|length }}</span>
                                     </div>
                                     <table class="table table-sm">
                                         <thead>
@@ -1294,11 +1461,11 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for d in r.doors.all %}
+                                            {% for d in r.doors %}
                                             <tr>
-                                                <td>{{ d.type }}</td>
-                                                <td>{{ d.finish }}</td>
-                                                <td>{{ d.colour }}</td>
+                                                <td>{{ d.doorType }}</td>
+                                                <td>{{ d.doorFinish }}</td>
+                                                <td>{{ d.doorColour }}</td>
                                                 <td>{{ d.condition }}</td>
                                             </tr>
                                             {% endfor %}
@@ -1308,12 +1475,12 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% endif %}
                                 
                                 <!-- Windows -->
-                                {% if r.windows.exists %}
+                                {% if r.windows %}
                                 <div class="sub-section">
                                     <div class="sub-section-header">
                                         <i class="bi bi-window me-2"></i>
                                         Windows
-                                        <span class="badge-count">{{ r.windows.count }}</span>
+                                        <span class="badge-count">{{ r.windows|length }}</span>
                                     </div>
                                     <table class="table table-sm">
                                         <thead>
@@ -1325,12 +1492,221 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for w in r.windows.all %}
+                                            {% for w in r.windows %}
                                             <tr>
-                                                <td>{{ w.type }}</td>
-                                                <td>{{ w.glass_type }}</td>
-                                                <td>{{ w.frame_type }}</td>
+                                                <td>{{ w.windowType }}</td>
+                                                <td>{{ w.glassType }}</td>
+                                                <td>{{ w.frameType }}</td>
                                                 <td>{{ w.condition }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Ceilings -->
+                                {% if r.ceilings %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-square me-2"></i>
+                                        Ceilings
+                                        <span class="badge-count">{{ r.ceilings|length }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Finish</th>
+                                                <th>Color</th>
+                                                <th>Condition</th>
+                                                <th>Fittings</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for c in r.ceilings %}
+                                            <tr>
+                                                <td>{{ c.ceilingFinish }}</td>
+                                                <td>{{ c.colour }}</td>
+                                                <td>{{ c.condition }}</td>
+                                                <td>{{ c.ceilingFittings }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Floors -->
+                                {% if r.floors %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-border-width me-2"></i>
+                                        Floors
+                                        <span class="badge-count">{{ r.floors|length }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Finish</th>
+                                                <th>Color</th>
+                                                <th>Condition</th>
+                                                <th>Additions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for f in r.floors %}
+                                            <tr>
+                                                <td>{{ f.floorFinish }}</td>
+                                                <td>{{ f.colour }}</td>
+                                                <td>{{ f.condition }}</td>
+                                                <td>{{ f.additions }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Walls -->
+                                {% if r.walls %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-border-left me-2"></i>
+                                        Walls
+                                        <span class="badge-count">{{ r.walls|length }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Description</th>
+                                                <th>Color</th>
+                                                <th>Condition</th>
+                                                <th>Skirting Type</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for w in r.walls %}
+                                            <tr>
+                                                <td>{{ w.description }}</td>
+                                                <td>{{ w.colour }}</td>
+                                                <td>{{ w.condition }}</td>
+                                                <td>{{ w.skirtingType }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Fixtures & Fittings -->
+                                {% if r.fixturesFittings %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-lightning me-2"></i>
+                                        Fixtures & Fittings
+                                        <span class="badge-count">{{ r.fixturesFittings|length }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Fixture</th>
+                                                <th>Light Switches</th>
+                                                <th>Plug Sockets</th>
+                                                <th>Tested</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for f in r.fixturesFittings %}
+                                            <tr>
+                                                <td>{{ f.fixture }}</td>
+                                                <td>{{ f.lightSwitches }}</td>
+                                                <td>{{ f.plugSockets }}</td>
+                                                <td>{{ f.lightTested|yesno:"Yes,No" }}/{{ f.plugSocketsTested|yesno:"Yes,No" }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Furnishings -->
+                                {% if r.furnishings %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-house me-2"></i>
+                                        Furnishings
+                                        <span class="badge-count">{{ r.furnishings|length }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Furnishings</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for f in r.furnishings %}
+                                            <tr>
+                                                <td>{{ f.furnishings }}</td>
+                                                <td>{{ f.notes|default:"—" }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Cupboards -->
+                                {% if r.cupboards %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-box me-2"></i>
+                                        Cupboards
+                                        <span class="badge-count">{{ r.cupboards|length }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Contents</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for c in r.cupboards %}
+                                            <tr>
+                                                <td>{{ c.cupboardContent }}</td>
+                                                <td>{{ c.notes|default:"—" }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Kitchen Appliances -->
+                                {% if r.kitchenAppliances %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-refrigerator me-2"></i>
+                                        Kitchen Appliances
+                                        <span class="badge-count">{{ r.kitchenAppliances|length }}</span>
+                                    </div>
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Appliance</th>
+                                                <th>Brand</th>
+                                                <th>Condition</th>
+                                                <th>Tested</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for a in r.kitchenAppliances %}
+                                            <tr>
+                                                <td>{{ a.kitchenAppliances }}</td>
+                                                <td>{{ a.brand }}</td>
+                                                <td>{{ a.condition }}</td>
+                                                <td>{{ a.tested|yesno:"Yes,No" }}</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1356,10 +1732,10 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                         <i class="bi bi-files"></i>
                     </div>
                     Documents
-                    <span class="badge-count">{{ property.documents.count }}</span>
+                    <span class="badge-count">{{ document_count }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.documents.exists %}
+                    {% if property.documents %}
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -1369,14 +1745,14 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             </tr>
                         </thead>
                         <tbody>
-                            {% for doc in property.documents.all %}
+                            {% for doc in property.documents %}
                             <tr>
                                 <td>{{ doc.description }}</td>
                                 <td>{{ doc.notes|default:"—" }}</td>
                                 <td>
-                                    {% if doc.photo_url %}
+                                    {% if doc.photo %}
                                         <div class="thumbnail-container">
-                                            <img src="{{ doc.photo_url }}" alt="Document photo">
+                                            <img src="{{ doc.photo }}" alt="Document photo">
                                         </div>
                                     {% else %}
                                         —
@@ -1402,10 +1778,10 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                         <i class="bi bi-key"></i>
                     </div>
                     Keys
-                    <span class="badge-count">{{ property.keys.count }}</span>
+                    <span class="badge-count">{{ key_count }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.keys.exists %}
+                    {% if property.keys %}
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -1415,14 +1791,14 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             </tr>
                         </thead>
                         <tbody>
-                            {% for k in property.keys.all %}
+                            {% for k in property.keys %}
                             <tr>
                                 <td>{{ k.description }}</td>
                                 <td>{{ k.notes|default:"—" }}</td>
                                 <td>
-                                    {% if k.photo_url %}
+                                    {% if k.photo %}
                                         <div class="thumbnail-container">
-                                            <img src="{{ k.photo_url }}" alt="Key photo">
+                                            <img src="{{ k.photo }}" alt="Key photo">
                                         </div>
                                     {% else %}
                                         —
@@ -1441,46 +1817,223 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
             </div>
             
-            <!-- NEW: Digital Signature Section -->
-               <div class="signature-container">
-            <!-- Landlord Signature -->
-            <div class="signature-box">
-                <div class="signature-label">Landlord/Agent Signature</div>
-                <!-- Changed from div to canvas -->
-                <canvas class="signature-pad" id="landlord-signature-pad"></canvas>
-                <div class="signature-actions">
-                    <button class="btn btn-secondary signature-btn" id="landlord-clear">Clear</button>
-                    <button class="btn btn-primary signature-btn" id="landlord-save">Save Signature</button>
+            <!-- Cleaning Standards -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-brush"></i>
+                    </div>
+                    Cleaning Standards
                 </div>
-                <div class="signature-preview" id="landlord-preview">
-                    <span class="text-muted">Signature will appear here</span>
+                <div class="section-body">
+                    {% if property.cleaningStandard %}
+                    <table class="table table-borderless">
+                        <tr><td class="kv">Standard</td><td class="val">{{ property.cleaningStandard.cleaningStandard }}</td></tr>
+                        <tr><td class="kv">Notes</td><td class="val">{{ property.cleaningStandard.notes|default:"—" }}</td></tr>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-brush text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No cleaning standards recorded</p>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="signature-name">Landlord / Agent: {{ property.landlord.name|default:"[Landlord/ AgentName]" }}</div>
-                <div class="signature-date" id="landlord-date"></div>
             </div>
             
-            <!-- Tenant Signature -->
-            <div class="signature-box">
-                <div class="signature-label">Tenant Signature</div>
-                <!-- Changed from div to canvas -->
-                <canvas class="signature-pad" id="tenant-signature-pad"></canvas>
-                <div class="signature-actions">
-                    <button class="btn btn-secondary signature-btn" id="tenant-clear">Clear</button>
-                    <button class="btn btn-primary signature-btn" id="tenant-save">Save Signature</button>
+            <!-- External Surfaces -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-house-exclamation"></i>
+                    </div>
+                    External Surfaces
+                    <span class="badge-count">{{ external_features_count }}</span>
                 </div>
-                <div class="signature-preview" id="tenant-preview">
-                    <span class="text-muted">Signature will appear here</span>
+                <div class="section-body">
+                    {% if property.externalSurfaces %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Notes</th>
+                                <th>Photo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in property.externalSurfaces %}
+                            <tr>
+                                <td>{{ s.externalSurfaceType }}</td>
+                                <td>{{ s.location }}</td>
+                                <td>{{ s.notes|default:"—" }}</td>
+                                <td>
+                                    {% if s.photo %}
+                                        <div class="thumbnail-container">
+                                            <img src="{{ s.photo }}" alt="External surface photo">
+                                        </div>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-house-exclamation text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No external surfaces recorded</p>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="signature-name">Tenant: {{ property.tenants.first.name|default:"[Tenant Name]" }}</div>
-                <div class="signature-date" id="tenant-date"></div>
             </div>
-        </div>
-        
-        <div class="alert alert-info mt-4">
-            <i class="bi bi-info-circle me-2"></i> 
-            By signing this document, you acknowledge that you have reviewed and agree with the contents of this property inventory report.
-        </div>
-    </div>
+            
+            <!-- External Features -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-tree"></i>
+                    </div>
+                    External Features
+                    <span class="badge-count">{{ external_features_count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.externalFeatures %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Condition</th>
+                                <th>Notes</th>
+                                <th>Photo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in property.externalFeatures %}
+                            <tr>
+                                <td>{{ f.externalFeature }}</td>
+                                <td>{{ f.condition }}</td>
+                                <td>{{ f.notes|default:"—" }}</td>
+                                <td>
+                                    {% if f.photo %}
+                                        <div class="thumbnail-container">
+                                            <img src="{{ f.photo }}" alt="External feature photo">
+                                        </div>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-tree text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No external features recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Boundaries -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-fence"></i>
+                    </div>
+                    Boundaries
+                    <span class="badge-count">{{ boundaries_count }}</span>
+                </div>
+                <div class="section-body">
+                    {% if property.boundary %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Color</th>
+                                <th>Condition</th>
+                                <th>Quantity</th>
+                                <th>Notes</th>
+                                <th>Photo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in property.boundary %}
+                            <tr>
+                                <td>{{ b.boundaryType }}</td>
+                                <td>{{ b.colour }}</td>
+                                <td>{{ b.condition }}</td>
+                                <td>{{ b.quantity }}</td>
+                                <td>{{ b.notes|default:"—" }}</td>
+                                <td>
+                                    {% if b.photo %}
+                                        <div class="thumbnail-container">
+                                            <img src="{{ b.photo }}" alt="Boundary photo">
+                                        </div>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-fence text-muted fs-1"></i>
+                        <p class="text-muted mt-2">No boundaries recorded</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Signature Section -->
+            <div class="signature-section">
+                <h4 class="signature-header">
+                    <i class="bi bi-pen me-2"></i>
+                    Signatures
+                </h4>
+                
+                <div class="signature-container">
+                    <!-- Landlord Signature -->
+                    <!-- Landlord Signature (replace original block) -->
+<div class="signature-box">
+  <div class="signature-label">Landlord/Agent Signature</div>
+  <canvas class="signature-pad" id="landlord-signature-pad"></canvas>
+  <div class="signature-actions">
+    <button class="btn btn-secondary signature-btn" id="landlord-clear">Clear</button>
+    <button class="btn btn-primary signature-btn" id="landlord-save">Save Signature</button>
+  </div>
+  <div class="signature-preview" id="landlord-preview">
+    <span class="text-muted">Signature will appear here</span>
+  </div>
+  <div class="signature-name">Landlord / Agent: _________________________</div>
+  <div class="signature-date" id="landlord-date"></div>
+</div>
+
+<!-- Tenant Signature (replace original block) -->
+<div class="signature-box">
+  <div class="signature-label">Tenant Signature</div>
+  <canvas class="signature-pad" id="tenant-signature-pad"></canvas>
+  <div class="signature-actions">
+    <button class="btn btn-secondary signature-btn" id="tenant-clear">Clear</button>
+    <button class="btn btn-primary signature-btn" id="tenant-save">Save Signature</button>
+  </div>
+  <div class="signature-preview" id="tenant-preview">
+    <span class="text-muted">Signature will appear here</span>
+  </div>
+  <div class="signature-name">Tenant: _________________________</div>
+  <div class="signature-date" id="tenant-date"></div>
+</div>
+
+                </div>
+                
+                <div class="alert alert-info mt-4">
+                    <i class="bi bi-info-circle me-2"></i> 
+                    By signing this document, you acknowledge that you have reviewed and agree with the contents of this property inventory report.
+                </div>
+            </div>
             
             <!-- Footer -->
             <div class="footer">
@@ -1494,113 +2047,88 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-      <script>
-        // Initialize Signature Pads after page loads
-        window.addEventListener('load', function() {
-            console.log("Initializing signature pads...");
-            
-            // Declare variables for the signature pads
-            let landlordSignaturePad = null;
-            let tenantSignaturePad = null;
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Elements (canvas)
+  let landlordCanvas = document.getElementById('landlord-signature-pad');
+  let tenantCanvas = document.getElementById('tenant-signature-pad');
 
-            // Function to resize canvas for high DPI screens
-            function resizeCanvas(canvas) {
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                canvas.width = canvas.offsetWidth * ratio;
-                canvas.height = canvas.offsetHeight * ratio;
-                canvas.getContext('2d').scale(ratio, ratio);
-            }
-            
-            // Initialize landlord signature pad
-            const landlordCanvas = document.getElementById('landlord-signature-pad');
-            if (landlordCanvas) {
-                resizeCanvas(landlordCanvas);
-                landlordSignaturePad = new SignaturePad(landlordCanvas, {
-                    backgroundColor: 'rgba(255, 255, 255, 0)',
-                    penColor: 'rgb(0, 0, 0)',
-                    minWidth: 1,
-                    maxWidth: 3,
-                    throttle: 16
-                });
-                
-                // Landlord handlers
-                document.getElementById('landlord-clear').addEventListener('click', function() {
-                    landlordSignaturePad.clear();
-                });
-                
-                document.getElementById('landlord-save').addEventListener('click', function() {
-                    if (landlordSignaturePad.isEmpty()) {
-                        alert('Please provide a signature first.');
-                    } else {
-                        const dataURL = landlordSignaturePad.toDataURL();
-                        const preview = document.getElementById('landlord-preview');
-                        preview.innerHTML = `<img src="${dataURL}" alt="Landlord Signature">`;
-                        
-                        // Set date
-                        const now = new Date();
-                        document.getElementById('landlord-date').textContent = 
-                            `Date: ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-                        
-                        alert('Landlord signature saved successfully!');
-                    }
-                });
-            }
-            
-            // Initialize tenant signature pad
-            const tenantCanvas = document.getElementById('tenant-signature-pad');
-            if (tenantCanvas) {
-                resizeCanvas(tenantCanvas);
-                tenantSignaturePad = new SignaturePad(tenantCanvas, {
-                    backgroundColor: 'rgba(255, 255, 255, 0)',
-                    penColor: 'rgb(0, 0, 0)',
-                    minWidth: 1,
-                    maxWidth: 3,
-                    throttle: 16
-                });
-                
-                // Tenant handlers
-                document.getElementById('tenant-clear').addEventListener('click', function() {
-                    tenantSignaturePad.clear();
-                });
-                
-                document.getElementById('tenant-save').addEventListener('click', function() {
-                    if (tenantSignaturePad.isEmpty()) {
-                        alert('Please provide a signature first.');
-                    } else {
-                        const dataURL = tenantSignaturePad.toDataURL();
-                        const preview = document.getElementById('tenant-preview');
-                        preview.innerHTML = `<img src="${dataURL}" alt="Tenant Signature">`;
-                        
-                        // Set date
-                        const now = new Date();
-                        document.getElementById('tenant-date').textContent = 
-                            `Date: ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-                        
-                        alert('Tenant signature saved successfully!');
-                    }
-                });
-            }
-            
-            // Print button functionality
-            document.querySelector('.print-btn').addEventListener('click', function() {
-                // Check landlord signature
-                if (landlordSignaturePad && !landlordSignaturePad.isEmpty() && 
-                    document.getElementById('landlord-preview').innerHTML.includes('will appear')) {
-                    alert('Please save your landlord signature before printing.');
-                    return;
-                }
-                
-                // Check tenant signature
-                if (tenantSignaturePad && !tenantSignaturePad.isEmpty() && 
-                    document.getElementById('tenant-preview').innerHTML.includes('will appear')) {
-                    alert('Please save your tenant signature before printing.');
-                    return;
-                }
-                
-                window.print();
-            });
-        });
-    </script>
+  // Helper: set canvas pixel size for high-DPI and preserve drawing when needed
+  function setCanvasDisplaySize(canvas) {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    // set the internal pixel size to match display size * ratio
+    canvas.width = Math.floor(canvas.offsetWidth * ratio);
+    canvas.height = Math.floor(canvas.offsetHeight * ratio);
+    // scale drawing operations to account for ratio
+    canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+  }
+
+  // Initial sizing BEFORE creating SignaturePad
+  setCanvasDisplaySize(landlordCanvas);
+  setCanvasDisplaySize(tenantCanvas);
+
+  // Create SignaturePad instances
+  const landlordSignaturePad = new SignaturePad(landlordCanvas, {
+    backgroundColor: 'rgb(255, 255, 255)',
+    penColor: 'rgb(0, 0, 0)'
+  });
+
+  const tenantSignaturePad = new SignaturePad(tenantCanvas, {
+    backgroundColor: 'rgb(255, 255, 255)',
+    penColor: 'rgb(0, 0, 0)'
+  });
+
+  // Buttons
+  document.getElementById('landlord-clear').addEventListener('click', function() {
+    landlordSignaturePad.clear();
+    document.getElementById('landlord-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
+    document.getElementById('landlord-date').textContent = '';
+  });
+
+  document.getElementById('tenant-clear').addEventListener('click', function() {
+    tenantSignaturePad.clear();
+    document.getElementById('tenant-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
+    document.getElementById('tenant-date').textContent = '';
+  });
+
+  document.getElementById('landlord-save').addEventListener('click', function() {
+    if (landlordSignaturePad.isEmpty()) {
+      alert("Please provide a signature first.");
+      return;
+    }
+    const dataURL = landlordSignaturePad.toDataURL();
+    document.getElementById('landlord-preview').innerHTML = `<img src="${dataURL}" alt="Landlord Signature">`;
+    document.getElementById('landlord-date').textContent = 'Date: ' + new Date().toLocaleDateString();
+    // optionally store in hidden input for server submission
+  });
+
+  document.getElementById('tenant-save').addEventListener('click', function() {
+    if (tenantSignaturePad.isEmpty()) {
+      alert("Please provide a signature first.");
+      return;
+    }
+    const dataURL = tenantSignaturePad.toDataURL();
+    document.getElementById('tenant-preview').innerHTML = `<img src="${dataURL}" alt="Tenant Signature">`;
+    document.getElementById('tenant-date').textContent = 'Date: ' + new Date().toLocaleDateString();
+  });
+
+  // Preserve drawing on resize: save dataURL, resize, then re-load
+  window.addEventListener('resize', function() {
+    // landlord
+    const landlordData = landlordSignaturePad.isEmpty() ? null : landlordSignaturePad.toDataURL();
+    setCanvasDisplaySize(landlordCanvas);
+    landlordSignaturePad.clear();
+    if (landlordData) landlordSignaturePad.fromDataURL(landlordData);
+
+    // tenant
+    const tenantData = tenantSignaturePad.isEmpty() ? null : tenantSignaturePad.toDataURL();
+    setCanvasDisplaySize(tenantCanvas);
+    tenantSignaturePad.clear();
+    if (tenantData) tenantSignaturePad.fromDataURL(tenantData);
+  });
+});
+</script>
+
 </body>
 </html>
