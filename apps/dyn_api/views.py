@@ -307,3 +307,29 @@ def property_report(request, pk):
     }
 
     return render(request, "reports/property.html", context)
+
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+def property_list(request):
+    """
+    List all properties (with optional search q=) and paginate results.
+    Renders templates/reports/property_list.html
+    """
+    qs = Property.objects.all().select_related(
+        'utility', 'detector_compliance', 'cleaning_standard'
+    ).prefetch_related(
+        'tenants', 'rooms'
+    ).order_by('-id')
+
+    q = request.GET.get('q', '').strip()
+    if q:
+        qs = qs.filter(Q(address__icontains=q) | Q(postcode__icontains=q))
+
+    paginator = Paginator(qs, 25)  # 25 per page
+    page_number = request.GET.get('page')
+    properties = paginator.get_page(page_number)
+
+    return render(request, "reports/property_list.html", {
+        'properties': properties
+    })

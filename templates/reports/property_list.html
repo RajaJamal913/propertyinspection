@@ -1,0 +1,87 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Property Reports</h2>
+   
+  </div>
+
+  {% if properties %}
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Address</th>
+          <th scope="col">Postcode</th>
+          <th scope="col">Type</th>
+          <th scope="col">Tenants</th>
+          <th scope="col">Rooms</th>
+          <th scope="col">Inspected</th>
+          <th scope="col" class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for prop in properties %}
+        <tr>
+          <td>{{ prop.id }}</td>
+          <td>
+            {{ prop.address|default:"—" }}
+            {% if prop.address and prop.address|length > 60 %}<small class="text-muted d-block">{{ prop.address|slice:":60" }}…</small>{% endif %}
+          </td>
+          <td>{{ prop.postcode|default:"—" }}</td>
+          <td>{{ prop.property_type|default:"—" }}</td>
+          <td>{{ prop.tenants.count }}</td>
+          <td>{{ prop.rooms.count }}</td>
+          <td>
+            {% if prop.inspectedBy %}
+              {{ prop.inspectedBy }}
+            {% else %}
+              <span class="text-muted">Not set</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a href="{% url 'property_report' prop.id %}" class="btn btn-sm btn-primary" target="_blank" rel="noopener">View report</a>
+            
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      {% if properties.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?q={{ request.GET.q|urlencode }}&page={{ properties.previous_page_number }}" aria-label="Previous">‹</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">‹</span></li>
+      {% endif %}
+
+      {% for p in properties.paginator.page_range %}
+        {% if properties.number == p %}
+          <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+        {% elif p > properties.number|add:-3 and p < properties.number|add:3 %}
+          <li class="page-item"><a class="page-link" href="?q={{ request.GET.q|urlencode }}&page={{ p }}">{{ p }}</a></li>
+        {% endif %}
+      {% endfor %}
+
+      {% if properties.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?q={{ request.GET.q|urlencode }}&page={{ properties.next_page_number }}" aria-label="Next">›</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">›</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  {% else %}
+    <div class="alert alert-info">No properties found.</div>
+  {% endif %}
+</div>
+{% endblock %}

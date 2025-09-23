@@ -6,9 +6,8 @@
     <title>Property Report - {{ property.address }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-     <style>
-
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
         :root {
             --primary: #1a4f72;
             --secondary: #6c757d;
@@ -138,14 +137,19 @@
             border-radius: 8px;
             overflow: hidden;
             position: relative;
-            height: 150px;
+            height: 200px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            padding: 5px;
         }
         
         .photo-label {
@@ -270,10 +274,13 @@
         }
         
         .thumb {
-            height: 100px;
-            object-fit: cover;
+            max-height: 120px;
+            max-width: 100%;
+            object-fit: contain;
             border-radius: 0.5rem;
             border: 1px solid #e2e8f0;
+            padding: 4px;
+            background: #f8f9fa;
         }
         
         .photo-display-container {
@@ -288,14 +295,21 @@
             max-width: calc(50% - 0.5rem);
             position: relative;
             page-break-inside: avoid;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 220px;
         }
         
         .photo-display-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
             border: 1px solid var(--border);
+            border-radius: 6px;
         }
         
         .photo-display-label {
@@ -332,13 +346,19 @@
         .thumbnail-container {
             max-width: 200px;
             position: relative;
+            background: #f8f9fa;
+            padding: 5px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .thumbnail-container img {
             max-width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
+            max-height: 150px;
+            object-fit: contain;
+            border-radius: 6px;
             border: 1px solid var(--border);
         }
         
@@ -346,6 +366,10 @@
             .photo-display-item {
                 flex: 0 0 100%;
                 max-width: 100%;
+            }
+            
+            .photo-item {
+                height: 180px;
             }
         }
         
@@ -423,7 +447,7 @@
             margin-bottom: 0.75rem;
         }
         
-        /* NEW: Utility card styling */
+        /* Utility card styling */
         .utility-card {
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -468,8 +492,7 @@
             font-weight: 500;
         }
         
-        /* NEW: Signature section styling */
-       * Signature section styling */
+        /* Signature section styling */
         .signature-section {
             border-top: 2px dashed var(--border);
             padding-top: 2rem;
@@ -505,15 +528,15 @@
         }
         
         .signature-pad {
-  width: 100%;
-  height: 150px;             /* visual size */
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  background: white;
-  cursor: crosshair;
-  touch-action: none;        /* important for stylus/touch */
-  display: block;
-}
+            width: 100%;
+            height: 150px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: crosshair;
+            touch-action: none;
+            display: block;
+        }
 
         .signature-actions {
             display: flex;
@@ -540,6 +563,7 @@
         .signature-preview img {
             max-width: 100%;
             max-height: 100%;
+            object-fit: contain;
         }
         
         .signature-date {
@@ -556,7 +580,46 @@
             color: var(--primary);
         }
         
-        /* ENHANCED PRINT STYLES */
+        /* Image gallery for sub-entities */
+        .sub-entity-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .sub-entity-photo {
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            height: 200px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .sub-entity-photo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            padding: 5px;
+        }
+        
+        .sub-entity-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        
+        /* ENHANCED PRINT STYLES - FIXED IMAGE ISSUES */
         @media print {
             /* Fix for blank first page */
             body, html {
@@ -632,8 +695,34 @@
                 page-break-inside: avoid !important;
             }
             
-            .photo-item, .photo-display-item {
-                height: 180px !important;
+            /* FIXED: Image printing issues */
+            .photo-item, .photo-display-item, .sub-entity-photo {
+                height: auto !important;
+                min-height: 200px !important;
+                max-height: 250px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .photo-item img, .photo-display-item img, .sub-entity-photo img {
+                max-height: 220px !important;
+                width: auto !important;
+                max-width: 100% !important;
+                object-fit: contain !important;
+                height: auto !important;
+            }
+            
+            .thumbnail-container img {
+                max-height: 120px !important;
+                max-width: 100% !important;
+                width: auto !important;
+                object-fit: contain !important;
+            }
+            
+            /* Ensure images don't break across pages */
+            .photo-gallery, .photo-display-container, .sub-entity-gallery {
+                break-inside: avoid;
+                page-break-inside: avoid;
             }
             
             .footer {
@@ -644,13 +733,9 @@
                 padding: 1rem !important;
             }
             
-            .photo-gallery {
+            .photo-gallery, .sub-entity-gallery {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 0.5rem !important;
-            }
-            
-            .thumbnail-container img {
-                height: 120px !important;
             }
             
             .data-table th, .data-table td {
@@ -699,7 +784,9 @@
             
             img {
                 max-width: 100% !important;
+                max-height: 100% !important;
                 height: auto !important;
+                object-fit: contain !important;
             }
             
             .intro-card {
@@ -749,14 +836,15 @@
                 grid-template-columns: repeat(2, 1fr) !important;
             }
             
-            .photo-display-item {
+            .photo-display-item, .sub-entity-photo {
                 flex: 0 0 100% !important;
                 max-width: 100% !important;
                 margin-bottom: 0.5rem !important;
             }
             
-            .photo-display-item img {
-                height: 150px !important;
+            .photo-display-item img, .sub-entity-photo img {
+                max-height: 150px !important;
+                object-fit: contain !important;
             }
             
             /* Signature section print adjustments */
@@ -777,6 +865,11 @@
             .signature-preview {
                 border: 1px solid #ddd !important;
                 height: 100px !important;
+            }
+            
+            .signature-preview img {
+                max-height: 90px !important;
+                object-fit: contain !important;
             }
             
             /* Prevent page breaks inside important elements */
@@ -971,7 +1064,7 @@ It is the responsibility of both the landlord and tenant to review this document
 
 This report records the furniture, furnishings, and landlord-owned items present in the property on the date of inspection. It does not provide a guarantee of adequacy, safety, or compliance — it simply confirms the existence and observed condition of these items at the time of the inventory.
 
-By signing this document, the undersigned agree that, subject to any notes or amendments, it represents a fair and accurate record of the property’s condition and contents.
+By signing this document, the undersigned agree that, subject to any notes or amendments, it represents a fair and accurate record of the property's condition and contents.
 
 The tenant and/or landlord has seven (7) days from receipt of this report to notify the landlord, agent or LI Services of any discrepancies.</p>
             </div>
@@ -1195,6 +1288,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 <div class="section-body">
                     {% if utility %}
                         <div class="utility-card">
+                            <!-- Gas Meter -->
                             <div class="utility-header">
                                 <div class="utility-type">Gas Meter</div>
                                 <div class="utility-type small text-muted">Serial: {{ utility.gasMeterSerialNumber }}</div>
@@ -1253,25 +1347,110 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 </div>
                             {% endif %}
 
-                            <!-- Water, Heat and Other -->
+                            <!-- Water Meter -->
+                            {% if utility.waterMeterReading or utility.waterMeterSerialNumber or utility.waterMeterPhoto %}
                             <hr>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="detail-label">Water Reading</div>
-                                    <div class="detail-value">{{ utility.waterMeterReading }}</div>
-                                    <div class="small text-muted">Serial: {{ utility.waterMeterSerialNumber }}</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-label">Heat Reading</div>
-                                    <div class="detail-value">{{ utility.heatMeterReading }}</div>
-                                    <div class="small text-muted">Serial: {{ utility.heatMeterSerialNumber }}</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="detail-label">Other Meter</div>
-                                    <div class="detail-value">{{ utility.otherMeterType }} - {{ utility.otherMeterReading }}</div>
-                                    <div class="small text-muted">Serial: {{ utility.otherMeterSerialNumber }}</div>
-                                </div>
+                            <div class="utility-header">
+                                <div class="utility-type">Water Meter</div>
+                                {% if utility.waterMeterSerialNumber %}
+                                <div class="utility-type small text-muted">Serial: {{ utility.waterMeterSerialNumber }}</div>
+                                {% endif %}
                             </div>
+                            <div class="utility-details">
+                                {% if utility.waterMeterReading %}
+                                <div class="utility-detail">
+                                    <div class="detail-label">Reading</div>
+                                    <div class="detail-value">{{ utility.waterMeterReading }}</div>
+                                </div>
+                                {% endif %}
+                                {% if utility.waterMeterSerialNumber %}
+                                <div class="utility-detail">
+                                    <div class="detail-label">Serial Number</div>
+                                    <div class="detail-value">{{ utility.waterMeterSerialNumber }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if utility.waterMeterPhoto %}
+                                <div class="photo-display-container">
+                                    {% for p in utility.waterMeterPhoto %}
+                                    <div class="photo-display-item">
+                                        <img src="{{ p }}" alt="Water meter photo">
+                                        <div class="photo-display-label">Water Meter Photo</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endif %}
+
+                            <!-- Heat Meter -->
+                            {% if utility.heatMeterReading or utility.heatMeterSerialNumber or utility.heatMeterPhoto %}
+                            <hr>
+                            <div class="utility-header">
+                                <div class="utility-type">Heat Meter</div>
+                                {% if utility.heatMeterSerialNumber %}
+                                <div class="utility-type small text-muted">Serial: {{ utility.heatMeterSerialNumber }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="utility-details">
+                                {% if utility.heatMeterReading %}
+                                <div class="utility-detail">
+                                    <div class="detail-label">Reading</div>
+                                    <div class="detail-value">{{ utility.heatMeterReading }}</div>
+                                </div>
+                                {% endif %}
+                                {% if utility.heatMeterSerialNumber %}
+                                <div class="utility-detail">
+                                    <div class="detail-label">Serial Number</div>
+                                    <div class="detail-value">{{ utility.heatMeterSerialNumber }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if utility.heatMeterPhoto %}
+                                <div class="photo-display-container">
+                                    {% for p in utility.heatMeterPhoto %}
+                                    <div class="photo-display-item">
+                                        <img src="{{ p }}" alt="Heat meter photo">
+                                        <div class="photo-display-label">Heat Meter Photo</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endif %}
+
+                            <!-- Other Meter -->
+                            {% if utility.otherMeterType or utility.otherMeterReading or utility.otherMeterSerialNumber or utility.otherMeterPhoto %}
+                            <hr>
+                            <div class="utility-header">
+                                <div class="utility-type">Other Meter ({{ utility.otherMeterType }})</div>
+                                {% if utility.otherMeterSerialNumber %}
+                                <div class="utility-type small text-muted">Serial: {{ utility.otherMeterSerialNumber }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="utility-details">
+                                {% if utility.otherMeterReading %}
+                                <div class="utility-detail">
+                                    <div class="detail-label">Reading</div>
+                                    <div class="detail-value">{{ utility.otherMeterReading }}</div>
+                                </div>
+                                {% endif %}
+                                {% if utility.otherMeterSerialNumber %}
+                                <div class="utility-detail">
+                                    <div class="detail-label">Serial Number</div>
+                                    <div class="detail-value">{{ utility.otherMeterSerialNumber }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if utility.otherMeterPhoto %}
+                                <div class="photo-display-container">
+                                    {% for p in utility.otherMeterPhoto %}
+                                    <div class="photo-display-item">
+                                        <img src="{{ p }}" alt="Other meter photo">
+                                        <div class="photo-display-label">Other Meter Photo ({{ utility.otherMeterType }})</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endif %}
 
                             <!-- Stopcock & Fusebox -->
                             <hr>
@@ -1320,6 +1499,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                     <th>Working</th>
                                     <th>Location</th>
                                     <th>Notes</th>
+                                    <th>Photo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1329,6 +1509,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                     <td>{{ d.working|yesno:"Yes,No" }}</td>
                                     <td>{{ d.location }}</td>
                                     <td>{{ d.notes|default:"—" }}</td>
+                                    <td>
+                                        {% if d.photo %}
+                                            <div class="thumbnail-container">
+                                                <img src="{{ d.photo }}" alt="Smoke detector photo">
+                                            </div>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -1356,6 +1545,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                     <th>Working</th>
                                     <th>Location</th>
                                     <th>Notes</th>
+                                    <th>Photo</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1365,6 +1555,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                     <td>{{ d.working|yesno:"Yes,No" }}</td>
                                     <td>{{ d.location }}</td>
                                     <td>{{ d.notes|default:"—" }}</td>
+                                    <td>
+                                        {% if d.photo %}
+                                            <div class="thumbnail-container">
+                                                <img src="{{ d.photo }}" alt="CO detector photo">
+                                            </div>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -1387,6 +1586,19 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                         <table class="table table-borderless">
                             <tr><td class="kv">Detectors Compliant</td><td class="val">{{ detector_compliance.detectorCompliance|yesno:"Yes,No" }}</td></tr>
                             <tr><td class="kv">Solid Fuel Device Present</td><td class="val">{{ detector_compliance.solidFuelDevice|yesno:"Yes,No" }}</td></tr>
+                            {% if detector_compliance.photo %}
+                            <tr>
+                                <td class="kv">Photo</td>
+                                <td class="val">
+                                    <div class="photo-display-container">
+                                        <div class="photo-display-item">
+                                            <img src="{{ detector_compliance.photo }}" alt="Detector compliance photo">
+                                            <div class="photo-display-label">Compliance Photo</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
                         </table>
                         {% else %}
                         <div class="text-muted">No detector compliance information recorded.</div>
@@ -1458,6 +1670,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <th>Finish</th>
                                                 <th>Color</th>
                                                 <th>Condition</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1467,6 +1680,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <td>{{ d.doorFinish }}</td>
                                                 <td>{{ d.doorColour }}</td>
                                                 <td>{{ d.condition }}</td>
+                                                <td>
+                                                    {% if d.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ d.photo }}" alt="Door photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1489,6 +1711,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <th>Glass</th>
                                                 <th>Frame Type</th>
                                                 <th>Condition</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1498,6 +1721,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <td>{{ w.glassType }}</td>
                                                 <td>{{ w.frameType }}</td>
                                                 <td>{{ w.condition }}</td>
+                                                <td>
+                                                    {% if w.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ w.photo }}" alt="Window photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1520,6 +1752,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <th>Color</th>
                                                 <th>Condition</th>
                                                 <th>Fittings</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1529,6 +1762,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <td>{{ c.colour }}</td>
                                                 <td>{{ c.condition }}</td>
                                                 <td>{{ c.ceilingFittings }}</td>
+                                                <td>
+                                                    {% if c.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ c.photo }}" alt="Ceiling photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1551,6 +1793,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <th>Color</th>
                                                 <th>Condition</th>
                                                 <th>Additions</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1560,6 +1803,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <td>{{ f.colour }}</td>
                                                 <td>{{ f.condition }}</td>
                                                 <td>{{ f.additions }}</td>
+                                                <td>
+                                                    {% if f.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ f.photo }}" alt="Floor photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1582,6 +1834,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <th>Color</th>
                                                 <th>Condition</th>
                                                 <th>Skirting Type</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1591,6 +1844,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <td>{{ w.colour }}</td>
                                                 <td>{{ w.condition }}</td>
                                                 <td>{{ w.skirtingType }}</td>
+                                                <td>
+                                                    {% if w.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ w.photo }}" alt="Wall photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1613,6 +1875,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <th>Light Switches</th>
                                                 <th>Plug Sockets</th>
                                                 <th>Tested</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1622,6 +1885,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <td>{{ f.lightSwitches }}</td>
                                                 <td>{{ f.plugSockets }}</td>
                                                 <td>{{ f.lightTested|yesno:"Yes,No" }}/{{ f.plugSocketsTested|yesno:"Yes,No" }}</td>
+                                                <td>
+                                                    {% if f.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ f.photo }}" alt="Fixture photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1642,6 +1914,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             <tr>
                                                 <th>Furnishings</th>
                                                 <th>Notes</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1649,6 +1922,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             <tr>
                                                 <td>{{ f.furnishings }}</td>
                                                 <td>{{ f.notes|default:"—" }}</td>
+                                                <td>
+                                                    {% if f.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ f.photo }}" alt="Furnishing photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1669,6 +1951,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             <tr>
                                                 <th>Contents</th>
                                                 <th>Notes</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1676,6 +1959,15 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             <tr>
                                                 <td>{{ c.cupboardContent }}</td>
                                                 <td>{{ c.notes|default:"—" }}</td>
+                                                <td>
+                                                    {% if c.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ c.photo }}" alt="Cupboard photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -1698,6 +1990,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <th>Brand</th>
                                                 <th>Condition</th>
                                                 <th>Tested</th>
+                                                <th>Photo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1707,10 +2000,120 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                 <td>{{ a.brand }}</td>
                                                 <td>{{ a.condition }}</td>
                                                 <td>{{ a.tested|yesno:"Yes,No" }}</td>
+                                                <td>
+                                                    {% if a.photo %}
+                                                        <div class="thumbnail-container">
+                                                            <img src="{{ a.photo }}" alt="Appliance photo">
+                                                        </div>
+                                                    {% else %}
+                                                        —
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Room Images Gallery -->
+                                {% if r.doors or r.windows or r.ceilings or r.floors or r.walls or r.fixturesFittings or r.furnishings or r.cupboards or r.kitchenAppliances %}
+                                <div class="sub-section">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-images me-2"></i>
+                                        Room Images Gallery
+                                    </div>
+                                    <div class="sub-entity-gallery">
+                                        <!-- Door Images -->
+                                        {% for d in r.doors %}
+                                            {% if d.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ d.photo }}" alt="Door photo">
+                                                <div class="sub-entity-label">Door: {{ d.doorType }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Window Images -->
+                                        {% for w in r.windows %}
+                                            {% if w.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ w.photo }}" alt="Window photo">
+                                                <div class="sub-entity-label">Window: {{ w.windowType }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Ceiling Images -->
+                                        {% for c in r.ceilings %}
+                                            {% if c.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ c.photo }}" alt="Ceiling photo">
+                                                <div class="sub-entity-label">Ceiling: {{ c.ceilingFinish }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Floor Images -->
+                                        {% for f in r.floors %}
+                                            {% if f.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ f.photo }}" alt="Floor photo">
+                                                <div class="sub-entity-label">Floor: {{ f.floorFinish }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Wall Images -->
+                                        {% for w in r.walls %}
+                                            {% if w.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ w.photo }}" alt="Wall photo">
+                                                <div class="sub-entity-label">Wall: {{ w.description }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Fixture & Fitting Images -->
+                                        {% for f in r.fixturesFittings %}
+                                            {% if f.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ f.photo }}" alt="Fixture photo">
+                                                <div class="sub-entity-label">Fixture: {{ f.fixture }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Furnishing Images -->
+                                        {% for f in r.furnishings %}
+                                            {% if f.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ f.photo }}" alt="Furnishing photo">
+                                                <div class="sub-entity-label">Furnishing: {{ f.furnishings }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Cupboard Images -->
+                                        {% for c in r.cupboards %}
+                                            {% if c.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ c.photo }}" alt="Cupboard photo">
+                                                <div class="sub-entity-label">Cupboard: {{ c.cupboardContent }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Kitchen Appliance Images -->
+                                        {% for a in r.kitchenAppliances %}
+                                            {% if a.photo %}
+                                            <div class="sub-entity-photo">
+                                                <img src="{{ a.photo }}" alt="Appliance photo">
+                                                <div class="sub-entity-label">Appliance: {{ a.kitchenAppliances }}</div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                                 {% endif %}
                             </div>
@@ -1724,7 +2127,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     {% endif %}
                 </div>
             </div>
-            
+
             <!-- Documents -->
             <div class="section-card">
                 <div class="section-header">
@@ -1761,7 +2164,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             </tr>
                             {% endfor %}
                         </tbody>
-                    </table>
+                        </table>
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-file-earmark-x text-muted fs-1"></i>
@@ -1770,7 +2173,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     {% endif %}
                 </div>
             </div>
-            
+
             <!-- Keys -->
             <div class="section-card">
                 <div class="section-header">
@@ -1816,7 +2219,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     {% endif %}
                 </div>
             </div>
-            
+
             <!-- Cleaning Standards -->
             <div class="section-card">
                 <div class="section-header">
@@ -1839,7 +2242,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     {% endif %}
                 </div>
             </div>
-            
+
             <!-- External Surfaces -->
             <div class="section-card">
                 <div class="section-header">
@@ -1887,7 +2290,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     {% endif %}
                 </div>
             </div>
-            
+
             <!-- External Features -->
             <div class="section-card">
                 <div class="section-header">
@@ -1935,7 +2338,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     {% endif %}
                 </div>
             </div>
-            
+
             <!-- Boundaries -->
             <div class="section-card">
                 <div class="section-header">
@@ -1987,7 +2390,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     {% endif %}
                 </div>
             </div>
-            
+
             <!-- Signature Section -->
             <div class="signature-section">
                 <h4 class="signature-header">
@@ -1997,36 +2400,34 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 
                 <div class="signature-container">
                     <!-- Landlord Signature -->
-                    <!-- Landlord Signature (replace original block) -->
-<div class="signature-box">
-  <div class="signature-label">Landlord/Agent Signature</div>
-  <canvas class="signature-pad" id="landlord-signature-pad"></canvas>
-  <div class="signature-actions">
-    <button class="btn btn-secondary signature-btn" id="landlord-clear">Clear</button>
-    <button class="btn btn-primary signature-btn" id="landlord-save">Save Signature</button>
-  </div>
-  <div class="signature-preview" id="landlord-preview">
-    <span class="text-muted">Signature will appear here</span>
-  </div>
-  <div class="signature-name">Landlord / Agent: _________________________</div>
-  <div class="signature-date" id="landlord-date"></div>
-</div>
+                    <div class="signature-box">
+                        <div class="signature-label">Landlord/Agent Signature</div>
+                        <canvas class="signature-pad" id="landlord-signature-pad"></canvas>
+                        <div class="signature-actions">
+                            <button class="btn btn-secondary signature-btn" id="landlord-clear">Clear</button>
+                            <button class="btn btn-primary signature-btn" id="landlord-save">Save Signature</button>
+                        </div>
+                        <div class="signature-preview" id="landlord-preview">
+                            <span class="text-muted">Signature will appear here</span>
+                        </div>
+                        <div class="signature-name">Landlord / Agent: _________________________</div>
+                        <div class="signature-date" id="landlord-date"></div>
+                    </div>
 
-<!-- Tenant Signature (replace original block) -->
-<div class="signature-box">
-  <div class="signature-label">Tenant Signature</div>
-  <canvas class="signature-pad" id="tenant-signature-pad"></canvas>
-  <div class="signature-actions">
-    <button class="btn btn-secondary signature-btn" id="tenant-clear">Clear</button>
-    <button class="btn btn-primary signature-btn" id="tenant-save">Save Signature</button>
-  </div>
-  <div class="signature-preview" id="tenant-preview">
-    <span class="text-muted">Signature will appear here</span>
-  </div>
-  <div class="signature-name">Tenant: _________________________</div>
-  <div class="signature-date" id="tenant-date"></div>
-</div>
-
+                    <!-- Tenant Signature -->
+                    <div class="signature-box">
+                        <div class="signature-label">Tenant Signature</div>
+                        <canvas class="signature-pad" id="tenant-signature-pad"></canvas>
+                        <div class="signature-actions">
+                            <button class="btn btn-secondary signature-btn" id="tenant-clear">Clear</button>
+                            <button class="btn btn-primary signature-btn" id="tenant-save">Save Signature</button>
+                        </div>
+                        <div class="signature-preview" id="tenant-preview">
+                            <span class="text-muted">Signature will appear here</span>
+                        </div>
+                        <div class="signature-name">Tenant: _________________________</div>
+                        <div class="signature-date" id="tenant-date"></div>
+                    </div>
                 </div>
                 
                 <div class="alert alert-info mt-4">
@@ -2034,7 +2435,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     By signing this document, you acknowledge that you have reviewed and agree with the contents of this property inventory report.
                 </div>
             </div>
-            
+
             <!-- Footer -->
             <div class="footer">
                 <div class="d-flex align-items-center justify-content-center mb-2">
@@ -2047,88 +2448,87 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
         </div>
     </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-   <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Elements (canvas)
-  let landlordCanvas = document.getElementById('landlord-signature-pad');
-  let tenantCanvas = document.getElementById('tenant-signature-pad');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements (canvas)
+      let landlordCanvas = document.getElementById('landlord-signature-pad');
+      let tenantCanvas = document.getElementById('tenant-signature-pad');
 
-  // Helper: set canvas pixel size for high-DPI and preserve drawing when needed
-  function setCanvasDisplaySize(canvas) {
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-    // set the internal pixel size to match display size * ratio
-    canvas.width = Math.floor(canvas.offsetWidth * ratio);
-    canvas.height = Math.floor(canvas.offsetHeight * ratio);
-    // scale drawing operations to account for ratio
-    canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
-  }
+      // Helper: set canvas pixel size for high-DPI and preserve drawing when needed
+      function setCanvasDisplaySize(canvas) {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        // set the internal pixel size to match display size * ratio
+        canvas.width = Math.floor(canvas.offsetWidth * ratio);
+        canvas.height = Math.floor(canvas.offsetHeight * ratio);
+        // scale drawing operations to account for ratio
+        canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
 
-  // Initial sizing BEFORE creating SignaturePad
-  setCanvasDisplaySize(landlordCanvas);
-  setCanvasDisplaySize(tenantCanvas);
+      // Initial sizing BEFORE creating SignaturePad
+      setCanvasDisplaySize(landlordCanvas);
+      setCanvasDisplaySize(tenantCanvas);
 
-  // Create SignaturePad instances
-  const landlordSignaturePad = new SignaturePad(landlordCanvas, {
-    backgroundColor: 'rgb(255, 255, 255)',
-    penColor: 'rgb(0, 0, 0)'
-  });
+      // Create SignaturePad instances
+      const landlordSignaturePad = new SignaturePad(landlordCanvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+      });
 
-  const tenantSignaturePad = new SignaturePad(tenantCanvas, {
-    backgroundColor: 'rgb(255, 255, 255)',
-    penColor: 'rgb(0, 0, 0)'
-  });
+      const tenantSignaturePad = new SignaturePad(tenantCanvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+      });
 
-  // Buttons
-  document.getElementById('landlord-clear').addEventListener('click', function() {
-    landlordSignaturePad.clear();
-    document.getElementById('landlord-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
-    document.getElementById('landlord-date').textContent = '';
-  });
+      // Buttons
+      document.getElementById('landlord-clear').addEventListener('click', function() {
+        landlordSignaturePad.clear();
+        document.getElementById('landlord-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
+        document.getElementById('landlord-date').textContent = '';
+      });
 
-  document.getElementById('tenant-clear').addEventListener('click', function() {
-    tenantSignaturePad.clear();
-    document.getElementById('tenant-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
-    document.getElementById('tenant-date').textContent = '';
-  });
+      document.getElementById('tenant-clear').addEventListener('click', function() {
+        tenantSignaturePad.clear();
+        document.getElementById('tenant-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
+        document.getElementById('tenant-date').textContent = '';
+      });
 
-  document.getElementById('landlord-save').addEventListener('click', function() {
-    if (landlordSignaturePad.isEmpty()) {
-      alert("Please provide a signature first.");
-      return;
-    }
-    const dataURL = landlordSignaturePad.toDataURL();
-    document.getElementById('landlord-preview').innerHTML = `<img src="${dataURL}" alt="Landlord Signature">`;
-    document.getElementById('landlord-date').textContent = 'Date: ' + new Date().toLocaleDateString();
-    // optionally store in hidden input for server submission
-  });
+      document.getElementById('landlord-save').addEventListener('click', function() {
+        if (landlordSignaturePad.isEmpty()) {
+          alert("Please provide a signature first.");
+          return;
+        }
+        const dataURL = landlordSignaturePad.toDataURL();
+        document.getElementById('landlord-preview').innerHTML = `<img src="${dataURL}" alt="Landlord Signature">`;
+        document.getElementById('landlord-date').textContent = 'Date: ' + new Date().toLocaleDateString();
+        // optionally store in hidden input for server submission
+      });
 
-  document.getElementById('tenant-save').addEventListener('click', function() {
-    if (tenantSignaturePad.isEmpty()) {
-      alert("Please provide a signature first.");
-      return;
-    }
-    const dataURL = tenantSignaturePad.toDataURL();
-    document.getElementById('tenant-preview').innerHTML = `<img src="${dataURL}" alt="Tenant Signature">`;
-    document.getElementById('tenant-date').textContent = 'Date: ' + new Date().toLocaleDateString();
-  });
+      document.getElementById('tenant-save').addEventListener('click', function() {
+        if (tenantSignaturePad.isEmpty()) {
+          alert("Please provide a signature first.");
+          return;
+        }
+        const dataURL = tenantSignaturePad.toDataURL();
+        document.getElementById('tenant-preview').innerHTML = `<img src="${dataURL}" alt="Tenant Signature">`;
+        document.getElementById('tenant-date').textContent = 'Date: ' + new Date().toLocaleDateString();
+      });
 
-  // Preserve drawing on resize: save dataURL, resize, then re-load
-  window.addEventListener('resize', function() {
-    // landlord
-    const landlordData = landlordSignaturePad.isEmpty() ? null : landlordSignaturePad.toDataURL();
-    setCanvasDisplaySize(landlordCanvas);
-    landlordSignaturePad.clear();
-    if (landlordData) landlordSignaturePad.fromDataURL(landlordData);
+      // Preserve drawing on resize: save dataURL, resize, then re-load
+      window.addEventListener('resize', function() {
+        // landlord
+        const landlordData = landlordSignaturePad.isEmpty() ? null : landlordSignaturePad.toDataURL();
+        setCanvasDisplaySize(landlordCanvas);
+        landlordSignaturePad.clear();
+        if (landlordData) landlordSignaturePad.fromDataURL(landlordData);
 
-    // tenant
-    const tenantData = tenantSignaturePad.isEmpty() ? null : tenantSignaturePad.toDataURL();
-    setCanvasDisplaySize(tenantCanvas);
-    tenantSignaturePad.clear();
-    if (tenantData) tenantSignaturePad.fromDataURL(tenantData);
-  });
-});
-</script>
-
+        // tenant
+        const tenantData = tenantSignaturePad.isEmpty() ? null : tenantSignaturePad.toDataURL();
+        setCanvasDisplaySize(tenantCanvas);
+        tenantSignaturePad.clear();
+        if (tenantData) tenantSignaturePad.fromDataURL(tenantData);
+      });
+    });
+    </script>
 </body>
 </html>
