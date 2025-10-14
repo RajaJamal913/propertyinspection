@@ -15,7 +15,8 @@ class DoorSerializer(serializers.ModelSerializer):
     doorFinish = serializers.CharField(source="finish")
     frameType = serializers.CharField(source="frame_type")
     frameColour = serializers.CharField(source="frame_colour")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Door
@@ -32,7 +33,8 @@ class WindowSerializer(serializers.ModelSerializer):
     frameColour = serializers.CharField(source="frame_colour")
     sillType = serializers.CharField(source="sill_type")
     sillColour = serializers.CharField(source="sill_colour")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Window
@@ -47,7 +49,8 @@ class CeilingSerializer(serializers.ModelSerializer):
     ceilingFittings = serializers.CharField(source="fittings")
     recessedSpotlights = serializers.IntegerField(source="recessed_spotlights")
     bulbsNotWorking = serializers.IntegerField(source="bulbs_not_working")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Ceiling
@@ -58,7 +61,8 @@ class CeilingSerializer(serializers.ModelSerializer):
         
 class FloorSerializer(serializers.ModelSerializer):
     floorFinish = serializers.CharField(source="finish")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Floor
@@ -70,7 +74,8 @@ class WallSerializer(serializers.ModelSerializer):
     skirtingType = serializers.CharField(source="skirting_type")
     skirtingColour = serializers.CharField(source="skirting_colour")
     signOfLeakages = serializers.BooleanField(source="sign_of_leakages")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Wall
@@ -89,7 +94,8 @@ class FixtureFittingSerializer(serializers.ModelSerializer):
     plugSocketsVisuallySafe = serializers.BooleanField(source="plug_sockets_safe")
     baseUnitDoors = serializers.IntegerField(source="base_unit_doors")
     wallUnits = serializers.IntegerField(source="wall_units")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = FixtureFitting
@@ -101,7 +107,8 @@ class FixtureFittingSerializer(serializers.ModelSerializer):
         ]
 
 class FurnishingSerializer(serializers.ModelSerializer):
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Furnishing
@@ -110,7 +117,7 @@ class FurnishingSerializer(serializers.ModelSerializer):
 
 class CupboardSerializer(serializers.ModelSerializer):
     cupboardContent = serializers.CharField(source="contents")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
 
     class Meta:
         model = Cupboard
@@ -119,7 +126,7 @@ class CupboardSerializer(serializers.ModelSerializer):
 
 class KitchenApplianceSerializer(serializers.ModelSerializer):
     kitchenAppliances = serializers.CharField(source="appliances")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
 
     class Meta:
         model = KitchenAppliance
@@ -132,16 +139,21 @@ class KitchenApplianceSerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
     roomType = serializers.CharField(source="name")
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
     doors = DoorSerializer(many=True)
     windows = WindowSerializer(many=True)
     ceilings = CeilingSerializer(many=True)
     floors = FloorSerializer(many=True)
     walls = WallSerializer(many=True)
-    fixturesFittings = FixtureFittingSerializer(many=True, source="fixtures_fittings")
+    # 🔑 Important: add source to link with related_name
+    fixturesFittings = FixtureFittingSerializer(
+        many=True, required=False, allow_null=True, default=list, source="fixtures_fittings"
+    )
+    kitchenAppliances = KitchenApplianceSerializer(
+        many=True, required=False, allow_null=True, default=list, source="kitchen_appliances"
+    )
     furnishings = FurnishingSerializer(many=True)
     cupboards = CupboardSerializer(many=True)
-    kitchenAppliances = KitchenApplianceSerializer(many=True, source="kitchen_appliances")
 
     class Meta:
         model = Room
@@ -192,7 +204,8 @@ class CoDetectorSerializer(serializers.ModelSerializer):
 
 
 class KeySerializer(serializers.ModelSerializer):
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
     class Meta:
         model = Key
         fields = ["id", "description", "notes", "photo"]
@@ -200,7 +213,8 @@ class KeySerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
     class Meta:
         model = Document
         fields = ["id", "description", "notes", "photo"]
@@ -216,7 +230,8 @@ class CleaningStandardSerializer(serializers.ModelSerializer):
 
 
 class ExternalSurfaceSerializer(serializers.ModelSerializer):
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
     externalSurfaceType = serializers.CharField(source="type")
     class Meta:
         model = ExternalSurface
@@ -225,7 +240,8 @@ class ExternalSurfaceSerializer(serializers.ModelSerializer):
 
 
 class ExternalFeatureSerializer(serializers.ModelSerializer):
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
     externalFeature = serializers.CharField(source="feature")
     class Meta:
         model = ExternalFeature
@@ -234,7 +250,8 @@ class ExternalFeatureSerializer(serializers.ModelSerializer):
 
 
 class BoundarySerializer(serializers.ModelSerializer):
-    photo = serializers.URLField(source="photo_url")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
     boundaryType = serializers.CharField(source="type")
     class Meta:
         model = Boundary
@@ -258,9 +275,9 @@ class PropertySerializer(serializers.ModelSerializer):
     rooms = RoomSerializer(many=True)
     propertyType = serializers.CharField(source="property_type")
     inspectedBy = serializers.CharField()
-    frontElevationPhoto = serializers.URLField(source="front_elevation_photos")
-    otherViews = serializers.URLField(source="other_views")
-
+    frontElevationPhoto = serializers.ListField(child=serializers.URLField(), source="front_elevation_photos")
+    otherViews = serializers.ListField(child=serializers.URLField(), source="other_views")
+    
     class Meta:
         model = Property
         fields = [
@@ -270,6 +287,36 @@ class PropertySerializer(serializers.ModelSerializer):
             "cleaningStandard", "keys", "smokeDetectors", "coDetectors", "detectorCompliance",
             "utilities", "tenantDetails"
         ]
+        
+    def validate(self, data):
+        """
+        Enforce kitchen rules:
+        - If room type is Kitchen → fixtures_fittings and kitchen_appliances are required.
+        - Otherwise → they must not be present.
+        """
+        rooms = data.get("rooms", [])
+        for room in rooms:
+            room_type = room.get("name") or room.get("roomType")  # serializer mapping
+
+            if room_type and room_type.lower() == "kitchen":
+                if not room.get("fixtures_fittings"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' must include fixture and fittings."
+                    })
+                if not room.get("kitchen_appliances"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' must include kitchen appliances."
+                    })
+            else:
+                if room.get("fixtures_fittings"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' cannot have fixture and fittings (only for kitchen)."
+                    })
+                if room.get("kitchen_appliances"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' cannot have kitchen appliances (only for kitchen)."
+                    })
+        return data
 
     def create(self, validated_data):
         tenants_data = validated_data.pop("tenants", [])

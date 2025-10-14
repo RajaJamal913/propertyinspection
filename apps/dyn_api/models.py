@@ -1,6 +1,5 @@
 from django.db import models
 
-
 # ----------- MAIN PROPERTY DETAILS -----------
 
 class Property(models.Model):
@@ -73,6 +72,7 @@ class Utility(models.Model):
     def __str__(self):
         return f"Utility Info - {self.property.address}"
 
+
 # ----------- DETECTOR COMPLIANCE -----------
 
 class DetectorCompliance(models.Model):
@@ -89,7 +89,8 @@ class SmokeDetector(models.Model):
     working = models.BooleanField()
     location = models.CharField(max_length=100)
     notes = models.TextField(blank=True)
-    photo = models.URLField(blank=True)
+    photo = models.JSONField(default=list)  # multiple images
+
 
 class CoDetector(models.Model):
     property = models.ForeignKey("Property", on_delete=models.CASCADE, related_name="co_detectors")
@@ -97,10 +98,11 @@ class CoDetector(models.Model):
     working = models.BooleanField()
     location = models.CharField(max_length=100)
     notes = models.TextField(blank=True)
-    photo = models.URLField(blank=True)
+    photo = models.JSONField(default=list)
 
     def __str__(self):
         return f"CO Detector at {self.location} - {self.property.address}"
+
 
 # ----------- KEYS -----------
 
@@ -108,7 +110,7 @@ class Key(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="keys")
     description = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 # ----------- DOCUMENTS -----------
@@ -117,7 +119,7 @@ class Document(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="documents")
     description = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 # ----------- CLEANING STANDARD -----------
@@ -135,7 +137,7 @@ class ExternalSurface(models.Model):
     type = models.CharField(max_length=50)
     location = models.CharField(max_length=100)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 # ----------- EXTERNAL FEATURES -----------
@@ -145,7 +147,7 @@ class ExternalFeature(models.Model):
     feature = models.CharField(max_length=100)
     condition = models.CharField(max_length=50)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 # ----------- BOUNDARY -----------
@@ -157,7 +159,7 @@ class Boundary(models.Model):
     condition = models.CharField(max_length=50)
     quantity = models.PositiveIntegerField()
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 # ----------- ROOMS -----------
@@ -166,7 +168,7 @@ class Room(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="rooms")
     name = models.CharField(max_length=100)  # e.g., "Main Living Room"
     notes = models.TextField(blank=True)
-    photo_url = models.URLField(blank=True, null=True)
+    photo_url = models.JSONField(default=list)
 
 
 # ----------- ROOM SUB-ENTITIES -----------
@@ -181,7 +183,7 @@ class Door(models.Model):
     features = models.CharField(max_length=255)
     condition = models.CharField(max_length=50)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class Window(models.Model):
@@ -196,7 +198,7 @@ class Window(models.Model):
     features = models.CharField(max_length=255)
     openers = models.PositiveIntegerField()
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class Ceiling(models.Model):
@@ -208,7 +210,7 @@ class Ceiling(models.Model):
     recessed_spotlights = models.PositiveIntegerField()
     bulbs_not_working = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class Floor(models.Model):
@@ -218,7 +220,7 @@ class Floor(models.Model):
     condition = models.CharField(max_length=50)
     additions = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class Wall(models.Model):
@@ -231,7 +233,7 @@ class Wall(models.Model):
     features = models.CharField(max_length=255)
     sign_of_leakages = models.BooleanField(default=False)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class FixtureFitting(models.Model):
@@ -251,21 +253,21 @@ class FixtureFitting(models.Model):
     base_unit_doors = models.PositiveIntegerField(default=0)
     wall_units = models.PositiveIntegerField(default=0)
     worktops = models.PositiveIntegerField(default=0)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class Furnishing(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="furnishings")
     furnishings = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class Cupboard(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="cupboards")
     contents = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
+    photo_url = models.JSONField(default=list)
 
 
 class KitchenAppliance(models.Model):
@@ -277,5 +279,4 @@ class KitchenAppliance(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     tested = models.BooleanField(default=False)
     notes = models.TextField(blank=True)
-    photo_url = models.URLField()
-
+    photo_url = models.JSONField(default=list)

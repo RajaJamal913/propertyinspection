@@ -7,903 +7,673 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <style>
-        :root {
-            --primary: #1a4f72;
-            --secondary: #6c757d;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --accent: #1e88e5;
-            --success: #28a745;
-            --warning: #ffc107;
-            --border: #e2e8f0;
-        }
-        
-        body {
-            background: #f8fafc;
-            color: #334155;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-        }
-        
-        .report-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        
-        .report-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #0d3a5d 100%);
-            color: white;
-            padding: 2rem 3rem;
-            position: relative;
-        }
-        
-        .header-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .header-pattern {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a4f72"/><path d="M0 50 L100 50 M50 0 L50 100" stroke="%231d5680" stroke-width="1" stroke-opacity="0.3"/></svg>');
-            opacity: 0.15;
-        }
-        
-        .section-card {
-            background: white;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            page-break-inside: avoid;
-        }
-        
-        .section-header {
-            background: #f1f5f9;
-            border-bottom: 1px solid var(--border);
-            padding: 1.25rem 1.5rem;
-            font-weight: 600;
-            color: var(--primary);
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-icon {
-            background: rgba(30, 136, 229, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            color: var(--accent);
-        }
-        
-        .section-body {
-            padding: 1.5rem;
-        }
-        
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        
-        .summary-item {
-            background: white;
-            border-radius: 10px;
-            padding: 1.25rem;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
-        
-        .summary-icon {
-            font-size: 1.75rem;
-            margin-bottom: 0.75rem;
-            color: var(--accent);
-        }
-        
-        .summary-count {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.25rem;
-        }
-        
-        .summary-label {
-            color: var(--secondary);
-            font-size: 0.9rem;
-        }
-        
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .photo-item {
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            height: 200px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .photo-item img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            padding: 5px;
-        }
-        
-        .photo-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-        
-        .data-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-        
-        .data-table th {
-            background: #f8fafc;
-            padding: 0.85rem 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--primary);
-            border-bottom: 2px solid var(--border);
-        }
-        
-        .data-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border);
-            vertical-align: top;
-        }
-        
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .room-card {
-            background: #f8fafc;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            page-break-inside: avoid;
-        }
-        
-        .room-header {
-            background: #e6f0ff;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            font-weight: 600;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-        }
-        
-        .room-icon {
-            margin-right: 10px;
-            color: var(--accent);
-        }
-        
-        .sub-section {
-            margin: 1.5rem 0;
-            page-break-inside: avoid;
-        }
-        
-        .sub-section-header {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px dashed var(--border);
-            display: flex;
-            align-items: center;
-        }
-        
-        .badge-count {
-            background: var(--accent);
-            color: white;
-            font-weight: 500;
-            font-size: 0.85rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            margin-left: 10px;
-        }
-        
-        .print-btn {
-            background: white;
-            color: var(--primary);
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            display: inline-flex;
-            align-items: center;
-        }
-        
-        .print-btn i {
-            margin-right: 8px;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--secondary);
-            border-top: 1px solid var(--border);
-            background: #f8fafc;
-            page-break-before: avoid;
-        }
-        
-        .kv { 
-            font-weight: 600; 
-            width: 35%; 
-            color: #475569;
-        }
-        
-        .val { 
-            color: #1e293b; 
-        }
-        
-        .thumb {
-            max-height: 120px;
-            max-width: 100%;
-            object-fit: contain;
-            border-radius: 0.5rem;
-            border: 1px solid #e2e8f0;
-            padding: 4px;
-            background: #f8f9fa;
-        }
-        
-        .photo-display-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .photo-display-item {
-            flex: 0 0 calc(50% - 0.5rem);
-            max-width: calc(50% - 0.5rem);
-            position: relative;
-            page-break-inside: avoid;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 220px;
-        }
-        
-        .photo-display-item img {
-            max-width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-        }
-        
-        .photo-display-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px;
-            font-size: 0.8rem;
-            text-align: center;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-        
-        .photo-placeholder {
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            border: 1px dashed #dee2e6;
-            border-radius: 8px;
-            color: #6c757d;
-            flex-direction: column;
-        }
-        
-        .photo-placeholder i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .thumbnail-container {
-            max-width: 200px;
-            position: relative;
-            background: #f8f9fa;
-            padding: 5px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .thumbnail-container img {
-            max-width: 100%;
-            max-height: 150px;
-            object-fit: contain;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-        }
-        
-        @media (max-width: 768px) {
-            .photo-display-item {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-            
-            .photo-item {
-                height: 180px;
-            }
-        }
-        
-        .intro-section {
-            background: #f0f8ff;
-            border-left: 4px solid var(--accent);
-            border-radius: 0 8px 8px 0;
-            page-break-inside: avoid;
-        }
-        
-        .intro-card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            height: 100%;
-            transition: transform 0.3s ease;
-            page-break-inside: avoid;
-        }
-        
-        .intro-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .intro-card-header {
-            background: #e6f2ff;
-            padding: 1rem;
-            font-weight: 600;
-            color: var(--primary);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-        }
-        
-        .intro-icon {
-            background: rgba(30, 136, 229, 0.15);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            color: var(--accent);
-        }
-        
-        .intro-card-body {
-            padding: 1.25rem;
-            font-size: 0.95rem;
-        }
-        
-        .intro-title {
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 0.5rem;
-            display: inline-block;
-        }
-        
-        .disclaimer-box {
-            background: #fff8e6;
-            border: 1px solid #ffecb3;
-            border-radius: 8px;
-            padding: 1.25rem;
-            margin-top: 1.5rem;
-            page-break-inside: avoid;
-        }
-        
-        .disclaimer-header {
-            font-weight: 600;
-            color: #e65100;
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-        
-        /* Utility card styling */
-        .utility-card {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            page-break-inside: avoid;
-        }
-        
-        .utility-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .utility-type {
-            font-weight: 600;
-            color: var(--primary);
-            font-size: 1.1rem;
-        }
-        
-        .utility-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .utility-detail {
-            padding: 0.75rem;
-            background: #f8fafc;
-            border-radius: 6px;
-        }
-        
-        .detail-label {
-            font-size: 0.85rem;
-            color: var(--secondary);
-            margin-bottom: 0.25rem;
-        }
-        
-        .detail-value {
-            font-weight: 500;
-        }
-        
-        /* Signature section styling */
-        .signature-section {
-            border-top: 2px dashed var(--border);
-            padding-top: 2rem;
-            margin-top: 2rem;
-            page-break-inside: avoid;
-        }
-        
-        .signature-header {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-        
-        .signature-container {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .signature-box {
-            flex: 1;
-            min-width: 300px;
-            max-width: 400px;
-        }
-        
-        .signature-label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
-        
-        .signature-pad {
-            width: 100%;
-            height: 150px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            background: white;
-            cursor: crosshair;
-            touch-action: none;
-            display: block;
-        }
+  
+<style>
+  :root {
+    --primary: #1a4f72;
+    --secondary: #6c757d;
+    --light: #f8fafc;
+    --dark: #343a40;
+    --accent: #1e88e5;
+    --success: #28a745;
+    --warning: #ffc107;
+    --border: #e2e8f0;
+    --gallery-image-size: 200px;
+    --thumbnail-size: 120px;
+    --display-image-size: 220px;
+}
 
-        .signature-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .signature-btn {
-            flex: 1;
-        }
-        
-        .signature-preview {
-            width: 100%;
-            height: 150px;
-            border: 1px dashed var(--border);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            overflow: hidden;
-        }
-        
-        .signature-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        
-        .signature-date {
-            font-size: 0.9rem;
-            color: var(--secondary);
-            text-align: center;
-            margin-top: 0.5rem;
-        }
-        
-        .signature-name {
-            font-weight: 500;
-            text-align: center;
-            margin-top: 0.5rem;
-            color: var(--primary);
-        }
-        
-        /* Image gallery for sub-entities */
-        .sub-entity-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .sub-entity-photo {
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            height: 200px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .sub-entity-photo img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            padding: 5px;
-        }
-        
-        .sub-entity-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-        
-        /* ENHANCED PRINT STYLES - FIXED IMAGE ISSUES */
-        @media print {
-            /* Fix for blank first page */
-            body, html {
-                height: auto !important;
-                overflow: visible !important;
-            }
-            
-            .report-container {
-                box-shadow: none !important;
-                margin: 0 !important;
-                border: none !important;
-                border-radius: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                overflow: visible !important;
-            }
-            
-            /* Ensure header prints correctly */
-            .report-header {
-                background: var(--primary) !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                padding: 1.5rem !important;
-                position: relative !important;
-                page-break-after: avoid !important;
-            }
-            
-            .header-pattern {
-                display: none !important;
-            }
-            
-            /* Fix intro section printing */
-            .intro-section {
-                background: #f0f8ff !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                border-left: 4px solid var(--accent) !important;
-                padding: 1.5rem !important;
-                page-break-inside: avoid !important;
-                page-break-after: auto !important;
-            }
-            
-            .section-card {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-                margin-bottom: 1rem !important;
-                page-break-inside: avoid !important;
-            }
-            
-            .section-header {
-                background: #f1f5f9 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                border-bottom: 1px solid #ddd !important;
-                padding: 0.8rem 1rem !important;
-            }
-            
-            .print-btn {
-                display: none !important;
-            }
-            
-            .summary-grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 0.5rem !important;
-                margin: 1rem 0 !important;
-            }
-            
-            .summary-item {
-                padding: 0.8rem !important;
-                border: 1px solid #ddd !important;
-                box-shadow: none !important;
-                page-break-inside: avoid !important;
-            }
-            
-            /* FIXED: Image printing issues */
-            .photo-item, .photo-display-item, .sub-entity-photo {
-                height: auto !important;
-                min-height: 200px !important;
-                max-height: 250px !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            
-            .photo-item img, .photo-display-item img, .sub-entity-photo img {
-                max-height: 220px !important;
-                width: auto !important;
-                max-width: 100% !important;
-                object-fit: contain !important;
-                height: auto !important;
-            }
-            
-            .thumbnail-container img {
-                max-height: 120px !important;
-                max-width: 100% !important;
-                width: auto !important;
-                object-fit: contain !important;
-            }
-            
-            /* Ensure images don't break across pages */
-            .photo-gallery, .photo-display-container, .sub-entity-gallery {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-            
-            .footer {
-                border-top: 1px solid #ddd !important;
-                background: #f8fafc !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                padding: 1rem !important;
-            }
-            
-            .photo-gallery, .sub-entity-gallery {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 0.5rem !important;
-            }
-            
-            .data-table th, .data-table td {
-                padding: 0.5rem !important;
-                font-size: 11pt;
-            }
-            
-            .room-card {
-                margin-bottom: 1rem !important;
-                page-break-inside: avoid !important;
-            }
-            
-            .summary-count, .section-header, .room-header, .sub-section-header,
-            .badge-count, .text-primary, .text-success, .text-warning, .text-danger {
-                color: inherit !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            .summary-icon.text-primary {
-                color: #1a4f72 !important;
-            }
-            .summary-icon.text-info {
-                color: #1e88e5 !important;
-            }
-            .summary-icon.text-warning {
-                color: #ffc107 !important;
-            }
-            .summary-icon.text-success {
-                color: #28a745 !important;
-            }
-            .summary-icon.text-secondary {
-                color: #6c757d !important;
-            }
-            .summary-icon.text-danger {
-                color: #dc3545 !important;
-            }
-            
-            h1, h2, h3, h4 {
-                page-break-after: avoid;
-            }
-            
-            .no-print {
-                display: none !important;
-            }
-            
-            img {
-                max-width: 100% !important;
-                max-height: 100% !important;
-                height: auto !important;
-                object-fit: contain !important;
-            }
-            
-            .intro-card {
-                border: 1px solid #ddd !important;
-                box-shadow: none !important;
-                margin-bottom: 0.5rem !important;
-                page-break-inside: avoid !important;
-            }
-            
-            .intro-card-header {
-                background: #e6f2ff !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                padding: 0.8rem !important;
-            }
-            
-            .disclaimer-box {
-                background: #fff8e6 !important;
-                border: 1px solid #ffecb3 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                padding: 1rem !important;
-                page-break-inside: avoid !important;
-            }
-            
-            a[href]::after {
-                content: none !important;
-            }
-            
-            .p-4, .p-lg-5 {
-                padding: 1rem !important;
-            }
-            
-            .section-body {
-                padding: 1rem !important;
-            }
-            
-            /* Utility card print adjustments */
-            .utility-card {
-                border: 1px solid #ddd !important;
-                padding: 1rem !important;
-                margin-bottom: 1rem !important;
-                page-break-inside: avoid !important;
-            }
-            
-            .utility-details {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-            
-            .photo-display-item, .sub-entity-photo {
-                flex: 0 0 100% !important;
-                max-width: 100% !important;
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .photo-display-item img, .sub-entity-photo img {
-                max-height: 150px !important;
-                object-fit: contain !important;
-            }
-            
-            /* Signature section print adjustments */
-            .signature-section {
-                border-top: 2px dashed #ddd !important;
-                padding-top: 1rem !important;
-                page-break-inside: avoid !important;
-            }
-            
-            .signature-pad {
-                display: none !important;
-            }
-            
-            .signature-actions {
-                display: none !important;
-            }
-            
-            .signature-preview {
-                border: 1px solid #ddd !important;
-                height: 100px !important;
-            }
-            
-            .signature-preview img {
-                max-height: 90px !important;
-                object-fit: contain !important;
-            }
-            
-            /* Prevent page breaks inside important elements */
-            .sub-section, .utility-detail, .utility-header {
-                page-break-inside: avoid !important;
-            }
-            
-            /* Force page breaks before major sections */
-            .section-card {
-                page-break-before: auto !important;
-            }
-            
-            /* Allow page breaks within room details if needed */
-            .room-card .p-3 {
-                page-break-inside: auto !important;
-            }
-            
-            /* Ensure tables don't break awkwardly */
-            table {
-                page-break-inside: auto !important;
-            }
-            
-            tr {
-                page-break-inside: avoid !important;
-                page-break-after: auto !important;
-            }
-            
-            /* Force longer elements to break when needed */
-            .utility-card, .room-card {
-                page-break-inside: auto !important;
-                page-break-after: auto !important;
-            }
-        }
-    </style>
+/* Base */
+body {
+    background: #f8fafc;
+    color: #334155;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.report-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.report-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #0d3a5d 100%);
+    color: white;
+    padding: 2rem 3rem;
+    position: relative;
+}
+
+.header-content { position: relative; z-index: 2; }
+
+.header-pattern {
+    position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a4f72"/><path d="M0 50 L100 50 M50 0 L50 100" stroke="%231d5680" stroke-width="1" stroke-opacity="0.3"/></svg>');
+    opacity: 0.15;
+}
+
+/* Cards / Sections */
+.section-card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    page-break-inside: avoid;
+}
+
+.section-header {
+    background: #f1f5f9;
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-icon {
+    background: rgba(30, 136, 229, 0.1);
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px; color: var(--accent);
+}
+
+.section-body { padding: 1.5rem; }
+
+/* Summary grid */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.summary-item {
+    background: white;
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.summary-icon { font-size: 1.75rem; margin-bottom: 0.75rem; color: var(--accent); }
+.summary-count { font-size: 1.75rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
+.summary-label { color: var(--secondary); font-size: 0.9rem; }
+
+/* Sub-section styling */
+.sub-section {
+    margin-bottom: 2rem;
+}
+
+.sub-section-header {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+}
+
+.badge-count {
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+
+/* Component cards */
+.component-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    background: white;
+}
+
+.component-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.component-type { font-weight: 600; color: var(--primary); font-size: 1.1rem; }
+
+.component-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.component-detail {
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+.detail-label { font-size: 0.85rem; color: var(--secondary); margin-bottom: 0.25rem; }
+.detail-value { font-weight: 500; }
+
+/* ---------- IMAGE GALLERY: COMPACT (no gaps) ---------- */
+
+/* Parent galleries: photo-gallery, sub-entity-gallery are grid-based with no gap */
+.photo-gallery, .sub-entity-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--gallery-image-size), 1fr));
+    gap: 0; /* no gaps between tiles */
+    margin-top: 0.5rem;
+    justify-items: stretch;
+    align-items: stretch;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+    background: transparent;
+}
+
+/* Each tile fills its grid cell exactly */
+.photo-gallery > .photo-item,
+.sub-entity-gallery > .sub-entity-photo {
+    width: 100%;
+    height: var(--gallery-image-size);
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;            /* remove borders that create hairlines */
+    background: transparent; /* remove background gaps */
+    border-radius: 0;        /* no rounding by default -> prevents seams */
+    overflow: hidden;        /* make children fill and clip to edges */
+    display: block;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Optional: use .rounded on gallery items if you want rounded corners without gaps */
+.photo-gallery > .photo-item.rounded,
+.sub-entity-gallery > .sub-entity-photo.rounded {
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* The image itself: fill tile completely */
+.photo-item img,
+.sub-entity-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* cover ensures no empty space, crops as needed */
+    margin: 0;
+    padding: 0;
+    border: none;
+    vertical-align: middle;
+    -webkit-backface-visibility: hidden; /* helps prevent thin lines in some browsers */
+}
+
+/* Label / Description: moved to TOP of the tile */
+.photo-label,
+.sub-entity-label,
+.photo-display-label {
+    position: absolute;
+    top: 0;                /* moved from bottom:0 to top:0 */
+    left: 0;
+    right: 0;
+    bottom: auto;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    padding: 6px 8px;
+    font-size: 0.78rem;
+    text-align: center;
+    line-height: 1.1;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* limit label to 2 lines */
+    -webkit-box-orient: vertical;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* If you want a small top-rounded overlay (for rounded tiles) */
+.photo-item.rounded .photo-label,
+.sub-entity-photo.rounded .sub-entity-label {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+/* Display tile variants */
+.photo-display-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-top: 0.5rem;
+    justify-content: stretch;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.photo-display-item {
+    flex: 0 0 calc(50% - 0px);
+    max-width: calc(50% - 0px);
+    position: relative;
+    page-break-inside: avoid;
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--display-image-size);
+    min-height: var(--display-image-size);
+    margin: 0;
+    border: 1px solid #e9ecef;
+}
+
+.photo-display-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none;
+    border-radius: 0;
+}
+
+.photo-placeholder {
+    height: var(--gallery-image-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    border-radius: 8px;
+    color: #6c757d;
+    flex-direction: column;
+    width: var(--gallery-image-size);
+    margin: 0 auto;
+}
+
+.photo-placeholder i { font-size: 2rem; margin-bottom: 0.5rem; }
+
+/* Thumbnail container used in tables */
+.thumbnail-container {
+    width: var(--thumbnail-size);
+    height: var(--thumbnail-size);
+    position: relative;
+    background: #f8f9fa;
+    padding: 0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    border: 1px solid #e9ecef;
+}
+
+.thumbnail-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+    border: none;
+}
+
+/* Room & Utility specifics */
+.room-card {
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    page-break-inside: avoid;
+}
+
+.room-header {
+    background: #e6f0ff;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+}
+
+.room-icon { margin-right: 10px; color: var(--accent); }
+
+.utility-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    page-break-inside: avoid;
+}
+
+.utility-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.utility-type { font-weight: 600; color: var(--primary); font-size: 1.1rem; }
+
+.utility-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.utility-detail {
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+.detail-label { font-size: 0.85rem; color: var(--secondary); margin-bottom: 0.25rem; }
+.detail-value { font-weight: 500; }
+
+/* Signature & Footer */
+.signature-section {
+    border-top: 2px dashed var(--border);
+    padding-top: 2rem;
+    margin-top: 2rem;
+    page-break-inside: avoid;
+}
+
+.signature-header { font-weight: 600; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
+
+.signature-container {
+    display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem;
+}
+
+.signature-box { flex: 1; min-width: 300px; max-width: 400px; }
+
+.signature-label { font-weight: 500; margin-bottom: 0.5rem; color: var(--dark); }
+
+.signature-pad {
+    width: 100%;
+    height: 150px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    cursor: crosshair;
+    touch-action: none;
+    display: block;
+}
+
+.signature-actions { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.signature-btn { flex: 1; }
+
+.signature-preview {
+    width: 100%;
+    height: 150px;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.signature-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.signature-date { font-size: 0.9rem; color: var(--secondary); text-align: center; margin-top: 0.5rem; }
+.signature-name { font-weight: 500; text-align: center; margin-top: 0.5rem; color: var(--primary); }
+
+/* Misc */
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.data-table th {
+    background: #f8fafc;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary);
+    border-bottom: 2px solid var(--border);
+}
+.data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+
+.kv { font-weight: 600; width: 35%; color: #475569; }
+.val { color: #1e293b; }
+
+.intro-section {
+    background: #f0f8ff;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    page-break-inside: avoid;
+}
+
+.intro-card {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    height: 100%;
+    transition: transform 0.3s ease;
+    page-break-inside: avoid;
+}
+
+.intro-card:hover { transform: translateY(-5px); }
+
+.intro-card-header {
+    background: #e6f2ff;
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+}
+
+.intro-icon {
+    background: rgba(30, 136, 229, 0.15);
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 10px; color: var(--accent);
+}
+
+.intro-card-body { padding: 1.25rem; font-size: 0.95rem; }
+
+.intro-title {
+    font-weight: 700; margin-bottom: 1.5rem; color: var(--primary);
+    border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block;
+}
+
+.disclaimer-box {
+    background: #fff8e6;
+    border: 1px solid #ffecb3;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    page-break-inside: avoid;
+}
+
+.disclaimer-header { font-weight: 600; color: #e65100; display: flex; align-items: center; margin-bottom: 0.75rem; }
+
+.print-btn {
+    background: white;
+    color: var(--primary);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+}
+
+.print-btn i { margin-right: 8px; }
+
+.footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--secondary);
+    border-top: 1px solid var(--border);
+    background: #f8fafc;
+    page-break-before: avoid;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    :root {
+        --gallery-image-size: 150px;
+        --thumbnail-size: 100px;
+        --display-image-size: 180px;
+    }
+    .photo-display-item { flex: 0 0 100%; max-width: 100%; }
+    .photo-gallery, .sub-entity-gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}
+
+/* ENHANCED PRINT STYLES */
+@media print {
+    :root {
+        --gallery-image-size: 120px !important;
+        --thumbnail-size: 80px !important;
+        --display-image-size: 130px !important;
+    }
+
+    body, html { height: auto !important; overflow: visible !important; }
+    .report-container { box-shadow: none !important; margin: 0 !important; border: none !important; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; overflow: visible !important; }
+
+    .report-header {
+        background: var(--primary) !important; color: white !important;
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+        padding: 1.5rem !important; position: relative !important; page-break-after: avoid !important;
+    }
+
+    .header-pattern { display: none !important; }
+
+    .intro-section { background: #f0f8ff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; border-left: 4px solid var(--accent) !important; padding: 1.5rem !important; page-break-inside: avoid !important; page-break-after: auto !important; }
+
+    .section-card { box-shadow: none !important; border: 1px solid #ddd !important; margin-bottom: 1rem !important; page-break-inside: avoid !important; }
+    .section-header { background: #f1f5f9 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; border-bottom: 1px solid #ddd !important; padding: 0.8rem 1rem !important; }
+    .print-btn { display: none !important; }
+
+    .summary-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; margin: 1rem 0 !important; }
+    .summary-item { padding: 0.8rem !important; border: 1px solid #ddd !important; box-shadow: none !important; page-break-inside: avoid !important; }
+
+    /* FIXED: Print image galleries - allow multiple rows and show all images */
+    .photo-gallery, .sub-entity-gallery {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(var(--gallery-image-size), 1fr)) !important;
+        gap: 0 !important;
+        grid-auto-rows: auto !important; /* CHANGED: Allow multiple rows */
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        overflow: hidden !important;
+    }
+
+    .photo-item, .sub-entity-photo {
+        width: 100% !important;
+        height: var(--gallery-image-size) !important;
+        min-height: var(--gallery-image-size) !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin: 0 !important;
+        border: 1px solid #ddd !important;
+    }
+
+    .photo-item img, .sub-entity-photo img {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    .photo-display-container {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        gap: 0 !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        overflow: hidden !important;
+    }
+
+    .photo-display-item {
+        flex: 0 0 calc(33.333% - 0px) !important;
+        max-width: calc(33.333% - 0px) !important;
+        height: var(--display-image-size) !important;
+        min-height: var(--display-image-size) !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin: 0 !important;
+        border: 1px solid #ddd !important;
+    }
+
+    .photo-display-item img {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    .thumbnail-container { width: var(--thumbnail-size) !important; height: var(--thumbnail-size) !important; border: 1px solid #ddd !important; }
+    .thumbnail-container img { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; }
+
+    .data-table th, .data-table td { padding: 0.5rem !important; font-size: 11pt; }
+
+    .room-card { margin-bottom: 1rem !important; page-break-inside: avoid !important; }
+    .summary-count, .section-header, .room-header, .sub-section-header, .badge-count, .text-primary, .text-success, .text-warning, .text-danger { color: inherit !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    img { max-width: 100% !important; max-height: 100% !important; height: auto !important; object-fit: cover !important; }
+
+    .intro-card { border: 1px solid #ddd !important; box-shadow: none !important; margin-bottom: 0.5rem !important; page-break-inside: avoid !important; }
+    .intro-card-header { background: #e6f2ff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; padding: 0.8rem !important; }
+    .disclaimer-box { background: #fff8e6 !important; border: 1px solid #ffecb3 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; padding: 1rem !important; page-break-inside: avoid !important; }
+    a[href]::after { content: none !important; }
+    .p-4, .p-lg-5 { padding: 1rem !important; }
+    .section-body { padding: 1rem !important; }
+
+    .utility-card { border: 1px solid #ddd !important; padding: 1rem !important; margin-bottom: 1rem !important; page-break-inside: avoid !important; }
+    .utility-details { grid-template-columns: repeat(2, 1fr) !important; }
+
+    .signature-section { border-top: 2px dashed #ddd !important; padding-top: 1rem !important; page-break-inside: avoid !important; }
+    .signature-pad { display: none !important; }
+    .signature-actions { display: none !important; }
+    .signature-preview { border: 1px solid #ddd !important; height: 100px !important; }
+    .signature-preview img { max-height: 90px !important; object-fit: contain !important; }
+
+    .sub-section, .utility-detail, .utility-header { page-break-inside: avoid !important; }
+    .section-card { page-break-before: auto !important; }
+    .room-card .p-3 { page-break-inside: auto !important; }
+    table { page-break-inside: auto !important; }
+    tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+    .utility-card, .room-card { page-break-inside: auto !important; page-break-after: auto !important; }
+
+    .photo-label, .sub-entity-label, .photo-display-label { font-size: 8pt !important; padding: 3px !important; height: auto !important; line-height: 1.1 !important; }
+
+    @page { margin: 0.5cm; }
+}
+
+/* Small utility: remove hairline artifacts if seen */
+.photo-gallery, .photo-gallery * { -webkit-backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0); }
+
+</style>
 </head>
 <body>
     <div class="report-container">
@@ -913,7 +683,7 @@
             <div class="header-content">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h1 class="h2 mb-3">LI Services Inventory Report</h1>
+                        <h1 class="h2 mb-3">miServices Inventory Report</h1>
                         <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                             <span class="badge bg-light bg-opacity-25 text-white py-2 px-3">
                                 <i class="bi bi-house me-1"></i> {{ property.propertyType }}
@@ -955,7 +725,7 @@
                             What is this Report?
                         </div>
                         <div class="intro-card-body">
-                            <p>The LI Services Inventory Check-in Report provides an accurate, impartial record of the property's condition at the start of a tenancy.</p>
+                            <p>The miServices Inventory Check-in Report provides an accurate, impartial record of the property's condition at the start of a tenancy.</p>
                             <p class="mb-0">It documents both the overall state of the premises and the condition of individual items where applicable.</p>
                         </div>
                     </div>
@@ -1059,14 +829,14 @@
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     Important Disclaimer
                 </div>
-                <p class="mb-0">Every effort has been made to ensure the accuracy of this inventory; however, LI Services cannot guarantee absolute accuracy.
+                <p class="mb-0">Every effort has been made to ensure the accuracy of this inventory; however, miServices cannot guarantee absolute accuracy.
 It is the responsibility of both the landlord and tenant to review this document carefully and confirm its correctness by signing below.
 
 This report records the furniture, furnishings, and landlord-owned items present in the property on the date of inspection. It does not provide a guarantee of adequacy, safety, or compliance — it simply confirms the existence and observed condition of these items at the time of the inventory.
 
 By signing this document, the undersigned agree that, subject to any notes or amendments, it represents a fair and accurate record of the property's condition and contents.
 
-The tenant and/or landlord has seven (7) days from receipt of this report to notify the landlord, agent or LI Services of any discrepancies.</p>
+The tenant and/or landlord has seven (7) days from receipt of this report to notify the landlord, agent or miServices of any discrepancies.</p>
             </div>
         </div>
         
@@ -1511,8 +1281,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                     <td>{{ d.notes|default:"—" }}</td>
                                     <td>
                                         {% if d.photo %}
-                                            <div class="thumbnail-container">
-                                                <img src="{{ d.photo }}" alt="Smoke detector photo">
+                                            <div class="photo-gallery">
+                                                {% for photo_url in d.photo %}
+                                                <div class="photo-item">
+                                                    <img src="{{ photo_url }}" alt="Smoke detector photo">
+                                                    <div class="photo-label">Smoke Detector</div>
+                                                </div>
+                                                {% endfor %}
                                             </div>
                                         {% else %}
                                             —
@@ -1557,8 +1332,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                     <td>{{ d.notes|default:"—" }}</td>
                                     <td>
                                         {% if d.photo %}
-                                            <div class="thumbnail-container">
-                                                <img src="{{ d.photo }}" alt="CO detector photo">
+                                            <div class="photo-gallery">
+                                                {% for photo_url in d.photo %}
+                                                <div class="photo-item">
+                                                    <img src="{{ photo_url }}" alt="CO detector photo">
+                                                    <div class="photo-label">CO Detector</div>
+                                                </div>
+                                                {% endfor %}
                                             </div>
                                         {% else %}
                                             —
@@ -1591,10 +1371,12 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 <td class="kv">Photo</td>
                                 <td class="val">
                                     <div class="photo-display-container">
+                                        {% for photo_url in detector_compliance.photo %}
                                         <div class="photo-display-item">
-                                            <img src="{{ detector_compliance.photo }}" alt="Detector compliance photo">
+                                            <img src="{{ photo_url }}" alt="Detector compliance photo">
                                             <div class="photo-display-label">Compliance Photo</div>
                                         </div>
+                                        {% endfor %}
                                     </div>
                                 </td>
                             </tr>
@@ -1623,495 +1405,418 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             <div class="room-header">
                                 <i class="bi bi-house-door room-icon"></i>
                                 {{ r.roomType }}
+                                {% if r.overviewComments %}<span class="badge bg-success ms-2">{{ r.overviewComments }}</span>{% endif %}
                             </div>
                             <div class="p-3 p-lg-4">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <table class="table table-borderless small mb-0">
-                                            <tr>
-                                                <td class="text-muted">Notes</td>
-                                                <td>{{ r.notes|default:"—" }}</td>
-                                            </tr>
-                                        </table>
+                                <!-- Room Overview Images -->
+                                {% if r.photo %}
+                                <div class="sub-section mb-4">
+                                    <div class="sub-section-header">
+                                        <i class="bi bi-images me-2"></i>
+                                        Room Overview
                                     </div>
-                                    <div class="col-md-6">
-                                        <table class="table table-borderless small mb-0">
-                                            <tr>
-                                                <td class="text-muted">Photo</td>
-                                                <td>
-                                                    {% if r.photo %}
-                                                        <div class="photo-display-container">
-                                                            <div class="photo-display-item">
-                                                                <img src="{{ r.photo }}" alt="Room photo">
-                                                                <div class="photo-display-label">Room Photo</div>
-                                                            </div>
-                                                        </div>
-                                                    {% else %}
-                                                        —
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                        </table>
+                                    <div class="photo-gallery">
+                                        {% for photo_url in r.photo %}
+                                        <div class="photo-item">
+                                            <img src="{{ photo_url }}" alt="Room overview">
+                                            <div class="photo-label">Room Overview</div>
+                                        </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
-                                
-                                <!-- Doors -->
+                                {% endif %}
+
+                                <!-- Doors Section -->
                                 {% if r.doors %}
-                                <div class="sub-section">
+                                <div class="sub-section mb-4">
                                     <div class="sub-section-header">
                                         <i class="bi bi-door-closed me-2"></i>
                                         Doors
                                         <span class="badge-count">{{ r.doors|length }}</span>
                                     </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Type</th>
-                                                <th>Finish</th>
-                                                <th>Color</th>
-                                                <th>Condition</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for d in r.doors %}
-                                            <tr>
-                                                <td>{{ d.doorType }}</td>
-                                                <td>{{ d.doorFinish }}</td>
-                                                <td>{{ d.doorColour }}</td>
-                                                <td>{{ d.condition }}</td>
-                                                <td>
-                                                    {% if d.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ d.photo }}" alt="Door photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
+                                    <div class="row g-3">
+                                        {% for d in r.doors %}
+                                        <div class="col-lg-6">
+                                            <div class="component-card">
+                                                <div class="component-header">
+                                                    <div class="component-type">{{ d.doorType }}</div>
+                                                    <span class="badge {% if d.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                                        {{ d.condition }}
+                                                    </span>
+                                                </div>
+                                                <div class="component-details">
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Finish</div>
+                                                        <div class="detail-value">{{ d.doorFinish }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Color</div>
+                                                        <div class="detail-value">{{ d.doorColour }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Frame Type</div>
+                                                        <div class="detail-value">{{ d.frameType }}</div>
+                                                    </div>
+                                                    {% if d.features %}
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Features</div>
+                                                        <div class="detail-value">{{ d.features }}</div>
+                                                    </div>
                                                     {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                                </div>
+                                                {% if d.notes %}
+                                                <div class="alert alert-warning py-2 mb-3">
+                                                    <small><strong>Notes:</strong> {{ d.notes }}</small>
+                                                </div>
+                                                {% endif %}
+                                                {% if d.photo %}
+                                                <div class="photo-gallery mt-2">
+                                                    {% for photo_url in d.photo %}
+                                                    <div class="photo-item">
+                                                        <img src="{{ photo_url }}" alt="Door photo">
+                                                        <div class="photo-label">Door: {{ d.doorType }}</div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                                 {% endif %}
-                                
-                                <!-- Windows -->
+
+                                <!-- Windows Section -->
                                 {% if r.windows %}
-                                <div class="sub-section">
+                                <div class="sub-section mb-4">
                                     <div class="sub-section-header">
                                         <i class="bi bi-window me-2"></i>
                                         Windows
                                         <span class="badge-count">{{ r.windows|length }}</span>
                                     </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Type</th>
-                                                <th>Glass</th>
-                                                <th>Frame Type</th>
-                                                <th>Condition</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for w in r.windows %}
-                                            <tr>
-                                                <td>{{ w.windowType }}</td>
-                                                <td>{{ w.glassType }}</td>
-                                                <td>{{ w.frameType }}</td>
-                                                <td>{{ w.condition }}</td>
-                                                <td>
-                                                    {% if w.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ w.photo }}" alt="Window photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
+                                    <div class="row g-3">
+                                        {% for w in r.windows %}
+                                        <div class="col-lg-6">
+                                            <div class="component-card">
+                                                <div class="component-header">
+                                                    <div class="component-type">{{ w.windowType }}</div>
+                                                    <span class="badge {% if w.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                                        {{ w.condition }}
+                                                    </span>
+                                                </div>
+                                                <div class="component-details">
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Glass Type</div>
+                                                        <div class="detail-value">{{ w.glassType }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Frame Type</div>
+                                                        <div class="detail-value">{{ w.frameType }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Sill Type</div>
+                                                        <div class="detail-value">{{ w.sillType }}</div>
+                                                    </div>
+                                                    {% if w.frameColour %}
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Frame Color</div>
+                                                        <div class="detail-value">{{ w.frameColour }}</div>
+                                                    </div>
                                                     {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                                </div>
+                                                {% if w.notes %}
+                                                <div class="alert alert-warning py-2 mb-3">
+                                                    <small><strong>Notes:</strong> {{ w.notes }}</small>
+                                                </div>
+                                                {% endif %}
+                                                {% if w.photo %}
+                                                <div class="photo-gallery mt-2">
+                                                    {% for photo_url in w.photo %}
+                                                    <div class="photo-item">
+                                                        <img src="{{ photo_url }}" alt="Window photo">
+                                                        <div class="photo-label">Window: {{ w.windowType }}</div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                                 {% endif %}
-                                
-                                <!-- Ceilings -->
+
+                                <!-- Ceilings Section -->
                                 {% if r.ceilings %}
-                                <div class="sub-section">
+                                <div class="sub-section mb-4">
                                     <div class="sub-section-header">
                                         <i class="bi bi-square me-2"></i>
                                         Ceilings
                                         <span class="badge-count">{{ r.ceilings|length }}</span>
                                     </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Finish</th>
-                                                <th>Color</th>
-                                                <th>Condition</th>
-                                                <th>Fittings</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for c in r.ceilings %}
-                                            <tr>
-                                                <td>{{ c.ceilingFinish }}</td>
-                                                <td>{{ c.colour }}</td>
-                                                <td>{{ c.condition }}</td>
-                                                <td>{{ c.ceilingFittings }}</td>
-                                                <td>
-                                                    {% if c.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ c.photo }}" alt="Ceiling photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
+                                    <div class="row g-3">
+                                        {% for c in r.ceilings %}
+                                        <div class="col-lg-6">
+                                            <div class="component-card">
+                                                <div class="component-header">
+                                                    <div class="component-type">{{ c.ceilingFinish }}</div>
+                                                    <span class="badge {% if c.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                                        {{ c.condition }}
+                                                    </span>
+                                                </div>
+                                                <div class="component-details">
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Color</div>
+                                                        <div class="detail-value">{{ c.colour }}</div>
+                                                    </div>
+                                                    {% if c.ceilingFittings %}
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Fittings</div>
+                                                        <div class="detail-value">{{ c.ceilingFittings }}</div>
+                                                    </div>
                                                     {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                                </div>
+                                                {% if c.notes %}
+                                                <div class="alert alert-warning py-2 mb-3">
+                                                    <small><strong>Notes:</strong> {{ c.notes }}</small>
+                                                </div>
+                                                {% endif %}
+                                                {% if c.photo %}
+                                                <div class="photo-gallery mt-2">
+                                                    {% for photo_url in c.photo %}
+                                                    <div class="photo-item">
+                                                        <img src="{{ photo_url }}" alt="Ceiling photo">
+                                                        <div class="photo-label">Ceiling: {{ c.ceilingFinish }}</div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                                 {% endif %}
-                                
-                                <!-- Floors -->
+
+                                <!-- Floors Section -->
                                 {% if r.floors %}
-                                <div class="sub-section">
+                                <div class="sub-section mb-4">
                                     <div class="sub-section-header">
                                         <i class="bi bi-border-width me-2"></i>
                                         Floors
                                         <span class="badge-count">{{ r.floors|length }}</span>
                                     </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Finish</th>
-                                                <th>Color</th>
-                                                <th>Condition</th>
-                                                <th>Additions</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for f in r.floors %}
-                                            <tr>
-                                                <td>{{ f.floorFinish }}</td>
-                                                <td>{{ f.colour }}</td>
-                                                <td>{{ f.condition }}</td>
-                                                <td>{{ f.additions }}</td>
-                                                <td>
-                                                    {% if f.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ f.photo }}" alt="Floor photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
+                                    <div class="row g-3">
+                                        {% for f in r.floors %}
+                                        <div class="col-lg-6">
+                                            <div class="component-card">
+                                                <div class="component-header">
+                                                    <div class="component-type">{{ f.floorFinish }}</div>
+                                                    <span class="badge {% if f.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                                        {{ f.condition }}
+                                                    </span>
+                                                </div>
+                                                <div class="component-details">
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Color</div>
+                                                        <div class="detail-value">{{ f.colour }}</div>
+                                                    </div>
+                                                    {% if f.additions %}
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Items</div>
+                                                        <div class="detail-value">{{ f.additions }}</div>
+                                                    </div>
                                                     {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                                </div>
+                                                {% if f.notes %}
+                                                <div class="alert alert-warning py-2 mb-3">
+                                                    <small><strong>Notes:</strong> {{ f.notes }}</small>
+                                                </div>
+                                                {% endif %}
+                                                {% if f.photo %}
+                                                <div class="photo-gallery mt-2">
+                                                    {% for photo_url in f.photo %}
+                                                    <div class="photo-item">
+                                                        <img src="{{ photo_url }}" alt="Floor photo">
+                                                        <div class="photo-label">Floor: {{ f.floorFinish }}</div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                                 {% endif %}
-                                
-                                <!-- Walls -->
+
+                                <!-- Walls Section -->
                                 {% if r.walls %}
-                                <div class="sub-section">
+                                <div class="sub-section mb-4">
                                     <div class="sub-section-header">
                                         <i class="bi bi-border-left me-2"></i>
                                         Walls
                                         <span class="badge-count">{{ r.walls|length }}</span>
                                     </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Description</th>
-                                                <th>Color</th>
-                                                <th>Condition</th>
-                                                <th>Skirting Type</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for w in r.walls %}
-                                            <tr>
-                                                <td>{{ w.description }}</td>
-                                                <td>{{ w.colour }}</td>
-                                                <td>{{ w.condition }}</td>
-                                                <td>{{ w.skirtingType }}</td>
-                                                <td>
-                                                    {% if w.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ w.photo }}" alt="Wall photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
+                                    <div class="row g-3">
+                                        {% for w in r.walls %}
+                                        <div class="col-lg-6">
+                                            <div class="component-card">
+                                                <div class="component-header">
+                                                    <div class="component-type">{{ w.description }}</div>
+                                                    <span class="badge {% if w.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                                        {{ w.condition }}
+                                                    </span>
+                                                </div>
+                                                <div class="component-details">
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Color</div>
+                                                        <div class="detail-value">{{ w.colour }}</div>
+                                                    </div>
+                                                    {% if w.skirtingType %}
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Skirting Type</div>
+                                                        <div class="detail-value">{{ w.skirtingType }}</div>
+                                                    </div>
                                                     {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {% endif %}
-                                
-                                <!-- Fixtures & Fittings -->
-                                {% if r.fixturesFittings %}
-                                <div class="sub-section">
-                                    <div class="sub-section-header">
-                                        <i class="bi bi-lightning me-2"></i>
-                                        Fixtures & Fittings
-                                        <span class="badge-count">{{ r.fixturesFittings|length }}</span>
+                                                    {% if w.skirtingColour %}
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Skirting Color</div>
+                                                        <div class="detail-value">{{ w.skirtingColour }}</div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                {% if w.notes %}
+                                                <div class="alert alert-warning py-2 mb-3">
+                                                    <small><strong>Notes:</strong> {{ w.notes }}</small>
+                                                </div>
+                                                {% endif %}
+                                                {% if w.photo %}
+                                                <div class="photo-gallery mt-2">
+                                                    {% for photo_url in w.photo %}
+                                                    <div class="photo-item">
+                                                        <img src="{{ photo_url }}" alt="Wall photo">
+                                                        <div class="photo-label">Wall: {{ w.description }}</div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
                                     </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Fixture</th>
-                                                <th>Light Switches</th>
-                                                <th>Plug Sockets</th>
-                                                <th>Tested</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for f in r.fixturesFittings %}
-                                            <tr>
-                                                <td>{{ f.fixture }}</td>
-                                                <td>{{ f.lightSwitches }}</td>
-                                                <td>{{ f.plugSockets }}</td>
-                                                <td>{{ f.lightTested|yesno:"Yes,No" }}/{{ f.plugSocketsTested|yesno:"Yes,No" }}</td>
-                                                <td>
-                                                    {% if f.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ f.photo }}" alt="Fixture photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
                                 </div>
                                 {% endif %}
-                                
-                                <!-- Furnishings -->
-                                {% if r.furnishings %}
-                                <div class="sub-section">
-                                    <div class="sub-section-header">
-                                        <i class="bi bi-house me-2"></i>
-                                        Furnishings
-                                        <span class="badge-count">{{ r.furnishings|length }}</span>
-                                    </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Furnishings</th>
-                                                <th>Notes</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for f in r.furnishings %}
-                                            <tr>
-                                                <td>{{ f.furnishings }}</td>
-                                                <td>{{ f.notes|default:"—" }}</td>
-                                                <td>
-                                                    {% if f.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ f.photo }}" alt="Furnishing photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {% endif %}
-                                
-                                <!-- Cupboards -->
-                                {% if r.cupboards %}
-                                <div class="sub-section">
-                                    <div class="sub-section-header">
-                                        <i class="bi bi-box me-2"></i>
-                                        Cupboards
-                                        <span class="badge-count">{{ r.cupboards|length }}</span>
-                                    </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Contents</th>
-                                                <th>Notes</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for c in r.cupboards %}
-                                            <tr>
-                                                <td>{{ c.cupboardContent }}</td>
-                                                <td>{{ c.notes|default:"—" }}</td>
-                                                <td>
-                                                    {% if c.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ c.photo }}" alt="Cupboard photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {% endif %}
-                                
-                                <!-- Kitchen Appliances -->
+
+                                <!-- Kitchen Appliances Section -->
                                 {% if r.kitchenAppliances %}
-                                <div class="sub-section">
+                                <div class="sub-section mb-4">
                                     <div class="sub-section-header">
                                         <i class="bi bi-refrigerator me-2"></i>
                                         Kitchen Appliances
                                         <span class="badge-count">{{ r.kitchenAppliances|length }}</span>
                                     </div>
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Appliance</th>
-                                                <th>Brand</th>
-                                                <th>Condition</th>
-                                                <th>Tested</th>
-                                                <th>Photo</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for a in r.kitchenAppliances %}
-                                            <tr>
-                                                <td>{{ a.kitchenAppliances }}</td>
-                                                <td>{{ a.brand }}</td>
-                                                <td>{{ a.condition }}</td>
-                                                <td>{{ a.tested|yesno:"Yes,No" }}</td>
-                                                <td>
-                                                    {% if a.photo %}
-                                                        <div class="thumbnail-container">
-                                                            <img src="{{ a.photo }}" alt="Appliance photo">
-                                                        </div>
-                                                    {% else %}
-                                                        —
+                                    <div class="row g-3">
+                                        {% for a in r.kitchenAppliances %}
+                                        <div class="col-lg-6">
+                                            <div class="component-card">
+                                                <div class="component-header">
+                                                    <div class="component-type">{{ a.kitchenAppliances }}</div>
+                                                    <span class="badge {% if a.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                                        {{ a.condition }}
+                                                    </span>
+                                                </div>
+                                                <div class="component-details">
+                                                    {% if a.brand %}
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Brand</div>
+                                                        <div class="detail-value">{{ a.brand }}</div>
+                                                    </div>
                                                     {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Color</div>
+                                                        <div class="detail-value">{{ a.colour }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Tested</div>
+                                                        <div class="detail-value">{{ a.tested|yesno:"Yes,No" }}</div>
+                                                    </div>
+                                                </div>
+                                                {% if a.notes %}
+                                                <div class="alert alert-warning py-2 mb-3">
+                                                    <small><strong>Notes:</strong> {{ a.notes }}</small>
+                                                </div>
+                                                {% endif %}
+                                                {% if a.photo %}
+                                                <div class="photo-gallery mt-2">
+                                                    {% for photo_url in a.photo %}
+                                                    <div class="photo-item">
+                                                        <img src="{{ photo_url }}" alt="Appliance photo">
+                                                        <div class="photo-label">{{ a.kitchenAppliances }}</div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                                 {% endif %}
-                                
-                                <!-- Room Images Gallery -->
-                                {% if r.doors or r.windows or r.ceilings or r.floors or r.walls or r.fixturesFittings or r.furnishings or r.cupboards or r.kitchenAppliances %}
-                                <div class="sub-section">
+
+                                <!-- Fixtures & Fittings Section -->
+                                {% if r.fixturesFittings %}
+                                <div class="sub-section mb-4">
                                     <div class="sub-section-header">
-                                        <i class="bi bi-images me-2"></i>
-                                        Room Images Gallery
+                                        <i class="bi bi-lightning me-2"></i>
+                                        Fixtures & Fittings
+                                        <span class="badge-count">{{ r.fixturesFittings|length }}</span>
                                     </div>
-                                    <div class="sub-entity-gallery">
-                                        <!-- Door Images -->
-                                        {% for d in r.doors %}
-                                            {% if d.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ d.photo }}" alt="Door photo">
-                                                <div class="sub-entity-label">Door: {{ d.doorType }}</div>
-                                            </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Window Images -->
-                                        {% for w in r.windows %}
-                                            {% if w.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ w.photo }}" alt="Window photo">
-                                                <div class="sub-entity-label">Window: {{ w.windowType }}</div>
-                                            </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Ceiling Images -->
-                                        {% for c in r.ceilings %}
-                                            {% if c.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ c.photo }}" alt="Ceiling photo">
-                                                <div class="sub-entity-label">Ceiling: {{ c.ceilingFinish }}</div>
-                                            </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Floor Images -->
-                                        {% for f in r.floors %}
-                                            {% if f.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ f.photo }}" alt="Floor photo">
-                                                <div class="sub-entity-label">Floor: {{ f.floorFinish }}</div>
-                                            </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Wall Images -->
-                                        {% for w in r.walls %}
-                                            {% if w.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ w.photo }}" alt="Wall photo">
-                                                <div class="sub-entity-label">Wall: {{ w.description }}</div>
-                                            </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Fixture & Fitting Images -->
+                                    <div class="row g-3">
                                         {% for f in r.fixturesFittings %}
-                                            {% if f.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ f.photo }}" alt="Fixture photo">
-                                                <div class="sub-entity-label">Fixture: {{ f.fixture }}</div>
+                                        <div class="col-lg-6">
+                                            <div class="component-card">
+                                                <div class="component-header">
+                                                    <div class="component-type">{{ f.fixture }}</div>
+                                                    <span class="badge {% if f.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                                        {{ f.condition|default:"Good" }}
+                                                    </span>
+                                                </div>
+                                                <div class="component-details">
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Light Switches</div>
+                                                        <div class="detail-value">{{ f.lightSwitches|default:"—" }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Plug Sockets</div>
+                                                        <div class="detail-value">{{ f.plugSockets|default:"—" }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Light Tested</div>
+                                                        <div class="detail-value">{{ f.lightTested|yesno:"Yes,No" }}</div>
+                                                    </div>
+                                                    <div class="component-detail">
+                                                        <div class="detail-label">Plug Sockets Tested</div>
+                                                        <div class="detail-value">{{ f.plugSocketsTested|yesno:"Yes,No" }}</div>
+                                                    </div>
+                                                </div>
+                                                {% if f.notes %}
+                                                <div class="alert alert-warning py-2 mb-3">
+                                                    <small><strong>Notes:</strong> {{ f.notes }}</small>
+                                                </div>
+                                                {% endif %}
+                                                {% if f.photo %}
+                                                <div class="photo-gallery mt-2">
+                                                    {% for photo_url in f.photo %}
+                                                    <div class="photo-item">
+                                                        <img src="{{ photo_url }}" alt="Fixture & Fitting photo">
+                                                        <div class="photo-label">{{ f.fixture }}</div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                {% endif %}
                                             </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Furnishing Images -->
-                                        {% for f in r.furnishings %}
-                                            {% if f.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ f.photo }}" alt="Furnishing photo">
-                                                <div class="sub-entity-label">Furnishing: {{ f.furnishings }}</div>
-                                            </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Cupboard Images -->
-                                        {% for c in r.cupboards %}
-                                            {% if c.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ c.photo }}" alt="Cupboard photo">
-                                                <div class="sub-entity-label">Cupboard: {{ c.cupboardContent }}</div>
-                                            </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                        
-                                        <!-- Kitchen Appliance Images -->
-                                        {% for a in r.kitchenAppliances %}
-                                            {% if a.photo %}
-                                            <div class="sub-entity-photo">
-                                                <img src="{{ a.photo }}" alt="Appliance photo">
-                                                <div class="sub-entity-label">Appliance: {{ a.kitchenAppliances }}</div>
-                                            </div>
-                                            {% endif %}
+                                        </div>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -2139,32 +1844,35 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
                 <div class="section-body">
                     {% if property.documents %}
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Notes</th>
-                                <th>Photo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for doc in property.documents %}
-                            <tr>
-                                <td>{{ doc.description }}</td>
-                                <td>{{ doc.notes|default:"—" }}</td>
-                                <td>
-                                    {% if doc.photo %}
-                                        <div class="thumbnail-container">
-                                            <img src="{{ doc.photo }}" alt="Document photo">
-                                        </div>
-                                    {% else %}
-                                        —
+                    <div class="row g-3">
+                        {% for doc in property.documents %}
+                        <div class="col-lg-6">
+                            <div class="component-card">
+                                <div class="component-header">
+                                    <div class="component-type">{{ doc.description }}</div>
+                                </div>
+                                <div class="component-details">
+                                    {% if doc.notes %}
+                                    <div class="component-detail">
+                                        <div class="detail-label">Notes</div>
+                                        <div class="detail-value">{{ doc.notes }}</div>
+                                    </div>
                                     {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        </table>
+                                </div>
+                                {% if doc.photo %}
+                                <div class="photo-gallery mt-2">
+                                    {% for photo_url in doc.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="Document photo">
+                                        <div class="photo-label">{{ doc.description }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-file-earmark-x text-muted fs-1"></i>
@@ -2185,32 +1893,35 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
                 <div class="section-body">
                     {% if property.keys %}
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Notes</th>
-                                <th>Photo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for k in property.keys %}
-                            <tr>
-                                <td>{{ k.description }}</td>
-                                <td>{{ k.notes|default:"—" }}</td>
-                                <td>
-                                    {% if k.photo %}
-                                        <div class="thumbnail-container">
-                                            <img src="{{ k.photo }}" alt="Key photo">
-                                        </div>
-                                    {% else %}
-                                        —
+                    <div class="row g-3">
+                        {% for k in property.keys %}
+                        <div class="col-lg-6">
+                            <div class="component-card">
+                                <div class="component-header">
+                                    <div class="component-type">{{ k.description }}</div>
+                                </div>
+                                <div class="component-details">
+                                    {% if k.notes %}
+                                    <div class="component-detail">
+                                        <div class="detail-label">Notes</div>
+                                        <div class="detail-value">{{ k.notes }}</div>
+                                    </div>
                                     {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </div>
+                                {% if k.photo %}
+                                <div class="photo-gallery mt-2">
+                                    {% for photo_url in k.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="Key photo">
+                                        <div class="photo-label">{{ k.description }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-key text-muted fs-1"></i>
@@ -2230,10 +1941,34 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
                 <div class="section-body">
                     {% if property.cleaningStandard %}
-                    <table class="table table-borderless">
-                        <tr><td class="kv">Standard</td><td class="val">{{ property.cleaningStandard.cleaningStandard }}</td></tr>
-                        <tr><td class="kv">Notes</td><td class="val">{{ property.cleaningStandard.notes|default:"—" }}</td></tr>
-                    </table>
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-type">Overall Cleaning Standard</div>
+                            <span class="badge bg-success">{{ property.cleaningStandard.cleaningStandard }}</span>
+                        </div>
+                        <div class="component-details">
+                            <div class="component-detail">
+                                <div class="detail-label">Standard</div>
+                                <div class="detail-value">{{ property.cleaningStandard.cleaningStandard }}</div>
+                            </div>
+                            {% if property.cleaningStandard.notes %}
+                            <div class="component-detail">
+                                <div class="detail-label">Notes</div>
+                                <div class="detail-value">{{ property.cleaningStandard.notes }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if property.cleaningStandard.photo %}
+                        <div class="photo-gallery mt-2">
+                            {% for photo_url in property.cleaningStandard.photo %}
+                            <div class="photo-item">
+                                <img src="{{ photo_url }}" alt="Cleaning standard photo">
+                                <div class="photo-label">Cleaning Standard</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-brush text-muted fs-1"></i>
@@ -2254,34 +1989,42 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
                 <div class="section-body">
                     {% if property.externalSurfaces %}
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Location</th>
-                                <th>Notes</th>
-                                <th>Photo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for s in property.externalSurfaces %}
-                            <tr>
-                                <td>{{ s.externalSurfaceType }}</td>
-                                <td>{{ s.location }}</td>
-                                <td>{{ s.notes|default:"—" }}</td>
-                                <td>
-                                    {% if s.photo %}
-                                        <div class="thumbnail-container">
-                                            <img src="{{ s.photo }}" alt="External surface photo">
-                                        </div>
-                                    {% else %}
-                                        —
+                    <div class="row g-3">
+                        {% for s in property.externalSurfaces %}
+                        <div class="col-lg-6">
+                            <div class="component-card">
+                                <div class="component-header">
+                                    <div class="component-type">{{ s.externalSurfaceType }}</div>
+                                    <span class="badge {% if s.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                        {{ s.condition|default:"Good" }}
+                                    </span>
+                                </div>
+                                <div class="component-details">
+                                    <div class="component-detail">
+                                        <div class="detail-label">Location</div>
+                                        <div class="detail-value">{{ s.location }}</div>
+                                    </div>
+                                    {% if s.notes %}
+                                    <div class="component-detail">
+                                        <div class="detail-label">Notes</div>
+                                        <div class="detail-value">{{ s.notes }}</div>
+                                    </div>
                                     {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </div>
+                                {% if s.photo %}
+                                <div class="photo-gallery mt-2">
+                                    {% for photo_url in s.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="External surface photo">
+                                        <div class="photo-label">{{ s.externalSurfaceType }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-house-exclamation text-muted fs-1"></i>
@@ -2302,34 +2045,38 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
                 <div class="section-body">
                     {% if property.externalFeatures %}
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Feature</th>
-                                <th>Condition</th>
-                                <th>Notes</th>
-                                <th>Photo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for f in property.externalFeatures %}
-                            <tr>
-                                <td>{{ f.externalFeature }}</td>
-                                <td>{{ f.condition }}</td>
-                                <td>{{ f.notes|default:"—" }}</td>
-                                <td>
-                                    {% if f.photo %}
-                                        <div class="thumbnail-container">
-                                            <img src="{{ f.photo }}" alt="External feature photo">
-                                        </div>
-                                    {% else %}
-                                        —
+                    <div class="row g-3">
+                        {% for f in property.externalFeatures %}
+                        <div class="col-lg-6">
+                            <div class="component-card">
+                                <div class="component-header">
+                                    <div class="component-type">{{ f.externalFeature }}</div>
+                                    <span class="badge {% if f.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                        {{ f.condition }}
+                                    </span>
+                                </div>
+                                <div class="component-details">
+                                    {% if f.notes %}
+                                    <div class="component-detail">
+                                        <div class="detail-label">Notes</div>
+                                        <div class="detail-value">{{ f.notes }}</div>
+                                    </div>
                                     {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </div>
+                                {% if f.photo %}
+                                <div class="photo-gallery mt-2">
+                                    {% for photo_url in f.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="External feature photo">
+                                        <div class="photo-label">{{ f.externalFeature }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-tree text-muted fs-1"></i>
@@ -2350,38 +2097,46 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
                 <div class="section-body">
                     {% if property.boundary %}
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Color</th>
-                                <th>Condition</th>
-                                <th>Quantity</th>
-                                <th>Notes</th>
-                                <th>Photo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for b in property.boundary %}
-                            <tr>
-                                <td>{{ b.boundaryType }}</td>
-                                <td>{{ b.colour }}</td>
-                                <td>{{ b.condition }}</td>
-                                <td>{{ b.quantity }}</td>
-                                <td>{{ b.notes|default:"—" }}</td>
-                                <td>
-                                    {% if b.photo %}
-                                        <div class="thumbnail-container">
-                                            <img src="{{ b.photo }}" alt="Boundary photo">
-                                        </div>
-                                    {% else %}
-                                        —
+                    <div class="row g-3">
+                        {% for b in property.boundary %}
+                        <div class="col-lg-6">
+                            <div class="component-card">
+                                <div class="component-header">
+                                    <div class="component-type">{{ b.boundaryType }}</div>
+                                    <span class="badge {% if b.condition == 'Good' %}bg-success{% else %}bg-warning{% endif %}">
+                                        {{ b.condition }}
+                                    </span>
+                                </div>
+                                <div class="component-details">
+                                    <div class="component-detail">
+                                        <div class="detail-label">Color</div>
+                                        <div class="detail-value">{{ b.colour }}</div>
+                                    </div>
+                                    <div class="component-detail">
+                                        <div class="detail-label">Quantity</div>
+                                        <div class="detail-value">{{ b.quantity }}</div>
+                                    </div>
+                                    {% if b.notes %}
+                                    <div class="component-detail">
+                                        <div class="detail-label">Notes</div>
+                                        <div class="detail-value">{{ b.notes }}</div>
+                                    </div>
                                     {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </div>
+                                {% if b.photo %}
+                                <div class="photo-gallery mt-2">
+                                    {% for photo_url in b.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="Boundary photo">
+                                        <div class="photo-label">{{ b.boundaryType }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                     {% else %}
                     <div class="text-center py-4">
                         <i class="bi bi-fence text-muted fs-1"></i>
