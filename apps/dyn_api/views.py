@@ -333,3 +333,14 @@ def property_list(request):
     return render(request, "reports/property_list.html", {
         'properties': properties
     })
+
+
+def property_manual(request):
+    """
+    Render a static/manual report page. This view does not query the database.
+    Edit `templates/reports/property_manual.html` to change the static content and image paths.
+    """
+    context = {
+        'now': timezone.localtime(timezone.now()),
+    }
+    return render(request, "reports/property_manual.html", context)

@@ -15,3 +15,16 @@ env
 
 #.env
 node_modules
+
+# Ignore image assets and user uploads
+/static/assets/img/
+/static/assets/img/**
+/media/
+/uploads/
+# Common image file types
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
