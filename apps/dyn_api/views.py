@@ -325,4 +325,6 @@ def property_list(request):
     page_number = request.GET.get("page")
     properties = paginator.get_page(page_number)
 
-    return render(request, "reports/property_list.html", {"properties": properties})
+    return render(request, "reports/property_list.html", {
+        'properties': properties
+    })

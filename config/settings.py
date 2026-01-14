@@ -184,6 +184,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Optional PDF generation settings
+# Path to wkhtmltopdf binary (if using pdfkit/wkhtmltopdf). Example on Windows:
+# WKHTMLTOPDF_CMD = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+WKHTMLTOPDF_CMD = os.environ.get('WKHTMLTOPDF_CMD', None)
+
+# Force PDF responses to be downloaded (attachment) when True. Can be overridden
+# per-request using ?download=1 on the PDF URL.
+PDF_FORCE_DOWNLOAD = str2bool(os.environ.get('PDF_FORCE_DOWNLOAD', 'False'))
+
 # ### DYNAMIC_DATATB Settings ###
 DYNAMIC_DATATB = {
     # SLUG -> Import_PATH 
