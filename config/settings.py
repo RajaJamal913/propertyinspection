@@ -202,5 +202,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'EXCEPTION_HANDLER': 'yourapp.exception_handler.custom_exception_handler'
 }
 ########################################
