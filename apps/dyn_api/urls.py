@@ -13,8 +13,7 @@ path('api/', views.index, name="dynamic_api"),
 path('api/str:model_name/', views.DynamicAPI.as_view(), name="model_api"),
 path('api/str:model_name/str:id', views.DynamicAPI.as_view()),
 path('api/str:model_name/str:id/', views.DynamicAPI.as_view()),
-path('properties/<int:pk>/report/', views.property_report, name='property_report'),
-#path('reports/manual/', views.property_manual, name='property_manual'),
-path('properties/reports/', views.property_list, name='property_list'),
+ path('properties/<int:pk>/report/', views.property_report, name='property_report'),
+ path('properties/reports/', views.property_list, name='property_list'),
 path('api/', include(router.urls)), # Include router-generated routes
 ]

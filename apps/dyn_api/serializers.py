@@ -8,16 +8,15 @@ from .models import (
 
 
 # ----------- ROOM SUB-ENTITY SERIALIZERS -----------
+
 class DoorSerializer(serializers.ModelSerializer):
-    doorType = serializers.CharField(source="type", required=False, allow_blank=True)
-    doorColour = serializers.CharField(source="colour", required=False, allow_blank=True)
-    doorFinish = serializers.CharField(source="finish", required=False, allow_blank=True)
-    frameType = serializers.CharField(source="frame_type", required=False, allow_blank=True)
-    frameColour = serializers.CharField(source="frame_colour", required=False, allow_blank=True)
-    photo = serializers.ListField(
-        child=serializers.URLField(), source="photo_url",
-        required=False, allow_null=True, default=list
-    )
+    doorType = serializers.CharField(source="type")
+    doorColour = serializers.CharField(source="colour")
+    doorFinish = serializers.CharField(source="finish")
+    frameType = serializers.CharField(source="frame_type")
+    frameColour = serializers.CharField(source="frame_colour")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Door
@@ -28,16 +27,14 @@ class DoorSerializer(serializers.ModelSerializer):
 
 
 class WindowSerializer(serializers.ModelSerializer):
-    windowType = serializers.CharField(source="type", required=False, allow_blank=True)
-    glassType = serializers.CharField(source="glass_type", required=False, allow_blank=True)
-    frameType = serializers.CharField(source="frame_type", required=False, allow_blank=True)
-    frameColour = serializers.CharField(source="frame_colour", required=False, allow_blank=True)
-    sillType = serializers.CharField(source="sill_type", required=False, allow_blank=True)
-    sillColour = serializers.CharField(source="sill_colour", required=False, allow_blank=True)
-    photo = serializers.ListField(
-        child=serializers.URLField(), source="photo_url",
-        required=False, allow_null=True, default=list
-    )
+    windowType = serializers.CharField(source="type")
+    glassType = serializers.CharField(source="glass_type")
+    frameType = serializers.CharField(source="frame_type")
+    frameColour = serializers.CharField(source="frame_colour")
+    sillType = serializers.CharField(source="sill_type")
+    sillColour = serializers.CharField(source="sill_colour")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Window
@@ -48,14 +45,12 @@ class WindowSerializer(serializers.ModelSerializer):
 
 
 class CeilingSerializer(serializers.ModelSerializer):
-    ceilingFinish = serializers.CharField(source="finish", required=False, allow_blank=True)
-    ceilingFittings = serializers.CharField(source="fittings", required=False, allow_blank=True)
-    recessedSpotlights = serializers.IntegerField(source="recessed_spotlights", required=False, allow_null=True)
-    bulbsNotWorking = serializers.IntegerField(source="bulbs_not_working", required=False, allow_null=True)
-    photo = serializers.ListField(
-        child=serializers.URLField(), source="photo_url",
-        required=False, allow_null=True, default=list
-    )
+    ceilingFinish = serializers.CharField(source="finish")
+    ceilingFittings = serializers.CharField(source="fittings")
+    recessedSpotlights = serializers.IntegerField(source="recessed_spotlights")
+    bulbsNotWorking = serializers.IntegerField(source="bulbs_not_working")
+    photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
+
 
     class Meta:
         model = Ceiling
@@ -63,10 +58,9 @@ class CeilingSerializer(serializers.ModelSerializer):
             "id", "ceilingFinish", "colour", "condition", "ceilingFittings",
             "recessedSpotlights", "bulbsNotWorking", "notes", "photo"
         ]
-
         
 class FloorSerializer(serializers.ModelSerializer):
-    floorFinish = serializers.CharField(source="finish", required=False, allow_blank=True)
+    floorFinish = serializers.CharField(source="finish")
     photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
 
 
@@ -267,27 +261,23 @@ class BoundarySerializer(serializers.ModelSerializer):
 
 # ----------- MAIN PROPERTY SERIALIZER -----------
 class PropertySerializer(serializers.ModelSerializer):
-    tenantDetails = TenantSerializer(source="tenants", many=True, required=False, default=list)
-    utilities = UtilitySerializer(source="utility", required=False, allow_null=True)
-    smokeDetectors = SmokeDetectorSerializer(source="smoke_detectors", many=True, required=False, default=list)
-    coDetectors = CoDetectorSerializer(source="co_detectors", many=True, required=False, default=list)
-    detectorCompliance = DetectorComplianceSerializer(source="detector_compliance", required=False, allow_null=True)
-    keys = KeySerializer(many=True, required=False, default=list)
-    documents = DocumentSerializer(many=True, required=False, default=list)
-    cleaningStandard = CleaningStandardSerializer(source="cleaning_standard", required=False, allow_null=True)
-    externalSurfaces = ExternalSurfaceSerializer(source="external_surfaces", many=True, required=False, default=list,allow_null=True)
-    externalFeatures = ExternalFeatureSerializer(source="external_features", many=True, required=False, default=list,allow_null=True)
-    boundary = BoundarySerializer(source="boundaries", many=True, required=False, default=list,allow_null=True)
-    rooms = RoomSerializer(many=True, required=False, default=list)
+    tenantDetails = TenantSerializer(source="tenants", many=True)
+    utilities = UtilitySerializer(source="utility")
+    smokeDetectors = SmokeDetectorSerializer(source="smoke_detectors", many=True)
+    coDetectors = CoDetectorSerializer(source="co_detectors", many=True)  # corrected to plural and match field name
+    detectorCompliance = DetectorComplianceSerializer(source="detector_compliance")
+    keys = KeySerializer(many=True)
+    documents = DocumentSerializer(many=True)
+    cleaningStandard = CleaningStandardSerializer(source="cleaning_standard")
+    externalSurfaces = ExternalSurfaceSerializer(source="external_surfaces", many=True)
+    externalFeatures = ExternalFeatureSerializer(source="external_features", many=True)
+    boundary = BoundarySerializer(source="boundaries", many=True)
+    rooms = RoomSerializer(many=True)
     propertyType = serializers.CharField(source="property_type")
-    inspectedBy = serializers.CharField(required=False, allow_blank=True)
-    frontElevationPhoto = serializers.ListField(
-        child=serializers.URLField(), source="front_elevation_photos", required=False, default=list
-    )
-    otherViews = serializers.ListField(
-        child=serializers.URLField(), source="other_views", required=False, default=list
-    )
-
+    inspectedBy = serializers.CharField()
+    frontElevationPhoto = serializers.ListField(child=serializers.URLField(), source="front_elevation_photos")
+    otherViews = serializers.ListField(child=serializers.URLField(), source="other_views")
+    
     class Meta:
         model = Property
         fields = [
@@ -297,83 +287,38 @@ class PropertySerializer(serializers.ModelSerializer):
             "cleaningStandard", "keys", "smokeDetectors", "coDetectors", "detectorCompliance",
             "utilities", "tenantDetails"
         ]
-
+        
     def validate(self, data):
         """
-        Enforce:
-         - Kitchen rooms must include fixtures_fittings and kitchen_appliances (as lists).
-         - Non-kitchen rooms must NOT include those fields.
-         - Provide room-indexed errors for clearer client responses.
-         - Validate top-level list fields are lists (defensive).
+        Enforce kitchen rules:
+        - If room type is Kitchen → fixtures_fittings and kitchen_appliances are required.
+        - Otherwise → they must not be present.
         """
-        errors = {}
-
-        # Defensive checks for top-level list fields (ListField usually validates this,
-        # but explicit checks produce clearer error keys).
-        if "front_elevation_photos" in data and not isinstance(data["front_elevation_photos"], list):
-            errors["front_elevation_photos"] = "front_elevation_photos must be a list of image URLs."
-
-        if "other_views" in data and not isinstance(data["other_views"], list):
-            errors["other_views"] = "other_views must be a list of image URLs."
-
         rooms = data.get("rooms", [])
-        if rooms is not None and not isinstance(rooms, list):
-            errors["rooms"] = "rooms must be a list of room objects."
+        for room in rooms:
+            room_type = room.get("name") or room.get("roomType")  # serializer mapping
 
-        # Validate each room and collect per-room errors
-        room_level_errors = []
-        if isinstance(rooms, list):
-            for idx, room in enumerate(rooms):
-                room_err = {}
-                if not isinstance(room, dict):
-                    room_err["__all__"] = "Each room must be an object/dictionary."
-                    room_level_errors.append(room_err)
-                    continue
-
-                # Normalize room type key (incoming may be 'name' or 'roomType')
-                room_type = (room.get("name") or room.get("roomType") or "").strip()
-                is_kitchen = room_type.lower() == "kitchen" if room_type else False
-
-                # For kitchens: fixtures_fittings AND kitchen_appliances must be present and lists
-                if is_kitchen:
-                    ff = room.get("fixtures_fittings")
-                    ka = room.get("kitchen_appliances")
-
-                    if not ff:
-                        room_err["fixtures_fittings"] = "Kitchen must include 'fixtures_fittings' (list)."
-                    elif not isinstance(ff, list):
-                        room_err["fixtures_fittings"] = "fixtures_fittings must be a list."
-
-                    if not ka:
-                        room_err["kitchen_appliances"] = "Kitchen must include 'kitchen_appliances' (list)."
-                    elif not isinstance(ka, list):
-                        room_err["kitchen_appliances"] = "kitchen_appliances must be a list."
-
-                # For non-kitchens: these fields must NOT be present (or must be empty)
-                else:
-                    if "fixtures_fittings" in room and room.get("fixtures_fittings"):
-                        room_err["fixtures_fittings"] = "Only kitchens may include 'fixtures_fittings'."
-                    if "kitchen_appliances" in room and room.get("kitchen_appliances"):
-                        room_err["kitchen_appliances"] = "Only kitchens may include 'kitchen_appliances'."
-
-                # Optionally validate nested simple types (e.g., photo lists) within room
-                # e.g., ensure room['photo_url'] if provided is a list
-                if "photo_url" in room and room.get("photo_url") is not None and not isinstance(room.get("photo_url"), list):
-                    room_err["photo_url"] = "photo_url must be a list of image URLs."
-
-                room_level_errors.append(room_err if room_err else None)
-
-        # If any room-level errors exist, attach them
-        if any(x for x in room_level_errors if x):
-            errors["rooms"] = room_level_errors
-
-        if errors:
-            raise serializers.ValidationError(errors)
-
+            if room_type and room_type.lower() == "kitchen":
+                if not room.get("fixtures_fittings"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' must include fixture and fittings."
+                    })
+                if not room.get("kitchen_appliances"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' must include kitchen appliances."
+                    })
+            else:
+                if room.get("fixtures_fittings"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' cannot have fixture and fittings (only for kitchen)."
+                    })
+                if room.get("kitchen_appliances"):
+                    raise serializers.ValidationError({
+                        "rooms": f"Room '{room_type}' cannot have kitchen appliances (only for kitchen)."
+                    })
         return data
 
     def create(self, validated_data):
-        # keep existing create logic (safe pops with defaults)
         tenants_data = validated_data.pop("tenants", [])
         utility_data = validated_data.pop("utility", None)
         detector_compliance_data = validated_data.pop("detector_compliance", None)
