@@ -1245,149 +1245,112 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
             </div>
             
             <!-- Detectors -->
-            <div class="section-card">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-alarm"></i>
-                    </div>
-                    Detectors
-                    <span class="badge-count">{{ detector_count }}</span>
-                </div>
-                <div class="section-body">
-                    <!-- Smoke detectors -->
-                    <div class="sub-section">
-                        <div class="sub-section-header">
-                            <i class="bi bi-fire me-2"></i>
-                            Smoke Detectors
-                            <span class="badge-count">{{ smoke_detector_count }}</span>
-                        </div>
-                        {% if property.smokeDetectors %}
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Present</th>
-                                    <th>Working</th>
-                                    <th>Location</th>
-                                    <th>Notes</th>
-                                    <th>Photo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for d in property.smokeDetectors %}
-                                <tr>
-                                    <td>{{ d.smokeDetector|yesno:"Yes,No" }}</td>
-                                    <td>{{ d.working|yesno:"Yes,No" }}</td>
-                                    <td>{{ d.location }}</td>
-                                    <td>{{ d.notes|default:"—" }}</td>
-                                    <td>
-                                        {% if d.photo %}
-                                            <div class="photo-gallery">
-                                                {% for photo_url in d.photo %}
-                                                <div class="photo-item">
-                                                    <img src="{{ photo_url }}" alt="Smoke detector photo">
-                                                    <div class="photo-label">Smoke Detector</div>
-                                                </div>
-                                                {% endfor %}
-                                            </div>
-                                        {% else %}
-                                            —
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <div class="text-center py-4">
-                            <i class="bi bi-shield-exclamation text-muted fs-1"></i>
-                            <p class="text-muted mt-2">No smoke detectors recorded</p>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- CO detectors -->
-                    <div class="sub-section">
-                        <div class="sub-section-header">
-                            <i class="bi bi-thermometer me-2"></i>
-                            CO Detectors
-                            <span class="badge-count">{{ co_detector_count }}</span>
-                        </div>
-                        {% if property.coDetectors %}
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Present</th>
-                                    <th>Working</th>
-                                    <th>Location</th>
-                                    <th>Notes</th>
-                                    <th>Photo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for d in property.coDetectors %}
-                                <tr>
-                                    <td>{{ d.coDetector|yesno:"Yes,No" }}</td>
-                                    <td>{{ d.working|yesno:"Yes,No" }}</td>
-                                    <td>{{ d.location }}</td>
-                                    <td>{{ d.notes|default:"—" }}</td>
-                                    <td>
-                                        {% if d.photo %}
-                                            <div class="photo-gallery">
-                                                {% for photo_url in d.photo %}
-                                                <div class="photo-item">
-                                                    <img src="{{ photo_url }}" alt="CO detector photo">
-                                                    <div class="photo-label">CO Detector</div>
-                                                </div>
-                                                {% endfor %}
-                                            </div>
-                                        {% else %}
-                                            —
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <div class="text-center py-4">
-                            <i class="bi bi-shield-exclamation text-muted fs-1"></i>
-                            <p class="text-muted mt-2">No CO detectors recorded</p>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Detector compliance (one-to-one) -->
-                    <div class="sub-section">
-                        <div class="sub-section-header">
-                            <i class="bi bi-check2-circle me-2"></i>
-                            Detector Compliance
-                        </div>
-                        {% if detector_compliance %}
-                        <table class="table table-borderless">
-                            <tr><td class="kv">Detectors Compliant</td><td class="val">{{ detector_compliance.detectorCompliance|yesno:"Yes,No" }}</td></tr>
-                            <tr><td class="kv">Solid Fuel Device Present</td><td class="val">{{ detector_compliance.solidFuelDevice|yesno:"Yes,No" }}</td></tr>
-                            {% if detector_compliance.photo %}
-                            <tr>
-                                <td class="kv">Photo</td>
-                                <td class="val">
-                                    <div class="photo-display-container">
-                                        {% for photo_url in detector_compliance.photo %}
-                                        <div class="photo-display-item">
-                                            <img src="{{ photo_url }}" alt="Detector compliance photo">
-                                            <div class="photo-display-label">Compliance Photo</div>
+            <!-- Detectors -->
+<!-- Detectors Section - Simplified -->
+<div class="section-card">
+    <div class="section-header">
+        <div class="section-icon">
+            <i class="bi bi-alarm"></i>
+        </div>
+        Detectors
+        <span class="badge-count">{{ detector_count }}</span>
+    </div>
+    <div class="section-body">
+        
+        <!-- First, try to display ALL detectors as a fallback -->
+        <div class="sub-section">
+            <div class="sub-section-header">
+                <i class="bi bi-shield-check me-2"></i>
+                All Detectors
+            </div>
+            
+            {% if property.detectors and property.detectors|length > 0 %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Present</th>
+                            <th>Working</th>
+                            <th>Location</th>
+                            <th>Notes</th>
+                            <th>Photo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in property.detectors %}
+                        <tr>
+                            <td>
+                                {% if d.type == 'smoke' or d.detectorType == 'Smoke' %}
+                                    <span class="badge bg-danger">Smoke</span>
+                                {% elif d.type == 'co' or d.detectorType == 'CO' %}
+                                    <span class="badge bg-warning">CO</span>
+                                {% else %}
+                                    {{ d.type|default:"Detector" }}
+                                {% endif %}
+                            </td>
+                            <td>{{ d.detectorPresent|yesno:"Yes,No"|default:"—" }}</td>
+                            <td>{{ d.working|yesno:"Yes,No"|default:"—" }}</td>
+                            <td>{{ d.location|default:"—" }}</td>
+                            <td>{{ d.notes|default:"—" }}</td>
+                            <td>
+                                {% if d.photo and d.photo|length > 0 %}
+                                    <div class="photo-gallery">
+                                        {% for photo_url in d.photo %}
+                                        <div class="photo-item">
+                                            <img src="{{ photo_url }}" alt="Detector photo">
+                                            <div class="photo-label">Detector Photo</div>
                                         </div>
                                         {% endfor %}
                                     </div>
-                                </td>
-                            </tr>
-                            {% endif %}
-                        </table>
-                        {% else %}
-                        <div class="text-muted">No detector compliance information recorded.</div>
-                        {% endif %}
-                    </div>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-shield-exclamation text-muted fs-1"></i>
+                    <p class="text-muted mt-2">No detectors recorded</p>
                 </div>
+            {% endif %}
+        </div>
+        
+        <!-- Detector compliance -->
+        {% if property.detectorCompliance %}
+        <div class="sub-section">
+            <div class="sub-section-header">
+                <i class="bi bi-check2-circle me-2"></i>
+                Detector Compliance
             </div>
+            <table class="table table-borderless">
+                <tr><td class="kv">Detectors Compliant</td><td class="val">{{ property.detectorCompliance.detectorCompliance|yesno:"Yes,No" }}</td></tr>
+                <tr><td class="kv">Solid Fuel Device Present</td><td class="val">{{ property.detectorCompliance.solidFuelDevice|yesno:"Yes,No" }}</td></tr>
+                {% if property.detectorCompliance.notes %}
+                <tr><td class="kv">Notes</td><td class="val">{{ property.detectorCompliance.notes }}</td></tr>
+                {% endif %}
+                {% if property.detectorCompliance.photo %}
+                <tr>
+                    <td class="kv">Photo</td>
+                    <td class="val">
+                        <div class="photo-display-container">
+                            {% for photo_url in property.detectorCompliance.photo %}
+                            <div class="photo-display-item">
+                                <img src="{{ photo_url }}" alt="Detector compliance photo">
+                                <div class="photo-display-label">Compliance Photo</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
             
             <!-- Rooms -->
             <div class="section-card">

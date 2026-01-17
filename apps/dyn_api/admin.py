@@ -6,10 +6,10 @@ from django.utils.html import format_html
 
 from .models import (
     Property,
-    SmokeDetector,
+    Detector,
     Tenant,
     Utility,
-    CoDetector,
+  
     Key,
     Document,
     ExternalSurface,
@@ -63,14 +63,11 @@ class UtilityAdmin(LinkedToPropertyAdmin):
     pass
 
 
-@admin.register(CoDetector)
-class CoDetectorAdmin(LinkedToPropertyAdmin):
+@admin.register(Detector)
+class DetectorAdmin(LinkedToPropertyAdmin):
     pass
 
 
-@admin.register(SmokeDetector)
-class SmokeDetectorAdmin(LinkedToPropertyAdmin):
-    pass
 
 
 @admin.register(Key)

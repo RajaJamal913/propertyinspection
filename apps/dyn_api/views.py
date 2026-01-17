@@ -209,99 +209,107 @@ from django.db.models import Prefetch
 from django.utils import timezone
 from .models import Property
 from .serializers import PropertySerializer
+# views.py (top imports)
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.db.models import Prefetch
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+from .models import Property, Detector
+from .serializers import PropertySerializer, DetectorSerializer
 
 def property_report(request, pk):
-    prop = get_object_or_404(
-        Property.objects.select_related(
-            'utility', 'detector_compliance', 'cleaning_standard'
-        ).prefetch_related(
-            'tenants',
-            'smoke_detectors',
-            'co_detectors',
-            'keys',
-            'documents',
-            'external_surfaces',
-            'external_features',
-            'boundaries',
-            Prefetch('rooms__doors'),
-            Prefetch('rooms__windows'),
-            Prefetch('rooms__ceilings'),
-            Prefetch('rooms__floors'),
-            Prefetch('rooms__walls'),
-            Prefetch('rooms__fixtures_fittings'),
-            Prefetch('rooms__furnishings'),
-            Prefetch('rooms__cupboards'),
-            Prefetch('rooms__kitchen_appliances'),
-        ),
-        pk=pk
+    qs = Property.objects.select_related(
+        'utility', 'detector_compliance', 'cleaning_standard'
+    ).prefetch_related(
+        'tenants',
+        'keys',
+        'documents',
+        'external_surfaces',
+        'external_features',
+        'boundaries',
+        Prefetch('rooms__doors'),
+        Prefetch('rooms__windows'),
+        Prefetch('rooms__ceilings'),
+        Prefetch('rooms__floors'),
+        Prefetch('rooms__walls'),
+        Prefetch('rooms__fixtures_fittings'),
+        Prefetch('rooms__furnishings'),
+        Prefetch('rooms__cupboards'),
+        Prefetch('rooms__kitchen_appliances'),
+        # Prefetch detectors separately into attrs for type-specific lists:
+        Prefetch('detectors', queryset=Detector.objects.filter(detector_type='smoke'), to_attr='smoke_detectors'),
+        Prefetch('detectors', queryset=Detector.objects.filter(detector_type='co'), to_attr='co_detectors'),
+        # also keep the full detectors list if you want:
+        Prefetch('detectors', queryset=Detector.objects.all(), to_attr='all_detectors'),
     )
 
-    # Counts / summaries
-    tenant_count = prop.tenants.count()
-    total_rooms = prop.rooms.count()
-    smoke_detector_count = prop.smoke_detectors.count()
-    co_detector_count = prop.co_detectors.count()
-    detector_count = smoke_detector_count + co_detector_count
-    key_count = prop.keys.count()
-    document_count = prop.documents.count()
-    external_features_count = prop.external_features.count()
-    boundaries_count = prop.boundaries.count()
+    prop = get_object_or_404(qs, pk=pk)
 
-    # OneToOne objects may be None if not created
+    # using to_attr -> attributes are plain lists (no DB hits)
+    smoke_detectors = getattr(prop, 'smoke_detectors', [])    # list of Detector objs
+    co_detectors = getattr(prop, 'co_detectors', [])
+    all_detectors = getattr(prop, 'all_detectors', [])       # optional full list
+
+    smoke_detector_list = DetectorSerializer(smoke_detectors, many=True).data
+    co_detector_list = DetectorSerializer(co_detectors, many=True).data
+
+    smoke_detector_count = len(smoke_detectors)
+    co_detector_count = len(co_detectors)
+    detector_count = len(all_detectors) or (smoke_detector_count + co_detector_count)
+
+    # safe counts for other related sets
+    tenant_count = prop.tenants.count() if hasattr(prop, 'tenants') else 0
+    total_rooms = prop.rooms.count() if hasattr(prop, 'rooms') else 0
+    key_count = prop.keys.count() if hasattr(prop, 'keys') else 0
+    document_count = prop.documents.count() if hasattr(prop, 'documents') else 0
+    external_features_count = prop.external_features.count() if hasattr(prop, 'external_features') else 0
+    boundaries_count = prop.boundaries.count() if hasattr(prop, 'boundaries') else 0
+
     utility = getattr(prop, 'utility', None)
     cleaning_standard = getattr(prop, 'cleaning_standard', None)
     detector_compliance = getattr(prop, 'detector_compliance', None)
 
-    # Handle JSON fields properly - ensure they are lists
-    front_photos = prop.front_elevation_photos or []
-    # If it's a string, try to parse it as JSON
+    # photos -> ensure lists
+    front_photos = getattr(prop, 'front_elevation_photos', []) or []
+    other_views = getattr(prop, 'other_views', []) or []
+
+    # Ensure lists if JSONField stored single string accidentally
+    import json
     if isinstance(front_photos, str):
         try:
-            import json
             front_photos = json.loads(front_photos)
-        except (json.JSONDecodeError, TypeError):
-            front_photos = [front_photos]  # Treat as single URL
-    
-    other_views = prop.other_views or []
-    # If it's a string, try to parse it as JSON
+        except Exception:
+            front_photos = [front_photos]
     if isinstance(other_views, str):
         try:
-            import json
             other_views = json.loads(other_views)
-        except (json.JSONDecodeError, TypeError):
-            other_views = [other_views]  # Treat as single URL
+        except Exception:
+            other_views = [other_views]
 
-    # Ensure we're always working with lists
-    if not isinstance(front_photos, list):
-        front_photos = [front_photos]
-    if not isinstance(other_views, list):
-        other_views = [other_views]
-
-    # Serialized version - this is what the template expects
     serialized_property = PropertySerializer(prop).data
+    inspected_by = serialized_property.get('inspectedBy') or getattr(prop, 'inspectedBy', None)
 
     context = {
-        # Use the serialized property data in the template
         "property": serialized_property,
-        # Keep the original object for any direct model access needed
         "property_obj": prop,
         "now": timezone.localtime(timezone.now()),
-        "inspected_by": prop.inspectedBy,
-        # summaries
+        "inspected_by": inspected_by,
         "tenant_count": tenant_count,
         "total_rooms": total_rooms,
         "detector_count": detector_count,
         "smoke_detector_count": smoke_detector_count,
         "co_detector_count": co_detector_count,
+        "smoke_detectors": smoke_detector_list,
+        "co_detectors": co_detector_list,
         "key_count": key_count,
         "document_count": document_count,
         "external_features_count": external_features_count,
         "boundaries_count": boundaries_count,
-        # optional objects
         "utility": utility,
         "cleaning_standard": cleaning_standard,
         "detector_compliance": detector_compliance,
-        # photos
         "front_photos": front_photos,
         "other_views": other_views,
     }

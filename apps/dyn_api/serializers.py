@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (
-    Property, Tenant, Utility, DetectorCompliance, SmokeDetector,CoDetector,
+    Property, Tenant, Utility, DetectorCompliance, 
     Key, Document, CleaningStandard, ExternalSurface,
     ExternalFeature, Boundary, Room, Door, Window, Ceiling, Floor,
     Wall, FixtureFitting, Furnishing, Cupboard, KitchenAppliance
@@ -176,11 +176,29 @@ class TenantSerializer(serializers.ModelSerializer):
         extra_kwargs = {"property": {"read_only": True}}
 
 
+from rest_framework import serializers
+from .models import Utility
+
 class UtilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Utility
         fields = "__all__"
         extra_kwargs = {"property": {"read_only": True}}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in list(self.fields.items()):
+            # keep property read-only as requested
+            if name == "property":
+                continue
+            # Do not require fields on input
+            field.required = False
+            # Allow None for fields that support it
+            if hasattr(field, "allow_null"):
+                field.allow_null = True
+            # Allow empty strings for CharFields
+            if isinstance(field, serializers.CharField):
+                field.allow_blank = True
 
 
 class DetectorComplianceSerializer(serializers.ModelSerializer):
@@ -190,16 +208,18 @@ class DetectorComplianceSerializer(serializers.ModelSerializer):
         extra_kwargs = {"property": {"read_only": True}}
 
 
-class SmokeDetectorSerializer(serializers.ModelSerializer):
+# serializers.py (add)
+from rest_framework import serializers
+from .models import Detector
+
+class DetectorSerializer(serializers.ModelSerializer):
+    detectorType = serializers.ChoiceField(source="detector_type", choices=Detector.DETECTOR_TYPE_CHOICES)
+    detectorPresent = serializers.BooleanField(source="present", allow_null=True, required=False)
+    photo = serializers.ListField(child=serializers.URLField(), required=False)
+
     class Meta:
-        model = SmokeDetector
-        fields = "__all__"
-        extra_kwargs = {"property": {"read_only": True}}
-        
-class CoDetectorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CoDetector
-        fields = "__all__"
+        model = Detector
+        fields = ["id", "detectorType", "detectorPresent", "working", "location", "notes", "photo"]
         extra_kwargs = {"property": {"read_only": True}}
 
 
@@ -263,8 +283,7 @@ class BoundarySerializer(serializers.ModelSerializer):
 class PropertySerializer(serializers.ModelSerializer):
     tenantDetails = TenantSerializer(source="tenants", many=True)
     utilities = UtilitySerializer(source="utility")
-    smokeDetectors = SmokeDetectorSerializer(source="smoke_detectors", many=True)
-    coDetectors = CoDetectorSerializer(source="co_detectors", many=True)  # corrected to plural and match field name
+    detectors = DetectorSerializer( many=True, required=False)
     detectorCompliance = DetectorComplianceSerializer(source="detector_compliance")
     keys = KeySerializer(many=True)
     documents = DocumentSerializer(many=True)
@@ -284,7 +303,7 @@ class PropertySerializer(serializers.ModelSerializer):
             "id", "address", "propertyType", "postcode", "detachment", "inspectedBy",
             "frontElevationPhoto", "otherViews", "documents",
             "externalSurfaces", "externalFeatures", "boundary", "rooms",
-            "cleaningStandard", "keys", "smokeDetectors", "coDetectors", "detectorCompliance",
+            "cleaningStandard", "keys", "detectors",   "detectorCompliance",
             "utilities", "tenantDetails"
         ]
         
@@ -322,8 +341,7 @@ class PropertySerializer(serializers.ModelSerializer):
         tenants_data = validated_data.pop("tenants", [])
         utility_data = validated_data.pop("utility", None)
         detector_compliance_data = validated_data.pop("detector_compliance", None)
-        smoke_detectors_data = validated_data.pop("smoke_detectors", [])
-        co_detectors_data = validated_data.pop("co_detectors", [])
+        detectors_data = validated_data.pop("detectors", []) 
         keys_data = validated_data.pop("keys", [])
         documents_data = validated_data.pop("documents", [])
         cleaning_standard_data = validated_data.pop("cleaning_standard", None)
@@ -343,12 +361,11 @@ class PropertySerializer(serializers.ModelSerializer):
         if detector_compliance_data:
             DetectorCompliance.objects.create(property=property_obj, **detector_compliance_data)
 
-        for co in co_detectors_data:
-            CoDetector.objects.create(property=property_obj, **co)
+        for d in detectors_data:
+            # d keys will be like {'detector_type': 'smoke', 'present': True, 'working': True, ...}
+            Detector.objects.create(property=property_obj, **d)
 
-        for smokedetector in smoke_detectors_data:
-            SmokeDetector.objects.create(property=property_obj, **smokedetector)
-
+        
         for key in keys_data:
             Key.objects.create(property=property_obj, **key)
 

@@ -82,26 +82,32 @@ class DetectorCompliance(models.Model):
 
 
 # ----------- DETECTORS -----------
+# models.py (add/replace)
+from django.db import models
 
-class SmokeDetector(models.Model):
-    property = models.ForeignKey("Property", on_delete=models.CASCADE, related_name="smoke_detectors")
-    smokeDetector= models.BooleanField(null=True)
-    working = models.BooleanField()
-    location = models.CharField(max_length=100)
+class Detector(models.Model):
+    SMOKE = "smoke"
+    CO = "co"
+    DETECTOR_TYPE_CHOICES = [
+        (SMOKE, "Smoke detector"),
+        (CO, "CO detector"),
+    ]
+
+    property = models.ForeignKey("Property", on_delete=models.CASCADE, related_name="detectors")
+    detector_type = models.CharField(max_length=10, choices=DETECTOR_TYPE_CHOICES)
+    # original boolean fields (some existing models had `smokeDetector`/`coDetector` which allowed null)
+    present = models.BooleanField(null=True, help_text="True/False if a detector is present (null = unknown)")
+    working = models.BooleanField(default=False)
+    location = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)
-    photo = models.JSONField(default=list)  # multiple images
+    photo = models.JSONField(default=list, blank=True)  # keep your JSON list of URLs
 
-
-class CoDetector(models.Model):
-    property = models.ForeignKey("Property", on_delete=models.CASCADE, related_name="co_detectors")
-    coDetector= models.BooleanField(null=True)
-    working = models.BooleanField()
-    location = models.CharField(max_length=100)
-    notes = models.TextField(blank=True)
-    photo = models.JSONField(default=list)
+    class Meta:
+        # optional: prevent duplicate identical detectors for same property/location/type
+        unique_together = (("property", "detector_type", "location"),)
 
     def __str__(self):
-        return f"CO Detector at {self.location} - {self.property.address}"
+        return f"{self.get_detector_type_display()} at {self.location or 'unknown'} ({self.property.address})"
 
 
 # ----------- KEYS -----------
