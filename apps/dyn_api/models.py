@@ -34,28 +34,28 @@ class Utility(models.Model):
     property = models.OneToOneField("Property", on_delete=models.CASCADE, related_name="utility")
 
     # Gas
-    gasMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    gasMeterReading = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     gasMeterSerialNumber = models.CharField(max_length=50)
     gasMeterPhoto = models.JSONField(default=list)  # list of URLs
 
     # Electricity
-    electricityMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    electricityMeterReading = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     electricityMeterSerialNumber = models.CharField(max_length=50)
     electricityMeterPhoto = models.JSONField(default=list)
 
     # Water
-    waterMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    waterMeterReading = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     waterMeterSerialNumber = models.CharField(max_length=50)
     waterMeterPhoto = models.JSONField(default=list)
 
     # Heat
-    heatMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    heatMeterReading = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     heatMeterSerialNumber = models.CharField(max_length=50)
     heatMeterPhoto = models.JSONField(default=list)
 
     # Other
     otherMeterType = models.CharField(max_length=50)
-    otherMeterReading = models.DecimalField(max_digits=10, decimal_places=2)
+    otherMeterReading = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     otherMeterSerialNumber = models.CharField(max_length=50)
     otherMeterPhoto = models.JSONField(default=list)
 

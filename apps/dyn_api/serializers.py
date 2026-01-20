@@ -221,15 +221,135 @@ class DetectorComplianceSerializer(serializers.ModelSerializer):
 from rest_framework import serializers
 from .models import Detector
 
+from django.db import IntegrityError
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError as DRFValidationError
+
+from .models import Detector
+
+
+class CaseInsensitiveChoiceField(serializers.ChoiceField):
+    """
+    A ChoiceField that accepts case-insensitive keys or display labels
+    and normalizes them to the canonical key (e.g. 'smoke' or 'co').
+    """
+    def to_internal_value(self, data):
+        # keep normal null handling
+        if data is None:
+            return super().to_internal_value(data)
+
+        # non-string values fall back to default handling (numbers, etc.)
+        if not isinstance(data, str):
+            return super().to_internal_value(data)
+
+        norm = data.strip().lower()
+
+        # Build (key, display) pairs from self.choices robustly
+        items = []
+        if isinstance(self.choices, dict):
+            items = list(self.choices.items())
+        else:
+            try:
+                items = list(self.choices)  # e.g. list of tuples
+            except Exception:
+                items = []
+
+        # 1) Try matching keys case-insensitively
+        for maybe_key, maybe_display in items:
+            if str(maybe_key).lower() == norm:
+                return super().to_internal_value(maybe_key)
+
+        # 2) Try matching display labels case-insensitively
+        for maybe_key, maybe_display in items:
+            # maybe_display could itself be a tuple in some edge cases; coerce to str
+            if str(maybe_display).lower() == norm:
+                return super().to_internal_value(maybe_key)
+
+        # fallback (will raise the standard ChoiceField ValidationError)
+        return super().to_internal_value(data)
+
+
 class DetectorSerializer(serializers.ModelSerializer):
-    detectorType = serializers.ChoiceField(source="detector_type", choices=Detector.DETECTOR_TYPE_CHOICES)
-    detectorPresent = serializers.BooleanField(source="present", allow_null=True, required=False)
-    photo = serializers.ListField(child=serializers.URLField(), required=False)
+    # existing strict field (keeps same external shape & source)
+    detectorType = CaseInsensitiveChoiceField(
+        source="detector_type",
+        choices=Detector.DETECTOR_TYPE_CHOICES,
+        required=False,
+        allow_null=True
+    )
+
+    # NEW: human-friendly input field (write-only)
+    detectorTypeLabel = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=True
+    )
+
+    detectorPresent = serializers.BooleanField(
+        source="present", allow_null=True, required=False
+    )
+
+    photo = serializers.ListField(
+        child=serializers.URLField(),
+        required=False,
+        allow_empty=True
+    )
 
     class Meta:
         model = Detector
-        fields = ["id", "detectorType", "detectorPresent", "working", "location", "notes", "photo"]
+        fields = [
+            "id",
+            "detectorType",        # canonical (read/write)
+            "detectorTypeLabel",   # human input (write-only)
+            "detectorPresent",
+            "working",
+            "location",
+            "notes",
+            "photo",
+        ]
         extra_kwargs = {"property": {"read_only": True}}
+
+    def validate(self, attrs):
+        """
+        Allow detectorTypeLabel to populate detector_type WITHOUT changing detectorType behavior.
+        This runs after CaseInsensitiveChoiceField has attempted to set 'detector_type'.
+        """
+        label = attrs.pop("detectorTypeLabel", None)
+
+        # Only populate detector_type from label when not already provided
+        if label and not attrs.get("detector_type"):
+            label_norm = label.strip().lower()
+
+            label_map = {
+                "smoke": "smoke",
+                "smoke detector": "smoke",
+                "smoke alarm": "smoke",
+                "co": "co",
+                "carbon monoxide": "co",
+                "carbon monoxide detector": "co",
+            }
+
+            if label_norm not in label_map:
+                raise serializers.ValidationError({
+                    "detectorTypeLabel": f"'{label}' is not a valid detector type."
+                })
+
+            attrs["detector_type"] = label_map[label_norm]
+
+        return attrs
+
+    def create(self, validated_data):
+        try:
+            return super().create(validated_data)
+        except IntegrityError as exc:
+            # convert DB integrity problems to serializer validation error
+            raise DRFValidationError({"non_field_errors": [str(exc)]})
+
+    def update(self, instance, validated_data):
+        try:
+            return super().update(instance, validated_data)
+        except IntegrityError as exc:
+            raise DRFValidationError({"non_field_errors": [str(exc)]})
 
 
 class KeySerializer(serializers.ModelSerializer):
@@ -293,7 +413,8 @@ class PropertySerializer(serializers.ModelSerializer):
     tenantDetails = TenantSerializer(source="tenants", many=True)
     utilities = UtilitySerializer(source="utility")
     detectors = DetectorSerializer( many=True, required=False)
-    detectorCompliance = DetectorComplianceSerializer(source="detector_compliance")
+    detectorCompliance = DetectorComplianceSerializer(source="detector_compliance",required=False,        # <- don't require the whole nested object
+    allow_null=True)
     keys = KeySerializer(many=True)
     documents = DocumentSerializer(many=True)
     cleaningStandard = CleaningStandardSerializer(source="cleaning_standard")
