@@ -74,11 +74,21 @@ class Utility(models.Model):
 
 
 # ----------- DETECTOR COMPLIANCE -----------
+# models.py
+from django.db import models
 
 class DetectorCompliance(models.Model):
-    property = models.OneToOneField(Property, on_delete=models.CASCADE, related_name="detector_compliance")
-    detectorCompliance = models.BooleanField()
-    solidFuelDevice = models.BooleanField()
+    property = models.OneToOneField(
+        "Property", on_delete=models.CASCADE, related_name="detector_compliance"
+    )
+
+    # New string fields (store "", "true"/"false", or any string you prefer)
+    smoke_alarm_compliance = models.CharField(max_length=20, blank=True, default="")
+    carbon_monoxide_compliance = models.CharField(max_length=20, blank=True, default="")
+
+    def __str__(self):
+        return f"DetectorCompliance for property {self.property_id}"
+
 
 
 # ----------- DETECTORS -----------
@@ -94,7 +104,7 @@ class Detector(models.Model):
     ]
 
     property = models.ForeignKey("Property", on_delete=models.CASCADE, related_name="detectors")
-    detector_type = models.CharField(max_length=10, choices=DETECTOR_TYPE_CHOICES)
+    detector_type = models.CharField(max_length=10, choices=DETECTOR_TYPE_CHOICES, null=True)
     # original boolean fields (some existing models had `smokeDetector`/`coDetector` which allowed null)
     present = models.BooleanField(null=True, help_text="True/False if a detector is present (null = unknown)")
     working = models.BooleanField(default=False)
@@ -244,7 +254,7 @@ class Wall(models.Model):
 
 class FixtureFitting(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="fixtures_fittings")
-    fixture = models.CharField(max_length=100)
+    fixture = models.CharField(max_length=1000)
     notes = models.TextField(blank=True)
     light_switches = models.PositiveIntegerField(default=0)
     plug_sockets = models.PositiveIntegerField(default=0)

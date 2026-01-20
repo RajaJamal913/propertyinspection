@@ -202,9 +202,18 @@ class UtilitySerializer(serializers.ModelSerializer):
 
 
 class DetectorComplianceSerializer(serializers.ModelSerializer):
+    # expose camelCase JSON keys while mapping to snake_case model fields
+    smokeAlarmCompliance = serializers.CharField(
+        source="smoke_alarm_compliance", allow_blank=True, required=False
+    )
+    carbonMonoxideCompliance = serializers.CharField(
+        source="carbon_monoxide_compliance", allow_blank=True, required=False
+    )
+
     class Meta:
         model = DetectorCompliance
-        fields = "__all__"
+        # explicit list prevents duplicate snake_case fields in the output
+        fields = ("id", "smokeAlarmCompliance", "carbonMonoxideCompliance", "property")
         extra_kwargs = {"property": {"read_only": True}}
 
 
