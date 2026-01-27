@@ -457,10 +457,7 @@ class PropertySerializer(serializers.ModelSerializer):
                         "rooms": f"Room '{room_type}' must include kitchen appliances."
                     })
             else:
-                if room.get("fixtures_fittings"):
-                    raise serializers.ValidationError({
-                        "rooms": f"Room '{room_type}' cannot have fixture and fittings (only for kitchen)."
-                    })
+               
                 if room.get("kitchen_appliances"):
                     raise serializers.ValidationError({
                         "rooms": f"Room '{room_type}' cannot have kitchen appliances (only for kitchen)."
