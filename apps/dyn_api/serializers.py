@@ -24,6 +24,12 @@ class DoorSerializer(serializers.ModelSerializer):
             "id", "doorType", "doorFinish", "doorColour", "frameType", "frameColour",
             "features", "condition", "notes", "photo"
         ]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class WindowSerializer(serializers.ModelSerializer):
@@ -42,6 +48,12 @@ class WindowSerializer(serializers.ModelSerializer):
             "id", "windowType", "glassType", "frameType", "frameColour", "sillType",
             "sillColour", "condition", "features", "openers", "notes", "photo"
         ]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class CeilingSerializer(serializers.ModelSerializer):
@@ -58,6 +70,12 @@ class CeilingSerializer(serializers.ModelSerializer):
             "id", "ceilingFinish", "colour", "condition", "ceilingFittings",
             "recessedSpotlights", "bulbsNotWorking", "notes", "photo"
         ]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
         
 class FloorSerializer(serializers.ModelSerializer):
     floorFinish = serializers.CharField(source="finish")
@@ -69,6 +87,12 @@ class FloorSerializer(serializers.ModelSerializer):
         fields = [
             "id", "floorFinish", "colour", "condition", "additions", "notes", "photo"
         ]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
         
 class WallSerializer(serializers.ModelSerializer):
     skirtingType = serializers.CharField(source="skirting_type")
@@ -83,6 +107,12 @@ class WallSerializer(serializers.ModelSerializer):
             "id", "description", "colour", "skirtingType", "skirtingColour",
             "condition", "features", "signOfLeakages", "notes", "photo"
         ]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 class FixtureFittingSerializer(serializers.ModelSerializer):
     lightSwitches = serializers.IntegerField(source="light_switches")
@@ -113,6 +143,13 @@ class FurnishingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Furnishing
         fields = ["id", "furnishings", "notes", "photo"]
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
         
 
 class CupboardSerializer(serializers.ModelSerializer):
@@ -122,6 +159,12 @@ class CupboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cupboard
         fields = ["id", "cupboardContent", "notes", "photo"]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class KitchenApplianceSerializer(serializers.ModelSerializer):
@@ -135,6 +178,13 @@ class KitchenApplianceSerializer(serializers.ModelSerializer):
             "quantity", "tested", "notes", "photo"
         ]
         
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
+
 # ----------- ROOM SERIALIZER -----------
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -175,6 +225,13 @@ class TenantSerializer(serializers.ModelSerializer):
         fields = ["id", "tenantName","tenantEmail","mobilePhone", "notes"]
         extra_kwargs = {"property": {"read_only": True}}
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
+
 
 from rest_framework import serializers
 from .models import Utility
@@ -199,6 +256,12 @@ class UtilitySerializer(serializers.ModelSerializer):
             # Allow empty strings for CharFields
             if isinstance(field, serializers.CharField):
                 field.allow_blank = True
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class DetectorComplianceSerializer(serializers.ModelSerializer):
@@ -350,6 +413,12 @@ class DetectorSerializer(serializers.ModelSerializer):
             return super().update(instance, validated_data)
         except IntegrityError as exc:
             raise DRFValidationError({"non_field_errors": [str(exc)]})
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class KeySerializer(serializers.ModelSerializer):
@@ -359,6 +428,12 @@ class KeySerializer(serializers.ModelSerializer):
         model = Key
         fields = ["id", "description", "notes", "photo"]
         extra_kwargs = {"property": {"read_only": True}}
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -368,6 +443,13 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = Document
         fields = ["id", "description", "notes", "photo"]
         extra_kwargs = {"property": {"read_only": True}}
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class CleaningStandardSerializer(serializers.ModelSerializer):
@@ -376,6 +458,13 @@ class CleaningStandardSerializer(serializers.ModelSerializer):
         model = CleaningStandard
         fields = ["id", "cleaningStandard","notes"]
         extra_kwargs = {"property": {"read_only": True}}
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 class ExternalSurfaceSerializer(serializers.ModelSerializer):
@@ -387,6 +476,13 @@ class ExternalSurfaceSerializer(serializers.ModelSerializer):
         fields = ["id", "externalSurfaceType","location", "notes", "photo"]
         extra_kwargs = {"property": {"read_only": True}}
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
+
 
 class ExternalFeatureSerializer(serializers.ModelSerializer):
     photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
@@ -397,6 +493,13 @@ class ExternalFeatureSerializer(serializers.ModelSerializer):
         fields = ["id", "externalFeature","condition", "notes", "photo"]
         extra_kwargs = {"property": {"read_only": True}}
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
+
 
 class BoundarySerializer(serializers.ModelSerializer):
     photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
@@ -406,6 +509,12 @@ class BoundarySerializer(serializers.ModelSerializer):
         model = Boundary
         fields = ["id", "boundaryType","colour","condition","quantity", "notes", "photo"]
         extra_kwargs = {"property": {"read_only": True}}
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Remove notes if empty or null
+        if not data.get("notes"):
+            data.pop("notes", None)
+        return data
 
 
 # ----------- MAIN PROPERTY SERIALIZER -----------
