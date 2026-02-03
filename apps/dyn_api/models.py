@@ -6,8 +6,8 @@ class Property(models.Model):
     address = models.CharField(max_length=255)
     postcode = models.CharField(max_length=20)
     property_type = models.CharField(max_length=50)
-    detachment = models.CharField(max_length=50)
-    inspectedBy = models.CharField(max_length=100, default="Owner")
+    detachment = models.CharField(max_length=50,null=True, blank=True)
+    inspectedBy = models.CharField(max_length=100, default="Owner",null=True, blank=True)
     front_elevation_photos = models.JSONField(default=list)  # List of URLs
     other_views = models.JSONField(default=list)
 
@@ -142,7 +142,7 @@ class Document(models.Model):
 
 class CleaningStandard(models.Model):
     property = models.OneToOneField(Property, on_delete=models.CASCADE, related_name="cleaning_standard")
-    standard = models.CharField(max_length=50)
+    standard = models.CharField(max_length=50,null=True, blank=True)
     notes = models.TextField(blank=True)
 
 

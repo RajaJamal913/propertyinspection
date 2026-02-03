@@ -453,7 +453,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class CleaningStandardSerializer(serializers.ModelSerializer):
-    cleaningStandard = serializers.CharField(source="standard")
+    cleaningStandard = serializers.CharField(source="standard",allow_null=True, required=False)
     class Meta:
         model = CleaningStandard
         fields = ["id", "cleaningStandard","notes"]
@@ -526,13 +526,13 @@ class PropertySerializer(serializers.ModelSerializer):
     allow_null=True)
     keys = KeySerializer(many=True)
     documents = DocumentSerializer(many=True)
-    cleaningStandard = CleaningStandardSerializer(source="cleaning_standard")
+    cleaningStandard = CleaningStandardSerializer(source="cleaning_standard",allow_null=True, required=False)
     externalSurfaces = ExternalSurfaceSerializer(source="external_surfaces", many=True)
     externalFeatures = ExternalFeatureSerializer(source="external_features", many=True)
     boundary = BoundarySerializer(source="boundaries", many=True)
     rooms = RoomSerializer(many=True)
     propertyType = serializers.CharField(source="property_type")
-    inspectedBy = serializers.CharField()
+    inspectedBy = serializers.CharField(allow_null=True, required=False)
     frontElevationPhoto = serializers.ListField(child=serializers.URLField(), source="front_elevation_photos")
     otherViews = serializers.ListField(child=serializers.URLField(), source="other_views")
     
