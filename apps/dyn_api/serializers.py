@@ -41,6 +41,8 @@ class WindowSerializer(serializers.ModelSerializer):
     sillColour = serializers.CharField(source="sill_colour")
     photo = serializers.ListField(child=serializers.URLField(), source="photo_url")
 
+    # keep openers as an integer field, optional and nullable; default ensures missing -> 0 on create
+    openers = serializers.IntegerField(allow_null=True, required=False, default=0)
 
     class Meta:
         model = Window
@@ -48,12 +50,38 @@ class WindowSerializer(serializers.ModelSerializer):
             "id", "windowType", "glassType", "frameType", "frameColour", "sillType",
             "sillColour", "condition", "features", "openers", "notes", "photo"
         ]
+
+    def to_internal_value(self, data):
+        """
+        Normalize incoming empty-string for openers to None so IntegerField validation
+        doesn't raise. We'll turn None -> 0 in validation below.
+        """
+        data = data.copy()
+        if "openers" in data and data.get("openers") == "":
+            data["openers"] = None
+        return super().to_internal_value(data)
+
+    def validate_openers(self, value):
+        """
+        Ensure the saved value is always an integer; treat None/empty as 0.
+        Called during validation for the openers field.
+        """
+        if value in (None, ""):
+            return 0
+        return value
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         # Remove notes if empty or null
         if not data.get("notes"):
             data.pop("notes", None)
+
+        # Ensure openers is represented as 0 when null/empty
+        if data.get("openers") in (None, ""):
+            data["openers"] = 0
+
         return data
+
 
 
 class CeilingSerializer(serializers.ModelSerializer):
