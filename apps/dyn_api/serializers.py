@@ -218,8 +218,8 @@ class RoomSerializer(serializers.ModelSerializer):
 
 class TenantSerializer(serializers.ModelSerializer):
     tenantName = serializers.CharField(source="name")
-    tenantEmail = serializers.CharField(source="email")
-    mobilePhone = serializers.CharField(source="mobile_phone")
+    tenantEmail = serializers.CharField(source="email", allow_null=True, allow_blank=True, required=False)
+    mobilePhone = serializers.CharField(source="mobile_phone", allow_null=True, allow_blank=True, required=False)
     class Meta:
         model = Tenant
         fields = ["id", "tenantName","tenantEmail","mobilePhone", "notes"]

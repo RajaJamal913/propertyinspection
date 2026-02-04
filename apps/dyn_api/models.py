@@ -20,8 +20,8 @@ class Property(models.Model):
 class Tenant(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="tenants")
     name = models.CharField(max_length=100)
-    email = models.EmailField()
-    mobile_phone = models.CharField(max_length=20)
+    email = models.EmailField(null=True, blank=True)
+    mobile_phone = models.CharField(max_length=20 ,null=True, blank=True)
     notes = models.TextField(blank=True , null=True)
 
     def __str__(self):
@@ -211,8 +211,8 @@ class Window(models.Model):
     sill_type = models.CharField(max_length=50)
     sill_colour = models.CharField(max_length=50)
     condition = models.CharField(max_length=50)
-    features = models.CharField(max_length=255)
-    openers = models.PositiveIntegerField()
+    features = models.CharField(max_length=255,null=True, blank=True)
+    openers = models.PositiveIntegerField(null=True, blank=True)
     notes = models.TextField(blank=True, null=True)
     photo_url = models.JSONField(default=list)
 
@@ -289,7 +289,7 @@ class Cupboard(models.Model):
 class KitchenAppliance(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name="kitchen_appliances")
     appliances = models.CharField(max_length=255)
-    brand = models.CharField(max_length=50)
+    brand = models.CharField(max_length=50 ,null=True, blank=True)
     colour = models.CharField(max_length=50)
     condition = models.CharField(max_length=50)
     quantity = models.PositiveIntegerField(default=1)
