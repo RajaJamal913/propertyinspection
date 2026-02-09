@@ -78,7 +78,7 @@
         border: 1px solid var(--border);
         margin-bottom: 1.5rem;
         overflow: hidden;
-        page-break-inside: avoid;
+        page-break-inside: auto;
       }
 
       .section-header {
@@ -613,6 +613,12 @@
         border-left: 4px solid var(--accent);
         border-radius: 0 8px 8px 0;
         page-break-inside: avoid;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem !important;
+      }
+
+      .intro-section .row {
+        gap: 1rem !important;
       }
 
       .intro-card {
@@ -623,20 +629,27 @@
         height: 100%;
         transition: transform 0.3s ease;
         page-break-inside: avoid;
+        display: flex;
+        flex-direction: column;
       }
 
       .intro-card:hover {
         transform: translateY(-5px);
       }
 
+      .intro-card-body {
+        flex: 1;
+      }
+
       .intro-card-header {
         background: #e6f2ff;
-        padding: 1rem;
+        padding: 0.9rem;
         font-weight: 600;
         color: var(--primary);
         border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
+        font-size: 1rem;
       }
 
       .intro-icon {
@@ -647,22 +660,43 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 10px;
+        margin-right: 8px;
         color: var(--accent);
+        flex-shrink: 0;
       }
 
       .intro-card-body {
-        padding: 1.25rem;
-        font-size: 0.95rem;
+        padding: 1rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .intro-card-body p {
+        margin-bottom: 0.8rem;
+      }
+
+      .intro-card-body p:last-child {
+        margin-bottom: 0;
+      }
+
+      .intro-card-body ul {
+        margin-bottom: 0;
+        padding-left: 1.2rem;
+      }
+
+      .intro-card-body li {
+        margin-bottom: 0.4rem;
       }
 
       .intro-title {
         font-weight: 700;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.2rem;
+        margin-top: 0;
         color: var(--primary);
         border-bottom: 2px solid var(--accent);
         padding-bottom: 0.5rem;
-        display: inline-block;
+        display: block;
+        font-size: 1.3rem;
       }
 
       .disclaimer-box {
@@ -727,16 +761,26 @@
       /* ENHANCED PRINT STYLES */
       @media print {
         :root {
-          --gallery-image-size: 120px !important;
-          --thumbnail-size: 80px !important;
-          --display-image-size: 130px !important;
+          --gallery-image-size: 100px !important;
+          --thumbnail-size: 70px !important;
+          --display-image-size: 110px !important;
+        }
+
+        @page {
+          margin: 0.3cm !important;
+          size: A4 !important;
         }
 
         body,
         html {
           height: auto !important;
           overflow: visible !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          orphans: 3 !important;
+          widows: 3 !important;
         }
+        
         .report-container {
           box-shadow: none !important;
           margin: 0 !important;
@@ -745,6 +789,7 @@
           width: 100% !important;
           max-width: 100% !important;
           overflow: visible !important;
+          padding: 0 !important;
         }
 
         .report-header {
@@ -752,9 +797,22 @@
           color: white !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
-          padding: 1.5rem !important;
+          padding: 1rem !important;
+          margin: 0 !important;
+          margin-bottom: 0.2rem !important;
           position: relative !important;
           page-break-after: avoid !important;
+        }
+
+        .report-header h2 {
+          font-size: 1.2rem !important;
+          margin: 0 !important;
+          margin-bottom: 0.3rem !important;
+        }
+
+        .report-header p {
+          margin: 0 !important;
+          font-size: 0.85rem !important;
         }
 
         .header-pattern {
@@ -766,23 +824,67 @@
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
           border-left: 4px solid var(--accent) !important;
-          padding: 1.5rem !important;
+          padding: 1rem !important;
+          margin: 0 !important;
+          margin-bottom: 0.8rem !important;
           page-break-inside: avoid !important;
           page-break-after: auto !important;
+        }
+
+        .intro-section .row {
+          display: grid !important;
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: 0.5rem !important;
+        }
+
+        .intro-title {
+          font-size: 1.1rem !important;
+          margin-bottom: 0.8rem !important;
+          margin-top: 0 !important;
+          padding-bottom: 0.4rem !important;
+          display: block !important;
         }
 
         .section-card {
           box-shadow: none !important;
           border: 1px solid #ddd !important;
-          margin-bottom: 1rem !important;
-          page-break-inside: avoid !important;
+          margin-bottom: 0.3rem !important;
+          margin-top: 0 !important;
+          page-break-inside: auto !important;
+          break-inside: auto !important;
+          overflow: visible !important;
         }
+
         .section-header {
           background: #f1f5f9 !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
           border-bottom: 1px solid #ddd !important;
           padding: 0.8rem 1rem !important;
+          font-weight: 600 !important;
+          page-break-inside: avoid !important;
+          page-break-after: avoid !important;
+        }
+
+        .section-body > h6:first-child,
+        .section-body > h5:first-child,
+        .section-body > h4:first-child {
+          page-break-after: avoid !important;
+          margin-top: 0 !important;
+        }
+
+        .section-body {
+          padding: 0.5rem !important;
+          margin: 0 !important;
+          page-break-inside: auto !important;
+        }
+        
+        .section-header {
+          background: #f1f5f9 !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          border-bottom: 1px solid #ddd !important;
+          padding: 0.6rem 0.8rem !important;
         }
         .print-btn {
           display: none !important;
@@ -810,22 +912,30 @@
           ) !important;
           gap: 0 !important;
           grid-auto-rows: auto !important; /* CHANGED: Allow multiple rows */
-          break-inside: avoid !important;
-          page-break-inside: avoid !important;
+          break-inside: auto !important;
+          page-break-inside: auto !important;
           border: 1px solid #ddd !important;
           border-radius: 4px !important;
           overflow: hidden !important;
+          margin-bottom: 0.3rem !important;
         }
 
         .photo-item,
         .sub-entity-photo {
           width: 100% !important;
-          height: var(--gallery-image-size) !important;
+          height: auto !important;
           min-height: var(--gallery-image-size) !important;
+          max-height: 150px !important;
           page-break-inside: avoid !important;
           break-inside: avoid !important;
           margin: 0 !important;
           border: 1px solid #ddd !important;
+        }
+
+        h6, h5 {
+          page-break-after: avoid !important;
+          margin-top: 0.3rem !important;
+          margin-bottom: 0.2rem !important;
         }
 
         .photo-item img,
@@ -840,19 +950,21 @@
         .photo-display-container {
           display: flex !important;
           flex-wrap: wrap !important;
-          break-inside: avoid !important;
-          page-break-inside: avoid !important;
+          break-inside: auto !important;
+          page-break-inside: auto !important;
           gap: 0 !important;
           border: 1px solid #ddd !important;
           border-radius: 4px !important;
           overflow: hidden !important;
+          margin-bottom: 0.3rem !important;
         }
 
         .photo-display-item {
           flex: 0 0 calc(33.333% - 0px) !important;
           max-width: calc(33.333% - 0px) !important;
-          height: var(--display-image-size) !important;
-          min-height: var(--display-image-size) !important;
+          height: auto !important;
+          min-height: 120px !important;
+          max-height: 150px !important;
           page-break-inside: avoid !important;
           break-inside: avoid !important;
           margin: 0 !important;
@@ -861,10 +973,10 @@
 
         .photo-display-item img {
           width: 100% !important;
-          height: 100% !important;
+          height: auto !important;
           max-width: 100% !important;
-          max-height: 100% !important;
-          object-fit: cover !important;
+          max-height: 150px !important;
+          object-fit: contain !important;
         }
 
         .thumbnail-container {
@@ -886,8 +998,10 @@
         }
 
         .room-card {
-          margin-bottom: 1rem !important;
-          page-break-inside: avoid !important;
+          margin-bottom: 0.3rem !important;
+          margin-top: 0 !important;
+          page-break-inside: auto !important;
+          overflow: visible !important;
         }
         .summary-count,
         .section-header,
@@ -914,8 +1028,8 @@
         /* Make gallery images larger on print: use fewer columns, allow tiles to expand */
         .photo-gallery,
         .sub-entity-gallery {
-          grid-template-columns: repeat(3, 1fr) !important;
-          gap: 0.5rem !important;
+          grid-template-columns: repeat(4, 1fr) !important;
+          gap: 0.3rem !important;
         }
 
         /* Allow photo tiles to grow vertically in print and provide a reasonable minimum height */
@@ -923,7 +1037,7 @@
         .sub-entity-photo,
         .photo-display-item {
           height: auto !important;
-          min-height: 260px !important;
+          min-height: 120px !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
@@ -934,7 +1048,7 @@
         .sub-entity-photo img,
         .photo-display-item img {
           max-width: 100% !important;
-          max-height: 360px !important;
+          max-height: 150px !important;
           height: auto !important;
           object-fit: contain !important;
           background: #fff !important;
@@ -943,40 +1057,129 @@
         .intro-card {
           border: 1px solid #ddd !important;
           box-shadow: none !important;
-          margin-bottom: 0.5rem !important;
+          margin: 0 !important;
+          padding: 0 !important;
           page-break-inside: avoid !important;
+          height: auto !important;
+          break-inside: avoid !important;
+          display: flex !important;
+          flex-direction: column !important;
         }
+
         .intro-card-header {
           background: #e6f2ff !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
-          padding: 0.8rem !important;
+          padding: 0.7rem !important;
+          margin: 0 !important;
+          font-size: 0.9rem !important;
+          font-weight: 600 !important;
+          min-height: auto !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+
+        .intro-card-body {
+          padding: 0.7rem !important;
+          margin: 0 !important;
+          font-size: 0.85rem !important;
+          line-height: 1.4 !important;
+          flex: 1 !important;
+        }
+
+        .intro-card-body p {
+          margin-bottom: 0.5rem !important;
+          padding: 0 !important;
+        }
+
+        .intro-card-body p:last-child {
+          margin-bottom: 0 !important;
+        }
+
+        .intro-card-body ul {
+          margin: 0 !important;
+          padding-left: 1.1rem !important;
+        }
+
+        .intro-card-body li {
+          margin-bottom: 0.3rem !important;
+        }
+
+        .intro-icon {
+          width: 26px !important;
+          height: 26px !important;
+          margin-right: 0.5rem !important;
+          flex-shrink: 0 !important;
         }
         .disclaimer-box {
           background: #fff8e6 !important;
           border: 1px solid #ffecb3 !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
-          padding: 1rem !important;
+          padding: 0.8rem !important;
+          margin: 0.8rem 0 !important;
           page-break-inside: avoid !important;
+          font-size: 0.85rem !important;
+          line-height: 1.5 !important;
         }
+
+        .disclaimer-header {
+          font-size: 0.9rem !important;
+          font-weight: 600 !important;
+          margin-bottom: 0.5rem !important;
+        }
+
+        .disclaimer-box p {
+          margin-bottom: 0 !important;
+        }
+        
+        /* Reduce large Bootstrap margins in print */
+        .mb-4, .my-4 {
+          margin-bottom: 0.3rem !important;
+        }
+        
+        .mb-3, .my-3 {
+          margin-bottom: 0.2rem !important;
+        }
+        
+        .mb-2, .my-2 {
+          margin-bottom: 0.2rem !important;
+        }
+        
         a[href]::after {
           content: none !important;
         }
         .p-4,
         .p-lg-5 {
-          padding: 1rem !important;
+          padding: 0 !important;
+          margin: 0 !important;
         }
-        .section-body {
-          padding: 1rem !important;
+
+        /* Prevent orphaned headings */
+        h1, h2, h3, h4, h5, h6 {
+          page-break-after: avoid !important;
+          page-break-inside: avoid !important;
+          orphans: 3 !important;
+          widows: 3 !important;
+          margin-bottom: 0.3rem !important;
+          margin-top: 0 !important;
         }
 
         .utility-card {
           border: 1px solid #ddd !important;
-          padding: 1rem !important;
-          margin-bottom: 1rem !important;
-          page-break-inside: avoid !important;
+          padding: 0.8rem !important;
+          margin-bottom: 0.3rem !important;
+          page-break-inside: auto !important;
         }
+        
+        .component-card {
+          border: 1px solid #ddd !important;
+          padding: 0.8rem !important;
+          margin-bottom: 0.3rem !important;
+          page-break-inside: auto !important;
+          overflow: visible !important;
+        }
+        
         .utility-details {
           grid-template-columns: repeat(2, 1fr) !important;
         }
@@ -1032,10 +1235,6 @@
           padding: 3px !important;
           height: auto !important;
           line-height: 1.1 !important;
-        }
-
-        @page {
-          margin: 0.5cm;
         }
       }
 
@@ -1601,30 +1800,18 @@
         </div>
       </div>
 
-      <!-- Cleaning Standards -->
+      <!-- Cleaning Standard -->
       <div class="section-card">
         <div class="section-header">
           <div class="section-icon">
             <i class="bi bi-brush"></i>
           </div>
-          Cleaning Standards
+          Cleaning Standard
         </div>
         <div class="section-body">
-          <div class="component-card">
-            <div class="component-header">
-              <div class="component-type">Overall Cleaning Standard</div>
-              <span class="badge bg-success">Good</span>
-            </div>
-            <div class="component-details">
-              <div class="component-detail">
-                <div class="detail-label">Standard</div>
-                <div class="detail-value">
-                  This property has been cleaned to a good standard unless
-                  indicated elsewhere on the inventory report.
-                </div>
-              </div>
-            </div>
-          </div>
+          <p style="margin: 0; font-size: 0.95rem; line-height: 1.6;">
+            This property has been cleaned to a good standard unless indicated elsewhere on the inventory report.
+          </p>
         </div>
       </div>
       <!-- External Surfaces -->
@@ -2120,14 +2307,8 @@
             </div>
           </div>
 
-          <!-- Rooms -->
-          <div class="section-card">
-            <div class="section-header">
-              <i class="section-icon bi bi-door-open"></i>Rooms
-            </div>
-            <div class="p-4">
-              <!-- Hallway Porche: categorized galleries -->
-              <h5 class="mb-3">Hallway Porche</h5>
+          <!-- Hallway Porche -->
+          <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #b3e5fc; color: #01579b; border-left: 4px solid #03a9f4; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-house me-2"></i>Hallway Porche</h3>
 
               <!-- Overview Images -->
               <div class="mb-2"><strong>Overview Images:</strong></div>
@@ -2604,16 +2785,13 @@
               <!-- Furnishing (missing, skip) -->
 
               <!-- Cupboard (missing, move to end if present) -->
-            </div>
-          </div>
 
-          <!-- Living Room -->
-          <div class="section-card">
-            <div class="section-header">
-              <i class="section-icon bi bi-house"></i>Living Room
-            </div>
-            <div class="section-body">
-              <h6 class="mb-2">Overview</h6>
+          <!-- ROOMS SECTION -->
+          <h2 style="margin-top: 2rem; margin-bottom: 1rem; padding: 1rem; background: linear-gradient(135deg, #1a4f72 0%, #0d3a5d 100%); color: white; border-radius: 8px; font-size: 1.5rem; font-weight: 600;"><i class="bi bi-house-door me-2"></i>Rooms</h2>
+
+          <!-- Room 1: Living Room -->
+          <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #e6f2ff; color: #1a4f72; border-left: 4px solid #1e88e5; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-house me-2"></i>Room 1: Living Room</h3>
+          <h6 class="mb-2">Overview</h6>
               <div
                 class="photo-gallery"
                 style="
@@ -3081,15 +3259,10 @@
                 </div>
               </div>
             </div>
-          </div>
 
           <!-- Toilet-Shower -->
-          <div class="section-card">
-            <div class="section-header">
-              <i class="section-icon bi bi-house"></i>Toilet - Shower
-            </div>
-            <div class="section-body">
-              <h6 class="mb-2">Overview</h6>
+          <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #e0f2f1; color: #00695c; border-left: 4px solid #009688; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-droplet me-2"></i>Toilet - Shower</h3>
+          <h6 class="mb-2">Overview</h6>
               <div
                 class="photo-gallery"
                 style="
@@ -3338,16 +3511,10 @@
               <!-- Furnishing (missing, skip) -->
 
               <!-- Cupboard (missing, skip) -->
-            </div>
-          </div>
 
-          <!-- Kitchen -->
-          <div class="section-card">
-            <div class="section-header">
-              <i class="section-icon bi bi-house"></i>Kitchen
-            </div>
-            <div class="section-body">
-              <h6 class="mb-2">Overview</h6>
+          <!-- Room 2: Kitchen -->
+          <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #f3e5f5; color: #6a1b9a; border-left: 4px solid #9c27b0; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-house me-2"></i>Room 2: Kitchen</h3>
+          <h6 class="mb-2">Overview</h6>
               <div
                 class="photo-gallery"
                 style="
@@ -4009,15 +4176,10 @@
 
               <!-- Cupboard (missing, skip) -->
             </div>
-          </div>
 
           <!-- Stairs Landing -->
-          <div class="section-card">
-            <div class="section-header">
-              <i class="section-icon bi bi-house"></i>Stairs Landing
-            </div>
-            <div class="section-body">
-              <h6 class="mb-2">Overview</h6>
+          <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #f1f8e9; color: #558b2f; border-left: 4px solid #8bc34a; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-arrow-up-circle me-2"></i>Stairs Landing</h3>
+          <h6 class="mb-2">Overview</h6>
               <div
                 class="photo-gallery"
                 style="
@@ -4225,15 +4387,10 @@
 
             <!-- Cupboard (missing, skip) -->
           </div>
-        </div>
 
-        <!-- Bedroom 1 -->
-        <div class="section-card">
-          <div class="section-header">
-            <i class="section-icon bi bi-house"></i>Bedroom 1
-          </div>
-          <div class="section-body">
-            <h6 class="mb-2">Overview</h6>
+        <!-- Room 3: Bedroom 1 -->
+        <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #e8f5e9; color: #2e7d32; border-left: 4px solid #4caf50; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-house me-2"></i>Room 3: Bedroom 1</h3>
+        <h6 class="mb-2">Overview</h6>
             <div
               class="photo-gallery"
               style="
@@ -4513,13 +4670,9 @@
           </div>
         </div>
 
-        <!-- Bathroom Toilet -->
-        <div class="section-card">
-          <div class="section-header">
-            <i class="section-icon bi bi-house"></i>Bathroom - Toilet
-          </div>
-          <div class="section-body">
-            <h6 class="mb-2">Overview</h6>
+        <!-- Bathroom-Toilet -->
+        <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #ede7f6; color: #512da8; border-left: 4px solid #673ab7; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-droplet me-2"></i>Bathroom - Toilet</h3>
+          <h6 class="mb-2">Overview</h6>
             <div
               class="photo-gallery"
               style="
@@ -4832,15 +4985,10 @@
             </div>
 
             <!-- Cupboard (missing, skip) -->
-          </div>
-        </div>
-        <!-- Bedroom 2 -->
-        <div class="section-card">
-          <div class="section-header">
-            <i class="section-icon bi bi-house"></i>Bedroom 2
-          </div>
-          <div class="section-body">
-            <h6 class="mb-2">Overview</h6>
+
+        <!-- Room 4: Bedroom 2 -->
+        <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #fff3e0; color: #e65100; border-left: 4px solid #ff9800; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-house me-2"></i>Room 4: Bedroom 2</h3>
+          <h6 class="mb-2">Overview</h6>
             <div
               class="photo-gallery"
               style="
@@ -5143,16 +5291,10 @@
             <!-- Furnishing (missing, skip) -->
 
             <!-- Cupboard (missing, skip) -->
-          </div>
-        </div>
 
-        <!-- Bedroom 3 -->
-        <div class="section-card">
-          <div class="section-header">
-            <i class="section-icon bi bi-house"></i>Bedroom 3
-          </div>
-          <div class="section-body">
-            <h6 class="mb-2">Overview</h6>
+        <!-- Room 5: Bedroom 3 -->
+        <h3 style="margin-top: 1.5rem; margin-bottom: 0.8rem; padding: 0.8rem 1rem; background: #fce4ec; color: #c2185b; border-left: 4px solid #e91e63; font-size: 1.2rem; font-weight: 600;"><i class="bi bi-house me-2"></i>Room 5: Bedroom 3</h3>
+          <h6 class="mb-2">Overview</h6>
             <div
               class="photo-gallery"
               style="
@@ -5495,8 +5637,7 @@
             </div>
 
             <!-- Cupboard (missing, skip) -->
-          </div>
-        </div>
+
         <!-- Documents -->
         <div class="section-card">
           <div class="section-header">
@@ -5511,6 +5652,7 @@
         </div>
 
         <!-- Declaration -->
+        <div style="page-break-before: always; border-top: 3px solid #1e88e5; margin-top: 2rem; padding-top: 2rem;"></div>
         <div class="section-card">
           <div class="section-header">
             <i class="section-icon bi bi-clipboard-check"></i>Declaration
