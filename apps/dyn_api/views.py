@@ -3,11 +3,9 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from pyexpat.errors import messages
 from django.http import Http404
-from django.views.decorators.http import require_POST
+
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -15,7 +13,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpResponse
-
+from django.views.decorators.http import require_POST
 from django.conf import settings
 
 DYNAMIC_API = {}
@@ -314,6 +312,37 @@ def calculate_property_counts(prop):
     
     return counts
 
+# views.py — required imports (add these near the top of the file)
+import os
+import io
+import tempfile
+import shutil
+import traceback
+from typing import List
+from django.http import StreamingHttpResponse, HttpResponse, FileResponse
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+from django.db.models import Prefetch
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+# These imports are already in your file; keep them too:
+from .models import Property, Detector
+from .serializers import PropertySerializer, DetectorSerializer
+
+# Optional libs used for download + recompression:
+try:
+    import requests
+except Exception:
+    requests = None
+
+try:
+    from PIL import Image
+except Exception:
+    Image = None
+
+# WeasyPrint import will be used inside the view (we handle ImportError)
+
 
 def property_report(request, pk):
     qs = Property.objects.select_related(
@@ -391,33 +420,6 @@ def property_report(request, pk):
     }
 
     return render(request, "reports/property.html", context)
-
-from django.core.paginator import Paginator
-from django.db.models import Q
-
-def property_list(request):
-    """
-    List all properties (with optional search q=) and paginate results.
-    Renders templates/reports/property_list.html
-    """
-    qs = Property.objects.all().select_related(
-        'utility', 'detector_compliance', 'cleaning_standard'
-    ).prefetch_related(
-        'tenants', 'rooms'
-    ).order_by('-id')
-
-    q = request.GET.get('q', '').strip()
-    if q:
-        qs = qs.filter(Q(address__icontains=q) | Q(postcode__icontains=q))
-
-    paginator = Paginator(qs, 25)  # 25 per page
-    page_number = request.GET.get('page')
-    properties = paginator.get_page(page_number)
-
-    return render(request, "reports/property_list.html", {
-        'properties': properties
-    })
-
 @require_POST
 @login_required
 def property_delete(request, pk):
@@ -448,60 +450,46 @@ def property_delete(request, pk):
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list')
     return redirect(next_url)
 
-# Add these imports near the top of your views.py (if not already present)
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse, urljoin
-import tempfile
-import os
-import io
-import traceback
-import json
-from django.http import HttpResponse, StreamingHttpResponse
-from django.utils.text import slugify
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-import base64
-import multiprocessing
+from django.core.paginator import Paginator
+from django.db.models import Q
 
-# 1x1 transparent PNG data URI (used as a placeholder when an image cannot be fetched)
-TRANSPARENT_PNG_DATAURI = (
-    "data:image/png;base64,"
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAE0lEQVR42mP8/5+BFzA1wMDA"
-    "gAEAAf8C4qv2xQAAAABJRU5ErkJggg=="
-)
+def property_list(request):
+    """
+    List all properties (with optional search q=) and paginate results.
+    Renders templates/reports/property_list.html
+    """
+    qs = Property.objects.all().select_related(
+        'utility', 'detector_compliance', 'cleaning_standard'
+    ).prefetch_related(
+        'tenants', 'rooms'
+    ).order_by('-id')
 
-def make_requests_session(retries=2, backoff_factor=0.3, status_forcelist=(500,502,503,504)):
-    s = requests.Session()
-    retry = Retry(total=retries, read=retries, connect=retries,
-                  backoff_factor=backoff_factor,
-                  status_forcelist=status_forcelist,
-                  raise_on_status=False)
-    adapter = HTTPAdapter(max_retries=retry)
-    s.mount('http://', adapter)
-    s.mount('https://', adapter)
-    return s
+    q = request.GET.get('q', '').strip()
+    if q:
+        qs = qs.filter(Q(address__icontains=q) | Q(postcode__icontains=q))
+
+    paginator = Paginator(qs, 25)  # 25 per page
+    page_number = request.GET.get('page')
+    properties = paginator.get_page(page_number)
+
+    return render(request, "reports/property_list.html", {
+        'properties': properties
+    })
+
 
 def property_report_pdf(request, pk):
     """
-    Robust PDF generator:
-      - prefetch remote images with timeouts/retries
-      - replace unreachable images with inline placeholder
-      - write PDF to a temp file and stream to the client
-      - on failure, write detailed log to /tmp/weasyprint_error_<pid>.log and return link
+    Generate and download property report as PDF using WeasyPrint
     """
     try:
         from weasyprint import HTML, CSS
+        import io
+        from django.http import FileResponse
     except ImportError:
         return HttpResponse("PDF generation library not installed. Please install weasyprint.", status=500)
-
-    # Prepare containers for temp paths so we can cleanup
-    tmp_image_paths = []
-    tmp_pdf_path = None
-    log_path = f"/tmp/weasyprint_error_{os.getpid()}.log"
-
+    
     try:
-        # --- your existing queryset + context construction (unchanged) ---
+        # Get the property report HTML content
         qs = Property.objects.select_related(
             'utility', 'detector_compliance', 'cleaning_standard'
         ).prefetch_related(
@@ -527,7 +515,7 @@ def property_report_pdf(request, pk):
 
         prop = get_object_or_404(qs, pk=pk)
         counts = calculate_property_counts(prop)
-
+        
         smoke_detectors = getattr(prop, 'smoke_detectors', [])
         co_detectors = getattr(prop, 'co_detectors', [])
         smoke_detector_list = DetectorSerializer(smoke_detectors, many=True).data
@@ -539,7 +527,7 @@ def property_report_pdf(request, pk):
         front_photos = getattr(prop, 'front_elevation_photos', []) or []
         other_views = getattr(prop, 'other_views', []) or []
 
-        # Ensure lists if JSONField stored single string accidentally
+        import json
         if isinstance(front_photos, str):
             try:
                 front_photos = json.loads(front_photos)
@@ -568,97 +556,11 @@ def property_report_pdf(request, pk):
             "other_views": other_views,
             "is_pdf": True,  # Tell template to render for PDF
         }
-        # --- end existing context build ---
 
         # Render HTML template
         html_string = render(request, "reports/property.html", context).content.decode('utf-8')
-
-        # ---------------------
-        # Prefetch remote images
-        # ---------------------
-        session = make_requests_session(retries=2)
-        # conservative connect/read timeout tuple (connect, read) in seconds
-        REQUEST_TIMEOUT = (5, 12)
-
-        try:
-            soup = BeautifulSoup(html_string, "html.parser")
-            imgs = soup.find_all("img")
-            for img in imgs:
-                src = img.get("src") or ""
-                src = src.strip()
-                if not src:
-                    continue
-
-                # Resolve relative URLs to absolute URLs using request.base URL
-                if src.startswith('/'):
-                    src = urljoin(request.build_absolute_uri('/'), src)
-                # If src is data: already inlined, leave it
-                if src.startswith('data:'):
-                    continue
-
-                # If http(s) - try to fetch and save to temp file
-                if src.startswith("http://") or src.startswith("https://"):
-                    try:
-                        # Perform HEAD first to quickly fail on big redirects / unreachable hosts
-                        # Some servers block HEAD; so we use GET with stream=True
-                        resp = session.get(src, stream=True, timeout=REQUEST_TIMEOUT, allow_redirects=True)
-                        resp.raise_for_status()
-
-                        # choose extension
-                        path_ext = ""
-                        parsed = urlparse(src)
-                        if parsed.path:
-                            _, ext = os.path.splitext(parsed.path)
-                            if ext and len(ext) <= 5:
-                                path_ext = ext.lower()
-                        if not path_ext:
-                            ctype = (resp.headers.get("Content-Type") or "").lower()
-                            if "jpeg" in ctype or "jpg" in ctype:
-                                path_ext = ".jpg"
-                            elif "png" in ctype:
-                                path_ext = ".png"
-                            elif "webp" in ctype:
-                                path_ext = ".webp"
-                            else:
-                                path_ext = ".img"
-
-                        tmpf = tempfile.NamedTemporaryFile(delete=False, suffix=path_ext)
-                        # write in chunks
-                        for chunk in resp.iter_content(8192):
-                            if chunk:
-                                tmpf.write(chunk)
-                        tmpf.flush()
-                        tmpf.close()
-                        tmp_image_paths.append(tmpf.name)
-                        # point to local file for WeasyPrint
-                        img['src'] = 'file://' + tmpf.name
-
-                    except Exception as e:
-                        # If fetching fails for any reason, replace the <img> with a tiny inline placeholder
-                        try:
-                            img['src'] = TRANSPARENT_PNG_DATAURI
-                        except Exception:
-                            # as fallback, remove tag
-                            img.decompose()
-                        # Optionally record the failure in a small attribute for later debugging
-                        img['data-fetch-error'] = str(e)
-                        continue
-                else:
-                    # Not an http(s) URL (relative already handled) - leave as-is
-                    continue
-
-            html_string = str(soup)
-        except Exception as e:
-            # If anything goes wrong during prefetching, continue with original html_string
-            # but log the incident in the debug log.
-            with open(log_path, 'a') as fh:
-                fh.write("Image prefetch failed:\n")
-                fh.write(traceback.format_exc())
-                fh.write("\n\n")
-
-        # ---------------------
-        # PDF CSS (keep your CSS if you have a long block; short example below)
-        # ---------------------
+        
+        # PDF-specific CSS that WeasyPrint understands better
         pdf_css = """
         @page {
             size: A4;
@@ -966,90 +868,332 @@ def property_report_pdf(request, pk):
             page-break-inside: avoid;
         }
         """
-
-
-        # Create WeasyPrint objects and write PDF to disk
+      
+        # Generate PDF using WeasyPrint
         html_obj = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
         css_obj = CSS(string=pdf_css)
-
-        tmp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
-        tmp_pdf_path = tmp_pdf.name
-        tmp_pdf.close()
-
-        try:
-            # This is the critical call that used to hang. We wrap in try/except and log any error.
-            html_obj.write_pdf(target=tmp_pdf_path, stylesheets=[css_obj])
-        except Exception as we:
-            # Write a verbose debug file for immediate inspection
-            with open(log_path, 'a') as fh:
-                fh.write("WeasyPrint write_pdf failed:\n")
-                fh.write(traceback.format_exc())
-                fh.write("\n")
-                fh.write("Temp images created:\n")
-                for p in tmp_image_paths:
-                    fh.write(f" - {p} (exists={os.path.exists(p)})\n")
-                fh.write("\nHtml (truncated 10k chars):\n")
-                fh.write(html_string[:10000])
-                fh.write("\n\n")
-            # Clean up temp images (we'll remove PDF later in finally)
-            for p in tmp_image_paths:
-                try:
-                    os.remove(p)
-                except Exception:
-                    pass
-            # Return an HTTP 500 with pointer to the debug log
-            return HttpResponse(
-                f"Error generating PDF. See server log for details: {log_path}",
-                status=500
-            )
-
-        # If write_pdf succeeded, stream file back and clean up tmp files after streaming
-        def stream_file(path, image_paths, chunk_size=8192):
-            try:
-                with open(path, 'rb') as fh:
-                    while True:
-                        chunk = fh.read(chunk_size)
-                        if not chunk:
-                            break
-                        yield chunk
-            finally:
-                # cleanup pdf + tmp images
-                try:
-                    os.remove(path)
-                except Exception:
-                    pass
-                for p in image_paths:
-                    try:
-                        os.remove(p)
-                    except Exception:
-                        pass
-
-        safe_addr = slugify(getattr(prop, 'address', f'property_{pk}'))
-        filename = f"Property_Report_{safe_addr or pk}.pdf"
-
-        file_size = os.path.getsize(tmp_pdf_path)
-        response = StreamingHttpResponse(stream_file(tmp_pdf_path, tmp_image_paths), content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        response['Content-Length'] = str(file_size)
+        
+        # Create PDF in memory
+        pdf_file = io.BytesIO()
+        html_obj.write_pdf(pdf_file, stylesheets=[css_obj])
+        pdf_file.seek(0)
+        
+        # Return as downloadable file
+        filename = f"Property_Report_{prop.address.replace(' ', '_')}.pdf"
+        response = FileResponse(pdf_file, as_attachment=True, filename=filename, content_type='application/pdf')
         return response
-
+        
     except Exception as e:
-        # catch-all: write a detailed log and return path
-        with open(log_path, 'a') as fh:
-            fh.write("Unhandled exception when generating PDF:\n")
-            fh.write(traceback.format_exc())
-            fh.write("\n")
-        # try cleanup
-        try:
-            if tmp_pdf_path and os.path.exists(tmp_pdf_path):
-                os.remove(tmp_pdf_path)
-        except Exception:
-            pass
-        for p in tmp_image_paths:
-            try:
-                if os.path.exists(p):
-                    os.remove(p)
-            except Exception:
-                pass
-        return HttpResponse(f"Error generating PDF. See server log for details: {log_path}", status=500)
+        import traceback
+        error_msg = f"Error generating PDF: {str(e)}\n{traceback.format_exc()}"
+        return HttpResponse(error_msg, status=500)
 
+
+pdf_css = """
+        @page {
+            size: A4;
+            margin: 0.75cm;
+        }
+        
+        * {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            color: #333;
+            font-size: 10pt;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: white;
+        }
+        
+        .no-print {
+            display: none !important;
+        }
+        
+        .report-container {
+            max-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 0;
+        }
+        
+        .report-header {
+            background: #1e88e5;
+            color: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            page-break-inside: avoid;
+        }
+        
+        .report-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+        }
+        
+        .report-header h2 {
+            margin: 0.25rem 0;
+            font-size: 1rem;
+        }
+        
+        .report-header p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .section-card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1.25rem;
+            page-break-inside: avoid;
+            background: white;
+        }
+        
+        .section-header {
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            padding: 0.85rem;
+            font-weight: 600;
+            color: #1e88e5;
+            page-break-inside: avoid;
+        }
+        
+        .section-body {
+            padding: 1rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+        
+        .summary-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.75rem;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        
+        .summary-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e88e5;
+        }
+        
+        .summary-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .detail-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-left: 3px solid #1e88e5;
+            border-radius: 3px;
+            padding: 0.6rem;
+            page-break-inside: avoid;
+        }
+        
+        .detail-item-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #1e88e5;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+        
+        .detail-item-value {
+            font-size: 0.9rem;
+            color: #333;
+            word-break: break-word;
+        }
+        
+        .component-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            page-break-inside: avoid;
+            background: white;
+        }
+        
+        .component-details {
+            padding: 0.85rem;
+            background: #fafafa;
+        }
+        
+        .component-photos {
+            padding: 0.85rem;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+        
+        .component-title {
+            font-weight: 700;
+            color: #1e88e5;
+            margin-bottom: 0.5rem;
+        }
+        
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .photo-item {
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .signature-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed #ddd;
+            page-break-inside: avoid;
+        }
+        
+        .signature-header {
+            font-weight: 700;
+            color: #1e88e5;
+            margin-bottom: 1rem;
+        }
+        
+        .signature-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .signature-box {
+            page-break-inside: avoid;
+        }
+        
+        .signature-print-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .signature-pad {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #000;
+            background: white;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.75rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .data-table th {
+            background: #f5f5f5;
+            padding: 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1e88e5;
+            border: 1px solid #ddd;
+        }
+        
+        .data-table td {
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .sub-section {
+            margin-bottom: 1.25rem;
+            page-break-inside: avoid;
+        }
+        
+        .sub-section-header {
+            background: #f5f5f5;
+            padding: 0.6rem 0.85rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #1e88e5;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .room-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1.25rem;
+            page-break-inside: avoid;
+        }
+        
+        .room-header {
+            background: #e6f0ff;
+            padding: 0.75rem;
+            border-bottom: 1px solid #ddd;
+            font-weight: 600;
+            color: #1e88e5;
+        }
+        
+        .intro-section {
+            background: #f0f8ff;
+            border-left: 4px solid #1e88e5;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            page-break-inside: avoid;
+        }
+        
+        .intro-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.85rem;
+            margin-bottom: 0.75rem;
+            page-break-inside: avoid;
+        }
+        
+        .intro-card-header {
+            background: #e6f0ff;
+            border-bottom: 1px solid #ddd;
+            padding: 0.6rem;
+            font-weight: 600;
+            color: #1e88e5;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            border-top: 1px solid #ddd;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #666;
+            page-break-inside: avoid;
+        }
+        """
+        
