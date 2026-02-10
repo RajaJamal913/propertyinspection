@@ -448,20 +448,27 @@ def property_delete(request, pk):
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list')
     return redirect(next_url)
 
+import tempfile
+import os
+import io
+import traceback
+import json
+from django.http import HttpResponse, StreamingHttpResponse
+from django.utils.text import slugify
 
 def property_report_pdf(request, pk):
     """
-    Generate and download property report as PDF using WeasyPrint
+    Generate and download property report as PDF using WeasyPrint.
+    Writes PDF to a temporary file and streams it back to the client to
+    reduce peak memory usage (WeasyPrint writes directly to disk).
     """
     try:
         from weasyprint import HTML, CSS
-        import io
-        from django.http import FileResponse
     except ImportError:
         return HttpResponse("PDF generation library not installed. Please install weasyprint.", status=500)
-    
+
     try:
-        # Get the property report HTML content
+        # Build queryset and fetch property (same as your original code)
         qs = Property.objects.select_related(
             'utility', 'detector_compliance', 'cleaning_standard'
         ).prefetch_related(
@@ -487,7 +494,7 @@ def property_report_pdf(request, pk):
 
         prop = get_object_or_404(qs, pk=pk)
         counts = calculate_property_counts(prop)
-        
+
         smoke_detectors = getattr(prop, 'smoke_detectors', [])
         co_detectors = getattr(prop, 'co_detectors', [])
         smoke_detector_list = DetectorSerializer(smoke_detectors, many=True).data
@@ -499,7 +506,7 @@ def property_report_pdf(request, pk):
         front_photos = getattr(prop, 'front_elevation_photos', []) or []
         other_views = getattr(prop, 'other_views', []) or []
 
-        import json
+        # Ensure lists if JSONField stored single string accidentally
         if isinstance(front_photos, str):
             try:
                 front_photos = json.loads(front_photos)
@@ -531,8 +538,9 @@ def property_report_pdf(request, pk):
 
         # Render HTML template
         html_string = render(request, "reports/property.html", context).content.decode('utf-8')
-        
-        # PDF-specific CSS that WeasyPrint understands better
+
+        # (Keep your pdf_css string as before; omitted here for brevity,
+        # copy your existing pdf_css definition into this spot)
         pdf_css = """
         @page {
             size: A4;
@@ -840,22 +848,47 @@ def property_report_pdf(request, pk):
             page-break-inside: avoid;
         }
         """
-        
-        # Generate PDF using WeasyPrint
+      
+
+        # Create WeasyPrint objects
         html_obj = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
         css_obj = CSS(string=pdf_css)
-        
-        # Create PDF in memory
-        pdf_file = io.BytesIO()
-        html_obj.write_pdf(pdf_file, stylesheets=[css_obj])
-        pdf_file.seek(0)
-        
-        # Return as downloadable file
-        filename = f"Property_Report_{prop.address.replace(' ', '_')}.pdf"
-        response = FileResponse(pdf_file, as_attachment=True, filename=filename, content_type='application/pdf')
+
+        # Create a temporary file for the PDF (delete=False so we can control removal)
+        tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+        tmp_path = tmp_file.name
+        tmp_file.close()  # close so WeasyPrint can write on Windows
+
+        # Write PDF directly to disk (WeasyPrint will stream to the file)
+        html_obj.write_pdf(target=tmp_path, stylesheets=[css_obj])
+
+        # Stream the file back to client in chunks and delete after streaming
+        def stream_file(path, chunk_size=8192):
+            try:
+                with open(path, 'rb') as fh:
+                    while True:
+                        chunk = fh.read(chunk_size)
+                        if not chunk:
+                            break
+                        yield chunk
+            finally:
+                # best-effort cleanup
+                try:
+                    os.remove(path)
+                except Exception:
+                    pass
+
+        # Safe filename: slugify the address
+        safe_addr = slugify(getattr(prop, 'address', f'property_{pk}'))
+        filename = f"Property_Report_{safe_addr or pk}.pdf"
+
+        file_size = os.path.getsize(tmp_path)
+        response = StreamingHttpResponse(stream_file(tmp_path), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Length'] = str(file_size)
+
         return response
-        
+
     except Exception as e:
-        import traceback
         error_msg = f"Error generating PDF: {str(e)}\n{traceback.format_exc()}"
         return HttpResponse(error_msg, status=500)
