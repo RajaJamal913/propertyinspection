@@ -448,6 +448,10 @@ def property_delete(request, pk):
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list')
     return redirect(next_url)
 
+# Add these imports near the top of your views.py (if not already present)
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 import tempfile
 import os
 import io
@@ -459,13 +463,19 @@ from django.utils.text import slugify
 def property_report_pdf(request, pk):
     """
     Generate and download property report as PDF using WeasyPrint.
-    Writes PDF to a temporary file and streams it back to the client to
-    reduce peak memory usage (WeasyPrint writes directly to disk).
+    - Prefetches remote images (requests) to local temp files and rewrites <img src>
+      to file:// paths so WeasyPrint won't hang on network fetches.
+    - Writes PDF to a temporary file and streams it back to the client to reduce
+      peak memory usage.
+    - Cleans up temp images and PDF after streaming.
     """
     try:
         from weasyprint import HTML, CSS
     except ImportError:
         return HttpResponse("PDF generation library not installed. Please install weasyprint.", status=500)
+
+    tmp_image_paths = []
+    tmp_pdf_path = None
 
     try:
         # Build queryset and fetch property (same as your original code)
@@ -539,8 +549,73 @@ def property_report_pdf(request, pk):
         # Render HTML template
         html_string = render(request, "reports/property.html", context).content.decode('utf-8')
 
-        # (Keep your pdf_css string as before; omitted here for brevity,
-        # copy your existing pdf_css definition into this spot)
+        # ---------------------------------------------------------------------
+        # PREFETCH REMOTE IMAGES -> write to temp files and replace src with file://
+        # ---------------------------------------------------------------------
+        try:
+            soup = BeautifulSoup(html_string, "html.parser")
+            imgs = soup.find_all("img")
+            for img in imgs:
+                src = img.get("src")
+                if not src:
+                    continue
+
+                # Only prefetch http(s) images. Leave data: and relative paths alone.
+                if src.startswith("http://") or src.startswith("https://"):
+                    try:
+                        # Tunable timeout (seconds)
+                        resp = requests.get(src, stream=True, timeout=8)
+                        resp.raise_for_status()
+
+                        # Determine extension from URL or content-type
+                        path_ext = ''
+                        parsed = urlparse(src)
+                        if parsed.path:
+                            _, ext = os.path.splitext(parsed.path)
+                            if ext and len(ext) <= 5:
+                                path_ext = ext
+
+                        if not path_ext:
+                            ctype = (resp.headers.get("Content-Type") or "").lower()
+                            if "jpeg" in ctype or "jpg" in ctype:
+                                path_ext = ".jpg"
+                            elif "png" in ctype:
+                                path_ext = ".png"
+                            elif "webp" in ctype:
+                                path_ext = ".webp"
+                            else:
+                                path_ext = ".img"
+
+                        tmpf = tempfile.NamedTemporaryFile(delete=False, suffix=path_ext)
+                        for chunk in resp.iter_content(8192):
+                            if chunk:
+                                tmpf.write(chunk)
+                        tmpf.flush()
+                        tmpf.close()
+
+                        tmp_image_paths.append(tmpf.name)
+                        img['src'] = 'file://' + tmpf.name
+
+                    except Exception:
+                        # If fetch fails, remove image tag so WeasyPrint doesn't try to fetch it.
+                        try:
+                            img.decompose()
+                        except Exception:
+                            img['src'] = ''
+                        continue
+                else:
+                    # non-http(s) (data URIs, relative paths) - leave them as-is
+                    continue
+
+            # Replace html_string with modified content
+            html_string = str(soup)
+        except Exception:
+            # If anything fails here, continue with original html_string (safer fallback)
+            pass
+
+        # ---------------------------------------------------------------------
+        # PDF-specific CSS (use your existing pdf_css here). Keep as-is to preserve styling.
+        # ---------------------------------------------------------------------
         pdf_css = """
         @page {
             size: A4;
@@ -848,22 +923,21 @@ def property_report_pdf(request, pk):
             page-break-inside: avoid;
         }
         """
-      
 
-        # Create WeasyPrint objects
+        # Create WeasyPrint objects (WeasyPrint will read local file:// images)
         html_obj = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
         css_obj = CSS(string=pdf_css)
 
-        # Create a temporary file for the PDF (delete=False so we can control removal)
-        tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
-        tmp_path = tmp_file.name
-        tmp_file.close()  # close so WeasyPrint can write on Windows
+        # Create a temporary file for the PDF
+        tmp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+        tmp_pdf_path = tmp_pdf.name
+        tmp_pdf.close()
 
-        # Write PDF directly to disk (WeasyPrint will stream to the file)
-        html_obj.write_pdf(target=tmp_path, stylesheets=[css_obj])
+        # Write PDF directly to disk (WeasyPrint streams to the file)
+        html_obj.write_pdf(target=tmp_pdf_path, stylesheets=[css_obj])
 
-        # Stream the file back to client in chunks and delete after streaming
-        def stream_file(path, chunk_size=8192):
+        # Stream the file back to client and cleanup temp files after streaming
+        def stream_file(path, image_paths, chunk_size=8192):
             try:
                 with open(path, 'rb') as fh:
                     while True:
@@ -872,23 +946,42 @@ def property_report_pdf(request, pk):
                             break
                         yield chunk
             finally:
-                # best-effort cleanup
+                # best-effort cleanup: pdf + tmp images
                 try:
                     os.remove(path)
                 except Exception:
                     pass
+                for p in image_paths:
+                    try:
+                        os.remove(p)
+                    except Exception:
+                        pass
 
         # Safe filename: slugify the address
         safe_addr = slugify(getattr(prop, 'address', f'property_{pk}'))
         filename = f"Property_Report_{safe_addr or pk}.pdf"
 
-        file_size = os.path.getsize(tmp_path)
-        response = StreamingHttpResponse(stream_file(tmp_path), content_type='application/pdf')
+        file_size = os.path.getsize(tmp_pdf_path)
+        response = StreamingHttpResponse(stream_file(tmp_pdf_path, tmp_image_paths), content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         response['Content-Length'] = str(file_size)
 
         return response
 
     except Exception as e:
+        # Ensure cleanup of any temp images or pdf if an exception happens
+        try:
+            if tmp_pdf_path and os.path.exists(tmp_pdf_path):
+                os.remove(tmp_pdf_path)
+        except Exception:
+            pass
+        for p in tmp_image_paths:
+            try:
+                if os.path.exists(p):
+                    os.remove(p)
+            except Exception:
+                pass
+
         error_msg = f"Error generating PDF: {str(e)}\n{traceback.format_exc()}"
         return HttpResponse(error_msg, status=500)
+
