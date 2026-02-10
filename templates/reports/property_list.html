@@ -4,8 +4,19 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Property Reports</h2>
-   
   </div>
+
+  {# Messages (Django messages framework) #}
+  {% if messages %}
+    <div class="mt-2">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   {% if properties %}
   <div class="table-responsive">
@@ -24,11 +35,13 @@
       </thead>
       <tbody>
         {% for prop in properties %}
-        <tr>
+        <tr id="property-row-{{ prop.id }}">
           <td>{{ prop.id }}</td>
           <td>
             {{ prop.address|default:"—" }}
-            {% if prop.address and prop.address|length > 60 %}<small class="text-muted d-block">{{ prop.address|slice:":60" }}…</small>{% endif %}
+            {% if prop.address and prop.address|length > 60 %}
+              <small class="text-muted d-block">{{ prop.address|slice:":60" }}…</small>
+            {% endif %}
           </td>
           <td>{{ prop.postcode|default:"—" }}</td>
           <td>{{ prop.property_type|default:"—" }}</td>
@@ -43,7 +56,18 @@
           </td>
           <td class="text-end">
             <a href="{% url 'property_report' prop.id %}" class="btn btn-sm btn-primary" target="_blank" rel="noopener">View report</a>
-            
+
+            {# Delete form visible to everyone (actual deletion requires login due to view decorator) #}
+            <form method="post"
+                  action="{% url 'property_delete' prop.id %}"
+                  style="display:inline-block; margin-left:0.45rem;"
+                  onsubmit="return handleDeleteSubmit(this);">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path|escape }}">
+              <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete property">
+                Delete
+              </button>
+            </form>
           </td>
         </tr>
         {% endfor %}
@@ -84,4 +108,23 @@
     <div class="alert alert-info">No properties found.</div>
   {% endif %}
 </div>
+
+{# Small client-side helper to confirm + prevent double submit #}
+<script>
+function handleDeleteSubmit(form) {
+  // confirm
+  if (!confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+    return false;
+  }
+
+  // disable button to avoid double submit
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = 'Deleting…';
+  }
+
+  return true;
+}
+</script>
 {% endblock %}
