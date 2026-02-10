@@ -451,7 +451,7 @@ def property_delete(request, pk):
 # Add these imports near the top of your views.py (if not already present)
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 import tempfile
 import os
 import io
@@ -459,26 +459,49 @@ import traceback
 import json
 from django.http import HttpResponse, StreamingHttpResponse
 from django.utils.text import slugify
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+import base64
+import multiprocessing
+
+# 1x1 transparent PNG data URI (used as a placeholder when an image cannot be fetched)
+TRANSPARENT_PNG_DATAURI = (
+    "data:image/png;base64,"
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAE0lEQVR42mP8/5+BFzA1wMDA"
+    "gAEAAf8C4qv2xQAAAABJRU5ErkJggg=="
+)
+
+def make_requests_session(retries=2, backoff_factor=0.3, status_forcelist=(500,502,503,504)):
+    s = requests.Session()
+    retry = Retry(total=retries, read=retries, connect=retries,
+                  backoff_factor=backoff_factor,
+                  status_forcelist=status_forcelist,
+                  raise_on_status=False)
+    adapter = HTTPAdapter(max_retries=retry)
+    s.mount('http://', adapter)
+    s.mount('https://', adapter)
+    return s
 
 def property_report_pdf(request, pk):
     """
-    Generate and download property report as PDF using WeasyPrint.
-    - Prefetches remote images (requests) to local temp files and rewrites <img src>
-      to file:// paths so WeasyPrint won't hang on network fetches.
-    - Writes PDF to a temporary file and streams it back to the client to reduce
-      peak memory usage.
-    - Cleans up temp images and PDF after streaming.
+    Robust PDF generator:
+      - prefetch remote images with timeouts/retries
+      - replace unreachable images with inline placeholder
+      - write PDF to a temp file and stream to the client
+      - on failure, write detailed log to /tmp/weasyprint_error_<pid>.log and return link
     """
     try:
         from weasyprint import HTML, CSS
     except ImportError:
         return HttpResponse("PDF generation library not installed. Please install weasyprint.", status=500)
 
+    # Prepare containers for temp paths so we can cleanup
     tmp_image_paths = []
     tmp_pdf_path = None
+    log_path = f"/tmp/weasyprint_error_{os.getpid()}.log"
 
     try:
-        # Build queryset and fetch property (same as your original code)
+        # --- your existing queryset + context construction (unchanged) ---
         qs = Property.objects.select_related(
             'utility', 'detector_compliance', 'cleaning_standard'
         ).prefetch_related(
@@ -545,36 +568,49 @@ def property_report_pdf(request, pk):
             "other_views": other_views,
             "is_pdf": True,  # Tell template to render for PDF
         }
+        # --- end existing context build ---
 
         # Render HTML template
         html_string = render(request, "reports/property.html", context).content.decode('utf-8')
 
-        # ---------------------------------------------------------------------
-        # PREFETCH REMOTE IMAGES -> write to temp files and replace src with file://
-        # ---------------------------------------------------------------------
+        # ---------------------
+        # Prefetch remote images
+        # ---------------------
+        session = make_requests_session(retries=2)
+        # conservative connect/read timeout tuple (connect, read) in seconds
+        REQUEST_TIMEOUT = (5, 12)
+
         try:
             soup = BeautifulSoup(html_string, "html.parser")
             imgs = soup.find_all("img")
             for img in imgs:
-                src = img.get("src")
+                src = img.get("src") or ""
+                src = src.strip()
                 if not src:
                     continue
 
-                # Only prefetch http(s) images. Leave data: and relative paths alone.
+                # Resolve relative URLs to absolute URLs using request.base URL
+                if src.startswith('/'):
+                    src = urljoin(request.build_absolute_uri('/'), src)
+                # If src is data: already inlined, leave it
+                if src.startswith('data:'):
+                    continue
+
+                # If http(s) - try to fetch and save to temp file
                 if src.startswith("http://") or src.startswith("https://"):
                     try:
-                        # Tunable timeout (seconds)
-                        resp = requests.get(src, stream=True, timeout=8)
+                        # Perform HEAD first to quickly fail on big redirects / unreachable hosts
+                        # Some servers block HEAD; so we use GET with stream=True
+                        resp = session.get(src, stream=True, timeout=REQUEST_TIMEOUT, allow_redirects=True)
                         resp.raise_for_status()
 
-                        # Determine extension from URL or content-type
-                        path_ext = ''
+                        # choose extension
+                        path_ext = ""
                         parsed = urlparse(src)
                         if parsed.path:
                             _, ext = os.path.splitext(parsed.path)
                             if ext and len(ext) <= 5:
-                                path_ext = ext
-
+                                path_ext = ext.lower()
                         if not path_ext:
                             ctype = (resp.headers.get("Content-Type") or "").lower()
                             if "jpeg" in ctype or "jpg" in ctype:
@@ -587,35 +623,42 @@ def property_report_pdf(request, pk):
                                 path_ext = ".img"
 
                         tmpf = tempfile.NamedTemporaryFile(delete=False, suffix=path_ext)
+                        # write in chunks
                         for chunk in resp.iter_content(8192):
                             if chunk:
                                 tmpf.write(chunk)
                         tmpf.flush()
                         tmpf.close()
-
                         tmp_image_paths.append(tmpf.name)
+                        # point to local file for WeasyPrint
                         img['src'] = 'file://' + tmpf.name
 
-                    except Exception:
-                        # If fetch fails, remove image tag so WeasyPrint doesn't try to fetch it.
+                    except Exception as e:
+                        # If fetching fails for any reason, replace the <img> with a tiny inline placeholder
                         try:
-                            img.decompose()
+                            img['src'] = TRANSPARENT_PNG_DATAURI
                         except Exception:
-                            img['src'] = ''
+                            # as fallback, remove tag
+                            img.decompose()
+                        # Optionally record the failure in a small attribute for later debugging
+                        img['data-fetch-error'] = str(e)
                         continue
                 else:
-                    # non-http(s) (data URIs, relative paths) - leave them as-is
+                    # Not an http(s) URL (relative already handled) - leave as-is
                     continue
 
-            # Replace html_string with modified content
             html_string = str(soup)
-        except Exception:
-            # If anything fails here, continue with original html_string (safer fallback)
-            pass
+        except Exception as e:
+            # If anything goes wrong during prefetching, continue with original html_string
+            # but log the incident in the debug log.
+            with open(log_path, 'a') as fh:
+                fh.write("Image prefetch failed:\n")
+                fh.write(traceback.format_exc())
+                fh.write("\n\n")
 
-        # ---------------------------------------------------------------------
-        # PDF-specific CSS (use your existing pdf_css here). Keep as-is to preserve styling.
-        # ---------------------------------------------------------------------
+        # ---------------------
+        # PDF CSS (keep your CSS if you have a long block; short example below)
+        # ---------------------
         pdf_css = """
         @page {
             size: A4;
@@ -924,19 +967,43 @@ def property_report_pdf(request, pk):
         }
         """
 
-        # Create WeasyPrint objects (WeasyPrint will read local file:// images)
+
+        # Create WeasyPrint objects and write PDF to disk
         html_obj = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
         css_obj = CSS(string=pdf_css)
 
-        # Create a temporary file for the PDF
         tmp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
         tmp_pdf_path = tmp_pdf.name
         tmp_pdf.close()
 
-        # Write PDF directly to disk (WeasyPrint streams to the file)
-        html_obj.write_pdf(target=tmp_pdf_path, stylesheets=[css_obj])
+        try:
+            # This is the critical call that used to hang. We wrap in try/except and log any error.
+            html_obj.write_pdf(target=tmp_pdf_path, stylesheets=[css_obj])
+        except Exception as we:
+            # Write a verbose debug file for immediate inspection
+            with open(log_path, 'a') as fh:
+                fh.write("WeasyPrint write_pdf failed:\n")
+                fh.write(traceback.format_exc())
+                fh.write("\n")
+                fh.write("Temp images created:\n")
+                for p in tmp_image_paths:
+                    fh.write(f" - {p} (exists={os.path.exists(p)})\n")
+                fh.write("\nHtml (truncated 10k chars):\n")
+                fh.write(html_string[:10000])
+                fh.write("\n\n")
+            # Clean up temp images (we'll remove PDF later in finally)
+            for p in tmp_image_paths:
+                try:
+                    os.remove(p)
+                except Exception:
+                    pass
+            # Return an HTTP 500 with pointer to the debug log
+            return HttpResponse(
+                f"Error generating PDF. See server log for details: {log_path}",
+                status=500
+            )
 
-        # Stream the file back to client and cleanup temp files after streaming
+        # If write_pdf succeeded, stream file back and clean up tmp files after streaming
         def stream_file(path, image_paths, chunk_size=8192):
             try:
                 with open(path, 'rb') as fh:
@@ -946,7 +1013,7 @@ def property_report_pdf(request, pk):
                             break
                         yield chunk
             finally:
-                # best-effort cleanup: pdf + tmp images
+                # cleanup pdf + tmp images
                 try:
                     os.remove(path)
                 except Exception:
@@ -957,7 +1024,6 @@ def property_report_pdf(request, pk):
                     except Exception:
                         pass
 
-        # Safe filename: slugify the address
         safe_addr = slugify(getattr(prop, 'address', f'property_{pk}'))
         filename = f"Property_Report_{safe_addr or pk}.pdf"
 
@@ -965,11 +1031,15 @@ def property_report_pdf(request, pk):
         response = StreamingHttpResponse(stream_file(tmp_pdf_path, tmp_image_paths), content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         response['Content-Length'] = str(file_size)
-
         return response
 
     except Exception as e:
-        # Ensure cleanup of any temp images or pdf if an exception happens
+        # catch-all: write a detailed log and return path
+        with open(log_path, 'a') as fh:
+            fh.write("Unhandled exception when generating PDF:\n")
+            fh.write(traceback.format_exc())
+            fh.write("\n")
+        # try cleanup
         try:
             if tmp_pdf_path and os.path.exists(tmp_pdf_path):
                 os.remove(tmp_pdf_path)
@@ -981,7 +1051,5 @@ def property_report_pdf(request, pk):
                     os.remove(p)
             except Exception:
                 pass
-
-        error_msg = f"Error generating PDF: {str(e)}\n{traceback.format_exc()}"
-        return HttpResponse(error_msg, status=500)
+        return HttpResponse(f"Error generating PDF. See server log for details: {log_path}", status=500)
 
