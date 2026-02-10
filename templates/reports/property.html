@@ -1234,9 +1234,14 @@ body {
                     </div>
                     
                     <div class="text-end no-print">
-                        <button class="print-btn" id="downloadBtn" type="button" onclick="window.print()">
-                            <i class="bi bi-download"></i> Download Report
-                        </button>
+                        <button class="print-btn" id="downloadBtn" type="button" onclick="downloadReport()">
+  <i class="bi bi-download"></i> Download Report
+</button>
+
+<!-- and add a proper Print button if you still want HTML print -->
+<button class="print-btn no-print" type="button" onclick="window.print()">
+  <i class="bi bi-printer"></i> Print (HTML)
+</button>
                     </div>
                 </div>
             </div>
@@ -1423,7 +1428,8 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
             </div>
 
-            <!-- Front View -->
+            <!-- Front View - Only show if photos exist -->
+            {% if front_photos and front_photos|length > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
@@ -1432,7 +1438,6 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     Front View
                 </div>
                 <div class="section-body">
-                    {% if front_photos %}
                     <div style="display: flex; flex-wrap: wrap; gap: 12px;">
                         {% for url in front_photos %}
                             {% if url %}
@@ -1442,16 +1447,12 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% endif %}
                         {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-image text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No front view photos available</p>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Other Views -->
+            <!-- Other Views - Only show if photos exist -->
+            {% if other_views and other_views|length > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
@@ -1460,7 +1461,6 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     Other Views
                 </div>
                 <div class="section-body">
-                    {% if other_views %}
                     <div style="display: flex; flex-wrap: wrap; gap: 12px;">
                         {% for url in other_views %}
                             {% if url %}
@@ -1470,16 +1470,11 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% endif %}
                         {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-image text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No other view photos available</p>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Summary Section -->
+            <!-- Summary Section - Always show -->
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
@@ -1540,7 +1535,8 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
             </div>
             
-            <!-- Tenants -->
+            <!-- Tenants - Only show if tenants exist -->
+            {% if property.tenantDetails and tenant_count > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
@@ -1550,7 +1546,6 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     <span class="badge-count">{{ tenant_count }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.tenantDetails %}
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -1574,16 +1569,12 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% endfor %}
                         </tbody>
                     </table>
-                    {% else %}
-                    <div class="text-center py-4">
-                        <i class="bi bi-person-x text-muted fs-1"></i>
-                        <p class="text-muted mt-2">No tenants recorded</p>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
+            {% endif %}
             
-            <!-- Utilities -->
+            <!-- Utilities - Only show if utility data exists -->
+            {% if utility and meters_count > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
@@ -1592,428 +1583,363 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     Utilities ({{ meters_count }})
                 </div>
                 <div class="section-body">
-                    {% if utility %}
-                        <!-- Gas Meter -->
-                        <div class="sub-section mb-4">
-                            <div class="sub-section-header">
-                                <i class="bi bi-lightning-charge me-2"></i>
-                                Gas Meter
-                            </div>
-                            <div class="component-container">
-                                <div class="component-details">
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Serial Number</div>
-                                            <div class="detail-item-value">{{ utility.gasMeterSerialNumber|default:"—" }}</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Reading</div>
-                                            <div class="detail-item-value">{{ utility.gasMeterReading|default:"—" }}</div>
-                                        </div>
+                    <!-- Gas Meter -->
+                    <div class="sub-section mb-4">
+                        <div class="sub-section-header">
+                            <i class="bi bi-lightning-charge me-2"></i>
+                            Gas Meter
+                        </div>
+                        <div class="component-container">
+                            <div class="component-details">
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Serial Number</div>
+                                        <div class="detail-item-value">{{ utility.gasMeterSerialNumber|default:"—" }}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Reading</div>
+                                        <div class="detail-item-value">{{ utility.gasMeterReading|default:"—" }}</div>
                                     </div>
                                 </div>
-                                <div class="component-photos">
-                                    <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                    {% if utility.gasMeterPhoto %}
-                                        <div class="photo-gallery">
-                                            {% for p in utility.gasMeterPhoto %}
-                                            <div class="photo-item">
-                                                <img src="{{ p }}" alt="Gas meter photo">
-                                                <div class="photo-label">Gas Meter</div>
-                                            </div>
-                                            {% endfor %}
+                            </div>
+                            <div class="component-photos">
+                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                                {% if utility.gasMeterPhoto %}
+                                    <div class="photo-gallery">
+                                        {% for p in utility.gasMeterPhoto %}
+                                        <div class="photo-item">
+                                            <img src="{{ p }}" alt="Gas meter photo">
+                                            <div class="photo-label">Gas Meter</div>
                                         </div>
-                                    {% else %}
-                                        <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
-                                    {% endif %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% endif %}
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Electricity Meter -->
-                        <div class="sub-section mb-4">
-                            <div class="sub-section-header">
-                                <i class="bi bi-lightning-charge me-2"></i>
-                                Electricity Meter
-                            </div>
-                            <div class="component-container">
-                                <div class="component-details">
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Serial Number</div>
-                                            <div class="detail-item-value">{{ utility.electricityMeterSerialNumber|default:"—" }}</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Reading</div>
-                                            <div class="detail-item-value">{{ utility.electricityMeterReading|default:"—" }}</div>
-                                        </div>
+                    <!-- Electricity Meter -->
+                    <div class="sub-section mb-4">
+                        <div class="sub-section-header">
+                            <i class="bi bi-lightning-charge me-2"></i>
+                            Electricity Meter
+                        </div>
+                        <div class="component-container">
+                            <div class="component-details">
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Serial Number</div>
+                                        <div class="detail-item-value">{{ utility.electricityMeterSerialNumber|default:"—" }}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Reading</div>
+                                        <div class="detail-item-value">{{ utility.electricityMeterReading|default:"—" }}</div>
                                     </div>
                                 </div>
-                                <div class="component-photos">
-                                    <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                    {% if utility.electricityMeterPhoto %}
-                                        <div class="photo-gallery">
-                                            {% for p in utility.electricityMeterPhoto %}
-                                            <div class="photo-item">
-                                                <img src="{{ p }}" alt="Electricity meter photo">
-                                                <div class="photo-label">Electricity Meter</div>
-                                            </div>
-                                            {% endfor %}
+                            </div>
+                            <div class="component-photos">
+                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                                {% if utility.electricityMeterPhoto %}
+                                    <div class="photo-gallery">
+                                        {% for p in utility.electricityMeterPhoto %}
+                                        <div class="photo-item">
+                                            <img src="{{ p }}" alt="Electricity meter photo">
+                                            <div class="photo-label">Electricity Meter</div>
                                         </div>
-                                    {% else %}
-                                        <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
-                                    {% endif %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% endif %}
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Water Meter -->
-                        {% if utility.waterMeterReading or utility.waterMeterSerialNumber or utility.waterMeterPhoto %}
-                        <div class="sub-section mb-4">
-                            <div class="sub-section-header">
-                                <i class="bi bi-water me-2"></i>
-                                Water Meter
-                            </div>
-                            <div class="component-container">
-                                <div class="component-details">
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Serial Number</div>
-                                            <div class="detail-item-value">{{ utility.waterMeterSerialNumber|default:"—" }}</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Reading</div>
-                                            <div class="detail-item-value">{{ utility.waterMeterReading|default:"—" }}</div>
-                                        </div>
+                    <!-- Water Meter -->
+                    {% if utility.waterMeterReading or utility.waterMeterSerialNumber or utility.waterMeterPhoto %}
+                    <div class="sub-section mb-4">
+                        <div class="sub-section-header">
+                            <i class="bi bi-water me-2"></i>
+                            Water Meter
+                        </div>
+                        <div class="component-container">
+                            <div class="component-details">
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Serial Number</div>
+                                        <div class="detail-item-value">{{ utility.waterMeterSerialNumber|default:"—" }}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Reading</div>
+                                        <div class="detail-item-value">{{ utility.waterMeterReading|default:"—" }}</div>
                                     </div>
                                 </div>
-                                <div class="component-photos">
-                                    <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                    {% if utility.waterMeterPhoto %}
-                                        <div class="photo-gallery">
-                                            {% for p in utility.waterMeterPhoto %}
-                                            <div class="photo-item">
-                                                <img src="{{ p }}" alt="Water meter photo">
-                                                <div class="photo-label">Water Meter</div>
-                                            </div>
-                                            {% endfor %}
+                            </div>
+                            <div class="component-photos">
+                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                                {% if utility.waterMeterPhoto %}
+                                    <div class="photo-gallery">
+                                        {% for p in utility.waterMeterPhoto %}
+                                        <div class="photo-item">
+                                            <img src="{{ p }}" alt="Water meter photo">
+                                            <div class="photo-label">Water Meter</div>
                                         </div>
-                                    {% else %}
-                                        <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
-                                    {% endif %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% endif %}
                             </div>
                         </div>
-                        {% endif %}
+                    </div>
+                    {% endif %}
 
-                        <!-- Heat Meter -->
-                        {% if utility.heatMeterReading or utility.heatMeterSerialNumber or utility.heatMeterPhoto %}
-                        <div class="sub-section mb-4">
-                            <div class="sub-section-header">
-                                <i class="bi bi-fire me-2"></i>
-                                Heat Meter
-                            </div>
-                            <div class="component-container">
-                                <div class="component-details">
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Serial Number</div>
-                                            <div class="detail-item-value">{{ utility.heatMeterSerialNumber|default:"—" }}</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Reading</div>
-                                            <div class="detail-item-value">{{ utility.heatMeterReading|default:"—" }}</div>
-                                        </div>
+                    <!-- Heat Meter -->
+                    {% if utility.heatMeterReading or utility.heatMeterSerialNumber or utility.heatMeterPhoto %}
+                    <div class="sub-section mb-4">
+                        <div class="sub-section-header">
+                            <i class="bi bi-fire me-2"></i>
+                            Heat Meter
+                        </div>
+                        <div class="component-container">
+                            <div class="component-details">
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Serial Number</div>
+                                        <div class="detail-item-value">{{ utility.heatMeterSerialNumber|default:"—" }}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Reading</div>
+                                        <div class="detail-item-value">{{ utility.heatMeterReading|default:"—" }}</div>
                                     </div>
                                 </div>
-                                <div class="component-photos">
-                                    <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                    {% if utility.heatMeterPhoto %}
-                                        <div class="photo-gallery">
-                                            {% for p in utility.heatMeterPhoto %}
-                                            <div class="photo-item">
-                                                <img src="{{ p }}" alt="Heat meter photo">
-                                                <div class="photo-label">Heat Meter</div>
-                                            </div>
-                                            {% endfor %}
+                            </div>
+                            <div class="component-photos">
+                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                                {% if utility.heatMeterPhoto %}
+                                    <div class="photo-gallery">
+                                        {% for p in utility.heatMeterPhoto %}
+                                        <div class="photo-item">
+                                            <img src="{{ p }}" alt="Heat meter photo">
+                                            <div class="photo-label">Heat Meter</div>
                                         </div>
-                                    {% else %}
-                                        <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
-                                    {% endif %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% endif %}
                             </div>
                         </div>
-                        {% endif %}
+                    </div>
+                    {% endif %}
 
-                        <!-- Other Meter -->
-                        {% if utility.otherMeterType or utility.otherMeterReading or utility.otherMeterSerialNumber or utility.otherMeterPhoto %}
-                        <div class="sub-section mb-4">
-                            <div class="sub-section-header">
-                                <i class="bi bi-lightning-charge me-2"></i>
-                                {{ utility.otherMeterType }} Meter
-                            </div>
-                            <div class="component-container">
-                                <div class="component-details">
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Serial Number</div>
-                                            <div class="detail-item-value">{{ utility.otherMeterSerialNumber|default:"—" }}</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Reading</div>
-                                            <div class="detail-item-value">{{ utility.otherMeterReading|default:"—" }}</div>
-                                        </div>
+                    <!-- Other Meter -->
+                    {% if utility.otherMeterType or utility.otherMeterReading or utility.otherMeterSerialNumber or utility.otherMeterPhoto %}
+                    <div class="sub-section mb-4">
+                        <div class="sub-section-header">
+                            <i class="bi bi-lightning-charge me-2"></i>
+                            {{ utility.otherMeterType }} Meter
+                        </div>
+                        <div class="component-container">
+                            <div class="component-details">
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Serial Number</div>
+                                        <div class="detail-item-value">{{ utility.otherMeterSerialNumber|default:"—" }}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Reading</div>
+                                        <div class="detail-item-value">{{ utility.otherMeterReading|default:"—" }}</div>
                                     </div>
                                 </div>
-                                <div class="component-photos">
-                                    <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                    {% if utility.otherMeterPhoto %}
-                                        <div class="photo-gallery">
-                                            {% for p in utility.otherMeterPhoto %}
-                                            <div class="photo-item">
-                                                <img src="{{ p }}" alt="Other meter photo">
-                                                <div class="photo-label">{{ utility.otherMeterType }}</div>
-                                            </div>
-                                            {% endfor %}
+                            </div>
+                            <div class="component-photos">
+                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                                {% if utility.otherMeterPhoto %}
+                                    <div class="photo-gallery">
+                                        {% for p in utility.otherMeterPhoto %}
+                                        <div class="photo-item">
+                                            <img src="{{ p }}" alt="Other meter photo">
+                                            <div class="photo-label">{{ utility.otherMeterType }}</div>
                                         </div>
-                                    {% else %}
-                                        <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
-                                    {% endif %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% endif %}
                             </div>
                         </div>
-                        {% endif %}
+                    </div>
+                    {% endif %}
 
-                        <!-- Stopcock -->
-                        <div class="sub-section mb-4">
-                            <div class="sub-section-header">
-                                <i class="bi bi-water me-2"></i>
-                                Stopcock
-                            </div>
-                            <div class="component-container">
-                                <div class="component-details">
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Location</div>
-                                            <div class="detail-item-value">{{ utility.stopcokLocation|default:"—" }}</div>
-                                        </div>
+                    <!-- Stopcock -->
+                    <div class="sub-section mb-4">
+                        <div class="sub-section-header">
+                            <i class="bi bi-water me-2"></i>
+                            Stopcock
+                        </div>
+                        <div class="component-container">
+                            <div class="component-details">
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Location</div>
+                                        <div class="detail-item-value">{{ utility.stopcokLocation|default:"—" }}</div>
                                     </div>
                                 </div>
-                                <div class="component-photos">
-                                    <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                    {% if utility.stopcokPhoto %}
-                                        <div class="photo-gallery">
-                                            {% for p in utility.stopcokPhoto %}
-                                            <div class="photo-item">
-                                                <img src="{{ p }}" alt="Stopcock photo">
-                                                <div class="photo-label">Stopcock</div>
-                                            </div>
-                                            {% endfor %}
+                            </div>
+                            <div class="component-photos">
+                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                                {% if utility.stopcokPhoto %}
+                                    <div class="photo-gallery">
+                                        {% for p in utility.stopcokPhoto %}
+                                        <div class="photo-item">
+                                            <img src="{{ p }}" alt="Stopcock photo">
+                                            <div class="photo-label">Stopcock</div>
                                         </div>
-                                    {% else %}
-                                        <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
-                                    {% endif %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% endif %}
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Fusebox -->
-                        <div class="sub-section mb-4">
-                            <div class="sub-section-header">
-                                <i class="bi bi-lightning me-2"></i>
-                                Fusebox
-                            </div>
-                            <div class="component-container">
-                                <div class="component-details">
-                                    <div class="details-grid">
-                                        <div class="detail-item">
-                                            <div class="detail-item-label">Location</div>
-                                            <div class="detail-item-value">{{ utility.fuseboxLocation|default:"—" }}</div>
-                                        </div>
+                    <!-- Fusebox -->
+                    <div class="sub-section mb-4">
+                        <div class="sub-section-header">
+                            <i class="bi bi-lightning me-2"></i>
+                            Fusebox
+                        </div>
+                        <div class="component-container">
+                            <div class="component-details">
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-item-label">Location</div>
+                                        <div class="detail-item-value">{{ utility.fuseboxLocation|default:"—" }}</div>
                                     </div>
                                 </div>
-                                <div class="component-photos">
-                                    <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                    {% if utility.fuseboxPhoto %}
-                                        <div class="photo-gallery">
-                                            {% for p in utility.fuseboxPhoto %}
-                                            <div class="photo-item">
-                                                <img src="{{ p }}" alt="Fusebox photo">
-                                                <div class="photo-label">Fusebox</div>
-                                            </div>
-                                            {% endfor %}
+                            </div>
+                            <div class="component-photos">
+                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                                {% if utility.fuseboxPhoto %}
+                                    <div class="photo-gallery">
+                                        {% for p in utility.fuseboxPhoto %}
+                                        <div class="photo-item">
+                                            <img src="{{ p }}" alt="Fusebox photo">
+                                            <div class="photo-label">Fusebox</div>
                                         </div>
-                                    {% else %}
-                                        <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
-                                    {% endif %}
-                                </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% endif %}
                             </div>
                         </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-plug text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No utilities recorded</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Detectors - Only show if detectors exist -->
+            {% if property.detectors and detector_count > 0 %}
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-alarm"></i>
+                    </div>
+                    Detectors
+                    <span class="badge-count">{{ detector_count }}</span>
+                </div>
+                <div class="section-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Working</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detector in property.detectors %}
+                            <tr>
+                                <td>
+                                    {% if detector.detectorType %}
+                                        {% if detector.detectorType == 'Smoke' %}Smoke Detector
+                                        {% elif detector.detectorType == 'CO' %}CO Detector
+                                        {% elif detector.detectorType == 'Heat' %}Heat Detector
+                                        {% else %}{{ detector.detectorType }}{% endif %}
+                                    {% elif detector.type %}
+                                        {% if detector.type == 'smoke' or detector.type == 'Smoke' %}Smoke Detector
+                                        {% elif detector.type == 'co' or detector.type == 'CO' %}CO Detector
+                                        {% elif detector.type == 'heat' or detector.type == 'Heat' %}Heat Detector
+                                        {% else %}{{ detector.type|title }} Detector{% endif %}
+                                    {% else %}
+                                        Unknown
+                                    {% endif %}
+                                </td>
+                                <td>{{ detector.location|default:"—" }}</td>
+                                <td>
+                                    {% if detector.working == True or detector.working == 'true' or detector.working == 'Yes' or detector.working == 'yes' %}
+                                        <span class="text-success">Yes</span>
+                                    {% elif detector.working == False or detector.working == 'false' or detector.working == 'No' or detector.working == 'no' %}
+                                        <span class="text-danger">No</span>
+                                    {% elif detector.working == 'Unknown' or detector.working == 'unknown' %}
+                                        Unknown
+                                    {% else %}
+                                        {{ detector.working|default:"—" }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ detector.notes|default:"—" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    <!-- Detector Compliance (if exists) -->
+                    {% if property.detectorCompliance %}
+                    <div class="sub-section" style="margin-top: 2rem;">
+                        <div class="sub-section-header">
+                            <i class="bi bi-check2-circle me-2"></i>
+                            Detector Compliance Status
+                        </div>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="kv">Smoke Alarm Compliance</td>
+                                <td class="val">
+                                    {% if property.detectorCompliance.smokeAlarmCompliance == True or property.detectorCompliance.smokeAlarmCompliance == 'true' or property.detectorCompliance.smokeAlarmCompliance == 'Yes' %}
+                                        <span class="text-success">Yes</span>
+                                    {% elif property.detectorCompliance.smokeAlarmCompliance == False or property.detectorCompliance.smokeAlarmCompliance == 'false' or property.detectorCompliance.smokeAlarmCompliance == 'No' %}
+                                        <span class="text-danger">No</span>
+                                    {% else %}
+                                        {{ property.detectorCompliance.smokeAlarmCompliance|default:"Not recorded" }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="kv">Carbon Monoxide Compliance</td>
+                                <td class="val">
+                                    {% if property.detectorCompliance.carbonMonoxideCompliance == True or property.detectorCompliance.carbonMonoxideCompliance == 'true' or property.detectorCompliance.carbonMonoxideCompliance == 'Yes' %}
+                                        <span class="text-success">Yes</span>
+                                    {% elif property.detectorCompliance.carbonMonoxideCompliance == False or property.detectorCompliance.carbonMonoxideCompliance == 'false' or property.detectorCompliance.carbonMonoxideCompliance == 'No' %}
+                                        <span class="text-danger">No</span>
+                                    {% else %}
+                                        {{ property.detectorCompliance.carbonMonoxideCompliance|default:"Not recorded" }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                     {% endif %}
                 </div>
             </div>
-            
-            <!-- Detectors -->
-{% if property.detectors and property.detectors|length > 0 %}
-<!-- Detectors Section - Simplified -->
-<div class="section-card">
-    <div class="section-header">
-        <div class="section-icon">
-            <i class="bi bi-alarm"></i>
-        </div>
-        Detectors
-        <span class="badge-count">{{ detector_count }}</span>
-    </div>
-    <div class="section-body">
-        
-        <!-- Smoke Detectors Table -->
-        <div class="sub-section mb-4">
-            <div class="sub-section-header">
-                <i class="bi bi-alarm me-2"></i>
-                Smoke Detectors
-            </div>
-            
-            {% with smoke_detectors=property.detectors|dictsort:"detectorType" %}
-            {% if property.detectors and property.detectors|length > 0 %}
-                {% if property.detectors|dictsort:"detectorType"|first %}
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Present</th>
-                            <th>Working</th>
-                            <th>Location</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for d in property.detectors %}
-                            {% if d.detectorType == 'Smoke' or d.type == 'smoke' %}
-                            <tr>
-                                <td>{% if d.detectorPresent %}Yes{% else %}N/A{% endif %}</td>
-                                <td>{% if d.working %}Yes{% else %}N/A{% endif %}</td>
-                                <td>{{ d.location|default:"—" }}</td>
-                                <td>{{ d.notes|default:"—" }}</td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <div class="text-center py-3">
-                    <p class="text-muted">No smoke detectors recorded</p>
-                </div>
-                {% endif %}
             {% endif %}
-            {% endwith %}
-        </div>
-
-        <!-- Carbon Monoxide Detectors Table -->
-        <div class="sub-section mb-4">
-            <div class="sub-section-header">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                Carbon Monoxide Detectors
-            </div>
             
-            {% if property.detectors and property.detectors|length > 0 %}
-                {% if property.detectors|dictsort:"detectorType" %}
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Present</th>
-                            <th>Working</th>
-                            <th>Location</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for d in property.detectors %}
-                            {% if d.detectorType == 'CO' or d.type == 'co' %}
-                            <tr>
-                                <td>{% if d.detectorPresent %}Yes{% else %}N/A{% endif %}</td>
-                                <td>{% if d.working %}Yes{% else %}N/A{% endif %}</td>
-                                <td>{{ d.location|default:"—" }}</td>
-                                <td>{{ d.notes|default:"—" }}</td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <div class="text-center py-3">
-                    <p class="text-muted">No carbon monoxide detectors recorded</p>
-                </div>
-                {% endif %}
-            {% endif %}
-        </div>
-
-        <!-- Heat Detectors Table -->
-        <div class="sub-section mb-4">
-            <div class="sub-section-header">
-                <i class="bi bi-fire me-2"></i>
-                Heat Detectors
-            </div>
-            
-            {% if property.detectors and property.detectors|length > 0 %}
-                {% if property.detectors|dictsort:"detectorType" %}
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Present</th>
-                            <th>Working</th>
-                            <th>Location</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for d in property.detectors %}
-                            {% if d.detectorType == 'Heat' or d.type == 'heat' %}
-                            <tr>
-                                <td>{% if d.detectorPresent %}Yes{% else %}N/A{% endif %}</td>
-                                <td>{% if d.working %}Yes{% else %}N/A{% endif %}</td>
-                                <td>{{ d.location|default:"—" }}</td>
-                                <td>{{ d.notes|default:"—" }}</td>
-                            </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <div class="text-center py-3">
-                    <p class="text-muted">No heat detectors recorded</p>
-                </div>
-                {% endif %}
-            {% endif %}
-        </div>
-        
-        <!-- Detector Compliance -->
-        {% if property.detectorCompliance %}
-        <div class="sub-section">
-            <div class="sub-section-header">
-                <i class="bi bi-check2-circle me-2"></i>
-                Detector Compliance Status
-            </div>
-            <table class="table table-borderless">
-                <tr>
-                    <td class="kv">Smoke Alarm Compliance</td>
-                    <td class="val">{% if property.detectorCompliance.smokeAlarmCompliance %}Yes{% else %}N/A{% endif %}</td>
-                </tr>
-                <tr>
-                    <td class="kv">Carbon Monoxide Compliance</td>
-                    <td class="val">{% if property.detectorCompliance.carbonMonoxideCompliance %}Yes{% else %}N/A{% endif %}</td>
-                </tr>
-            </table>
-        </div>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
-            
-            <!-- Keys -->
+            <!-- Keys - Only show if keys exist -->
+            {% if property.keys and key_count > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
@@ -2023,50 +1949,45 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     <span class="badge-count">{{ key_count }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.keys %}
-                        {% for k in property.keys %}
-                        <div class="component-container">
-                            <div class="component-details">
-                                <div class="details-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Description</div>
-                                        <div class="detail-item-value">{{ k.description }}</div>
-                                    </div>
-                                    {% if k.notes %}
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Notes</div>
-                                        <div class="detail-item-value">{{ k.notes }}</div>
-                                    </div>
-                                    {% endif %}
+                    {% for k in property.keys %}
+                    <div class="component-container">
+                        <div class="component-details">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Description</div>
+                                    <div class="detail-item-value">{{ k.description }}</div>
                                 </div>
-                            </div>
-                            <div class="component-photos">
-                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                {% if k.photo %}
-                                    <div class="photo-gallery">
-                                        {% for photo_url in k.photo %}
-                                        <div class="photo-item">
-                                            <img src="{{ photo_url }}" alt="Key photo">
-                                            <div class="photo-label">{{ k.description }}</div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% if k.notes %}
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Notes</div>
+                                    <div class="detail-item-value">{{ k.notes }}</div>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-key text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No keys recorded</p>
+                        <div class="component-photos">
+                            <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                            {% if k.photo %}
+                                <div class="photo-gallery">
+                                    {% for photo_url in k.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="Key photo">
+                                        <div class="photo-label">{{ k.description }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Documents -->
+            <!-- Documents - Only show if documents exist -->
+            {% if property.documents and document_count > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
@@ -2076,53 +1997,47 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     <span class="badge-count">{{ document_count }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.documents %}
-                        {% for doc in property.documents %}
-                        <div class="component-container">
-                            <div class="component-details">
-                                <div class="details-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Description</div>
-                                        <div class="detail-item-value">{{ doc.description }}</div>
-                                    </div>
-                                    {% if doc.notes %}
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Notes</div>
-                                        <div class="detail-item-value">{{ doc.notes }}</div>
-                                    </div>
-                                    {% endif %}
+                    {% for doc in property.documents %}
+                    <div class="component-container">
+                        <div class="component-details">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Description</div>
+                                    <div class="detail-item-value">{{ doc.description }}</div>
                                 </div>
-                            </div>
-                            <div class="component-photos">
-                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                {% if doc.photo %}
-                                    <div class="photo-gallery">
-                                        {% for photo_url in doc.photo %}
-                                        <div class="photo-item">
-                                            <img src="{{ photo_url }}" alt="Document photo">
-                                            <div class="photo-label">{{ doc.description }}</div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                {% if doc.notes %}
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Notes</div>
+                                    <div class="detail-item-value">{{ doc.notes }}</div>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-file-earmark-x text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No documents recorded</p>
+                        <div class="component-photos">
+                            <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                            {% if doc.photo %}
+                                <div class="photo-gallery">
+                                    {% for photo_url in doc.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="Document photo">
+                                        <div class="photo-label">{{ doc.description }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
 
-            <!-- ROOMS SECTION -->
+            <!-- ROOMS SECTION - Only show if rooms exist -->
+            {% if property.rooms and total_rooms > 0 %}
             <h2 style="margin-top: 2rem; margin-bottom: 1rem; padding: 1rem; background: linear-gradient(135deg, #1a4f72 0%, #0d3a5d 100%); color: white; border-radius: 8px; font-size: 1.5rem; font-weight: 600;"><i class="bi bi-house-door me-2"></i>Rooms</h2>
             
-            {% if property.rooms %}
                 {% for r in property.rooms %}
                 {% cycle '#e6f2ff' '#f3e5f5' '#e8f5e9' '#fff3e0' '#fce4ec' '#e0f2f1' '#f1f8e9' '#ede7f6' as bg_color silent %}
                 {% cycle '#1a4f72' '#6a1b9a' '#2e7d32' '#e65100' '#c2185b' '#00695c' '#558b2f' '#512da8' as text_color silent %}
@@ -2679,195 +2594,175 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 </div>
                                 {% endif %}
                 {% endfor %}
-            {% else %}
-                <div class="text-center py-4">
-                    <i class="bi bi-door-closed text-muted fs-1"></i>
-                    <p class="text-muted mt-2">No rooms recorded</p>
-                </div>
             {% endif %}
 
-            <!-- External Surfaces -->
+            <!-- External Surfaces - Only show if data exists -->
+            {% if property.externalSurfaces and property.externalSurfaces|length > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
                         <i class="bi bi-house-exclamation"></i>
                     </div>
                     External Surfaces
-                    <span class="badge-count">{{ external_features_count }}</span>
+                    <span class="badge-count">{{ property.externalSurfaces|length }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.externalSurfaces %}
-                        {% for s in property.externalSurfaces %}
-                        <div class="component-container">
-                            <div class="component-details">
-                                <div class="details-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Location</div>
-                                        <div class="detail-item-value">{{ s.location }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Type</div>
-                                        <div class="detail-item-value">{{ s.externalSurfaceType }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Condition</div>
-                                        <div class="detail-item-value">{{ s.condition }}</div>
-                                    </div>
-                                    {% if s.notes %}
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Notes</div>
-                                        <div class="detail-item-value">{{ s.notes }}</div>
-                                    </div>
-                                    {% endif %}
+                    {% for s in property.externalSurfaces %}
+                    <div class="component-container">
+                        <div class="component-details">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Location</div>
+                                    <div class="detail-item-value">{{ s.location }}</div>
                                 </div>
-                            </div>
-                            <div class="component-photos">
-                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                {% if s.photo %}
-                                    <div class="photo-gallery">
-                                        {% for photo_url in s.photo %}
-                                        <div class="photo-item">
-                                            <img src="{{ photo_url }}" alt="External surface photo">
-                                            <div class="photo-label">{{ s.externalSurfaceType }}</div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Type</div>
+                                    <div class="detail-item-value">{{ s.externalSurfaceType }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Condition</div>
+                                    <div class="detail-item-value">{{ s.condition }}</div>
+                                </div>
+                                {% if s.notes %}
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Notes</div>
+                                    <div class="detail-item-value">{{ s.notes }}</div>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-house-exclamation text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No external surfaces recorded</p>
+                        <div class="component-photos">
+                            <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                            {% if s.photo %}
+                                <div class="photo-gallery">
+                                    {% for photo_url in s.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="External surface photo">
+                                        <div class="photo-label">{{ s.externalSurfaceType }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
 
-            <!-- External Features -->
+            <!-- External Features - Only show if data exists -->
+            {% if property.externalFeatures and property.externalFeatures|length > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
                         <i class="bi bi-tree"></i>
                     </div>
                     External Features
-                    <span class="badge-count">{{ external_features_count }}</span>
+                    <span class="badge-count">{{ property.externalFeatures|length }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.externalFeatures %}
-                        {% for f in property.externalFeatures %}
-                        <div class="component-container">
-                            <div class="component-details">
-                                <div class="details-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Feature</div>
-                                        <div class="detail-item-value">{{ f.externalFeature }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Condition</div>
-                                        <div class="detail-item-value">{{ f.condition }}</div>
-                                    </div>
-                                    {% if f.notes %}
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Notes</div>
-                                        <div class="detail-item-value">{{ f.notes }}</div>
-                                    </div>
-                                    {% endif %}
+                    {% for f in property.externalFeatures %}
+                    <div class="component-container">
+                        <div class="component-details">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Feature</div>
+                                    <div class="detail-item-value">{{ f.externalFeature }}</div>
                                 </div>
-                            </div>
-                            <div class="component-photos">
-                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                {% if f.photo %}
-                                    <div class="photo-gallery">
-                                        {% for photo_url in f.photo %}
-                                        <div class="photo-item">
-                                            <img src="{{ photo_url }}" alt="External feature photo">
-                                            <div class="photo-label">{{ f.externalFeature }}</div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Condition</div>
+                                    <div class="detail-item-value">{{ f.condition }}</div>
+                                </div>
+                                {% if f.notes %}
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Notes</div>
+                                    <div class="detail-item-value">{{ f.notes }}</div>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-tree text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No external features recorded</p>
+                        <div class="component-photos">
+                            <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                            {% if f.photo %}
+                                <div class="photo-gallery">
+                                    {% for photo_url in f.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="External feature photo">
+                                        <div class="photo-label">{{ f.externalFeature }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Boundaries -->
+            <!-- Boundaries - Only show if data exists -->
+            {% if property.boundary and property.boundary|length > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
                         <i class="bi bi-fence"></i>
                     </div>
                     Boundaries
-                    <span class="badge-count">{{ boundaries_count }}</span>
+                    <span class="badge-count">{{ property.boundary|length }}</span>
                 </div>
                 <div class="section-body">
-                    {% if property.boundary %}
-                        {% for b in property.boundary %}
-                        <div class="component-container">
-                            <div class="component-details">
-                                <div class="details-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Type</div>
-                                        <div class="detail-item-value">{{ b.boundaryType }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Color</div>
-                                        <div class="detail-item-value">{{ b.colour }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Condition</div>
-                                        <div class="detail-item-value">{{ b.condition }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Quantity</div>
-                                        <div class="detail-item-value">{{ b.quantity }}</div>
-                                    </div>
-                                    {% if b.notes %}
-                                    <div class="detail-item">
-                                        <div class="detail-item-label">Notes</div>
-                                        <div class="detail-item-value">{{ b.notes }}</div>
-                                    </div>
-                                    {% endif %}
+                    {% for b in property.boundary %}
+                    <div class="component-container">
+                        <div class="component-details">
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Type</div>
+                                    <div class="detail-item-value">{{ b.boundaryType }}</div>
                                 </div>
-                            </div>
-                            <div class="component-photos">
-                                <div class="component-title"><i class="bi bi-image"></i> Photos</div>
-                                {% if b.photo %}
-                                    <div class="photo-gallery">
-                                        {% for photo_url in b.photo %}
-                                        <div class="photo-item">
-                                            <img src="{{ photo_url }}" alt="Boundary photo">
-                                            <div class="photo-label">{{ b.boundaryType }}</div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Color</div>
+                                    <div class="detail-item-value">{{ b.colour }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Condition</div>
+                                    <div class="detail-item-value">{{ b.condition }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Quantity</div>
+                                    <div class="detail-item-value">{{ b.quantity }}</div>
+                                </div>
+                                {% if b.notes %}
+                                <div class="detail-item">
+                                    <div class="detail-item-label">Notes</div>
+                                    <div class="detail-item-value">{{ b.notes }}</div>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-fence text-muted" style="font-size: 2.5rem;"></i>
-                        <p class="text-muted mt-3">No boundaries recorded</p>
+                        <div class="component-photos">
+                            <div class="component-title"><i class="bi bi-image"></i> Photos</div>
+                            {% if b.photo %}
+                                <div class="photo-gallery">
+                                    {% for photo_url in b.photo %}
+                                    <div class="photo-item">
+                                        <img src="{{ photo_url }}" alt="Boundary photo">
+                                        <div class="photo-label">{{ b.boundaryType }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0"><i class="bi bi-image"></i> No photos</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
 
             <!-- Signature Section -->
             <div class="signature-section">
