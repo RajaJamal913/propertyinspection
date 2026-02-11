@@ -519,98 +519,104 @@ body {
 .kv { font-weight: 600; width: 35%; color: #475569; }
 .val { color: #1e293b; }
 
+/* ===== ABOUT THIS REPORT – ULTRA COMPACT CARDS (3 COLUMNS × 2 ROWS) ===== */
 .intro-section {
     background: #f0f8ff;
     border-left: 4px solid var(--accent);
     border-radius: 0 8px 8px 0;
     page-break-inside: avoid;
     margin-bottom: 1.5rem;
-    padding: 1.5rem !important;
+    padding: 1rem 1.5rem !important;
 }
 
-.intro-section .row {
-    gap: 1rem !important;
+.intro-section .row.g-3 {
+    --bs-gutter-x: 0.4rem;
+    --bs-gutter-y: 0.4rem;
+}
+
+.intro-title {
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    margin-top: 0;
+    color: var(--primary);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.3rem;
+    display: block;
+    font-size: 1.1rem;
 }
 
 .intro-card {
     background: white;
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid var(--border);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     height: 100%;
-    transition: transform 0.3s ease;
     page-break-inside: avoid;
     display: flex;
     flex-direction: column;
+    transition: none;
+    margin-bottom: 0;
 }
 
-.intro-card:hover { transform: translateY(-5px); }
-
-.intro-card-body {
-    flex: 1;
+.intro-card:hover {
+    transform: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
 .intro-card-header {
     background: #e6f2ff;
-    padding: 0.9rem;
-    font-weight: 600;
+    padding: 0.5rem 0.6rem;
+    font-weight: 700;
     color: var(--primary);
     border-bottom: 1px solid var(--border);
-    display: flex; align-items: center;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
 }
 
 .intro-icon {
-    background: rgba(30, 136, 229, 0.15);
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin-right: 8px; color: var(--accent);
+    background: rgba(30, 136, 229, 0.12);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    color: var(--accent);
     flex-shrink: 0;
+    font-size: 0.7rem;
 }
 
-.intro-card-body { 
-    padding: 1rem;
-    font-size: 0.9rem;
-    line-height: 1.5;
+.intro-card-body {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
     word-break: break-word;
     overflow-wrap: break-word;
-    word-wrap: break-word;
-}
-
-.intro-card-body ul {
-    list-style-position: inside;
-    margin: 0;
-    margin-bottom: 0;
-    padding-left: 1.2rem;
-    overflow-wrap: break-word;
-}
-
-.intro-card-body li {
-    margin-bottom: 0.4rem;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    display: list-item;
 }
 
 .intro-card-body p {
-    margin-bottom: 0.8rem;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    margin-bottom: 0.3rem;
 }
 
 .intro-card-body p:last-child {
     margin-bottom: 0;
 }
 
-.intro-title {
-    font-weight: 700; 
-    margin-bottom: 1.2rem;
-    margin-top: 0;
-    color: var(--primary);
-    border-bottom: 2px solid var(--accent); 
-    padding-bottom: 0.5rem; 
-    display: block;
-    font-size: 1.3rem;
+.intro-card-body ul {
+    list-style-position: inside;
+    margin-bottom: 0;
+    padding-left: 0.8rem;
+    overflow-wrap: break-word;
+}
+
+.intro-card-body li {
+    margin-bottom: 0.15rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    display: list-item;
 }
 
 .disclaimer-box {
@@ -622,7 +628,13 @@ body {
     page-break-inside: avoid;
 }
 
-.disclaimer-header { font-weight: 600; color: #e65100; display: flex; align-items: center; margin-bottom: 0.75rem; }
+.disclaimer-header {
+    font-weight: 600;
+    color: #e65100;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
 
 .print-btn {
     background: white;
@@ -678,28 +690,28 @@ body {
         gap: 0.75rem;
     }
 
+    /* Keep cards compact on tablet */
+    .intro-section .row.g-3 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+    
+    .intro-card-header {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
     .intro-card-body {
-        font-size: 0.9rem;
-        padding: 1rem;
+        padding: 0.6rem;
+        font-size: 0.75rem;
     }
-
+    
     .intro-card-body ul {
-        list-style-position: inside;
-        margin: 0 !important;
-        padding-left: 0.5rem !important;
-        overflow-wrap: break-word !important;
+        padding-left: 0.8rem;
     }
-
+    
     .intro-card-body li {
-        word-break: break-word;
-        overflow-wrap: break-word;
-        margin-bottom: 0.3rem !important;
-        display: list-item !important;
-        padding-left: 0.5rem !important;
-    }
-
-    .intro-card {
-        margin-bottom: 1rem;
+        margin-bottom: 0.15rem;
     }
 }
 
@@ -725,28 +737,12 @@ body {
         gap: 0.5rem;
     }
 
-    .intro-card-body {
-        font-size: 0.9rem;
-        padding: 1rem;
+    .intro-section .row {
+        gap: 0.5rem !important;
     }
-
-    .intro-card-body ul {
-        list-style-position: inside;
-        margin: 0 !important;
-        padding-left: 0.5rem !important;
-        overflow-wrap: break-word !important;
-    }
-
-    .intro-card-body li {
-        word-break: break-word;
-        overflow-wrap: break-word;
-        margin-bottom: 0.3rem !important;
-        display: list-item !important;
-        padding-left: 0.5rem !important;
-    }
-
+    
     .intro-card {
-        margin-bottom: 1rem;
+        margin-bottom: 0.25rem;
     }
 }
 
@@ -756,27 +752,21 @@ body {
     }
 
     .intro-card-body {
-        font-size: 0.85rem;
-        padding: 0.75rem;
+        font-size: 0.8rem;
+        padding: 0.6rem;
     }
 
     .intro-card-header {
-        padding: 0.75rem;
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
     }
 
     .intro-card-body ul {
-        list-style: disc;
-        list-style-position: inside;
-        margin: 0;
-        padding-left: 0.5rem;
+        padding-left: 0.8rem;
     }
 
     .intro-card-body li {
-        margin-bottom: 0.25rem;
-        line-height: 1.4;
-        word-break: break-word;
-        overflow-wrap: break-word;
-        padding-left: 0.25rem;
+        margin-bottom: 0.2rem;
     }
 
     .p-4, .p-lg-5 {
@@ -1321,7 +1311,11 @@ body {
 }
 
 /* Small utility: remove hairline artifacts if seen */
-.photo-gallery, .photo-gallery * { -webkit-backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0); }
+.photo-gallery, .photo-gallery * { 
+    -webkit-backface-visibility: hidden; 
+    -webkit-transform: translateZ(0); 
+    transform: translateZ(0); 
+}
 
 /* Image metadata display */
 .image-meta {
@@ -1342,7 +1336,6 @@ body {
 .photo-item:hover .image-meta {
     opacity: 1;
 }
-
 </style>
 </head>
 <body>
@@ -1373,7 +1366,8 @@ body {
                 <i class="bi bi-info-circle me-2"></i>About This Inventory Report
             </h3>
             
-            <div class="row g-4">
+            <!-- CHANGED: gap reduced from g-4 to g-3 -->
+            <div class="row g-3">
                 <!-- Card 1: What is this report? -->
                 <div class="col-md-6 col-lg-4">
                     <div class="intro-card">
@@ -2229,7 +2223,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Room overview for {{ r.roomType }}" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">{{ r.roomType }} Overview</figcaption>
+                                            
                                             <div class="image-meta">
                                                 <span>{{ now|date:"Y-m-d" }}</span>
                                                 <span>{{ r.roomType }}</span>
