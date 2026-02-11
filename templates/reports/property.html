@@ -1566,7 +1566,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                      alt="Front View {{ forloop.counter }}" 
                                      loading="lazy"
                                      onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                <figcaption class="figure-caption">Front View #{{ forloop.counter }}</figcaption>
+                               
                                 <div class="image-meta">
                                     <span>{{ now|date:"Y-m-d" }}</span>
                                     <span>Front</span>
@@ -1597,7 +1597,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                      alt="Property View {{ forloop.counter }}" 
                                      loading="lazy"
                                      onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                <figcaption class="figure-caption">View #{{ forloop.counter }}</figcaption>
+                               
                                 <div class="image-meta">
                                     <span>{{ now|date:"Y-m-d" }}</span>
                                     <span>External</span>
@@ -1748,7 +1748,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Gas meter photo" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">Gas Meter</figcaption>
+                                          
                                         </figure>
                                         {% endfor %}
                                     </div>
@@ -1788,7 +1788,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Electricity meter photo" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">Electricity Meter</figcaption>
+                                           
                                         </figure>
                                         {% endfor %}
                                     </div>
@@ -1829,7 +1829,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Water meter photo" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">Water Meter</figcaption>
+                                           
                                         </figure>
                                         {% endfor %}
                                     </div>
@@ -1871,7 +1871,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Heat meter photo" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">Heat Meter</figcaption>
+                                            
                                         </figure>
                                         {% endfor %}
                                     </div>
@@ -1913,7 +1913,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Other meter photo" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">{{ utility.otherMeterType }}</figcaption>
+                                            
                                         </figure>
                                         {% endfor %}
                                     </div>
@@ -1950,7 +1950,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Stopcock photo" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">Stopcock</figcaption>
+                                           
                                         </figure>
                                         {% endfor %}
                                     </div>
@@ -1986,7 +1986,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                  alt="Fusebox photo" 
                                                  loading="lazy"
                                                  onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                            <figcaption class="figure-caption">Fusebox</figcaption>
+                                           
                                         </figure>
                                         {% endfor %}
                                     </div>
@@ -2132,7 +2132,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                              alt="{{ k.description }}" 
                                              loading="lazy"
                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                        <figcaption class="figure-caption">{{ k.description }}</figcaption>
+                                      
                                     </figure>
                                     {% endfor %}
                                 </div>
@@ -2183,7 +2183,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                              alt="{{ doc.description }}" 
                                              loading="lazy"
                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                        <figcaption class="figure-caption">{{ doc.description }}</figcaption>
+                                       
                                     </figure>
                                     {% endfor %}
                                 </div>
@@ -2292,7 +2292,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="{{ d.doorType }} in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ d.doorType }}</figcaption>
+                                                        
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2367,7 +2367,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="{{ w.windowType }} in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ w.windowType }}</figcaption>
+                                                      
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2426,7 +2426,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="Ceiling in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ c.ceilingFinish }}</figcaption>
+                                                        
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2477,7 +2477,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="Floor in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ f.floorFinish }}</figcaption>
+                                                        
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2540,7 +2540,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="Wall in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ w.description }}</figcaption>
+                           
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2623,7 +2623,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="{{ f.fixture }} in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ f.fixture }}</figcaption>
+                                                        
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2666,7 +2666,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="{{ furn.furnishings }} in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ furn.furnishings }}</figcaption>
+                                                        
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2709,7 +2709,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="{{ cup.cupboardContent }} in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ cup.cupboardContent }}</figcaption>
+                                                        
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2778,7 +2778,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                                              alt="{{ a.kitchenAppliances }} in {{ r.roomType }}" 
                                                              loading="lazy"
                                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                                        <figcaption class="figure-caption">{{ a.kitchenAppliances }}</figcaption>
+                                                      
                                                     </figure>
                                                     {% endfor %}
                                                 </div>
@@ -2838,7 +2838,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                              alt="{{ s.externalSurfaceType }} at {{ s.location }}" 
                                              loading="lazy"
                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                        <figcaption class="figure-caption">{{ s.externalSurfaceType }}</figcaption>
+                                        
                                     </figure>
                                     {% endfor %}
                                 </div>
@@ -2893,7 +2893,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                              alt="{{ f.externalFeature }}" 
                                              loading="lazy"
                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                        <figcaption class="figure-caption">{{ f.externalFeature }}</figcaption>
+                                        
                                     </figure>
                                     {% endfor %}
                                 </div>
@@ -2956,7 +2956,7 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                              alt="{{ b.boundaryType }}" 
                                              loading="lazy"
                                              onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                                        <figcaption class="figure-caption">{{ b.boundaryType }}</figcaption>
+                                       
                                     </figure>
                                     {% endfor %}
                                 </div>
