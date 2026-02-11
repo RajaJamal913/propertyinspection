@@ -8,12 +8,12 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect, get_object_or_404
-
+from django.views.decorators.http import require_POST
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpResponse
-from django.views.decorators.http import require_POST
+
 from django.conf import settings
 
 DYNAMIC_API = {}
@@ -312,37 +312,6 @@ def calculate_property_counts(prop):
     
     return counts
 
-# views.py — required imports (add these near the top of the file)
-import os
-import io
-import tempfile
-import shutil
-import traceback
-from typing import List
-from django.http import StreamingHttpResponse, HttpResponse, FileResponse
-from django.shortcuts import get_object_or_404, render
-from django.utils import timezone
-from django.db.models import Prefetch
-from django.core.paginator import Paginator
-from django.db.models import Q
-
-# These imports are already in your file; keep them too:
-from .models import Property, Detector
-from .serializers import PropertySerializer, DetectorSerializer
-
-# Optional libs used for download + recompression:
-try:
-    import requests
-except Exception:
-    requests = None
-
-try:
-    from PIL import Image
-except Exception:
-    Image = None
-
-# WeasyPrint import will be used inside the view (we handle ImportError)
-
 
 def property_report(request, pk):
     qs = Property.objects.select_related(
@@ -420,6 +389,33 @@ def property_report(request, pk):
     }
 
     return render(request, "reports/property.html", context)
+
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+def property_list(request):
+    """
+    List all properties (with optional search q=) and paginate results.
+    Renders templates/reports/property_list.html
+    """
+    qs = Property.objects.all().select_related(
+        'utility', 'detector_compliance', 'cleaning_standard'
+    ).prefetch_related(
+        'tenants', 'rooms'
+    ).order_by('-id')
+
+    q = request.GET.get('q', '').strip()
+    if q:
+        qs = qs.filter(Q(address__icontains=q) | Q(postcode__icontains=q))
+
+    paginator = Paginator(qs, 25)  # 25 per page
+    page_number = request.GET.get('page')
+    properties = paginator.get_page(page_number)
+
+    return render(request, "reports/property_list.html", {
+        'properties': properties
+    })
+
 @require_POST
 @login_required
 def property_delete(request, pk):
@@ -449,33 +445,6 @@ def property_delete(request, pk):
 
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list')
     return redirect(next_url)
-
-from django.core.paginator import Paginator
-from django.db.models import Q
-
-def property_list(request):
-    """
-    List all properties (with optional search q=) and paginate results.
-    Renders templates/reports/property_list.html
-    """
-    qs = Property.objects.all().select_related(
-        'utility', 'detector_compliance', 'cleaning_standard'
-    ).prefetch_related(
-        'tenants', 'rooms'
-    ).order_by('-id')
-
-    q = request.GET.get('q', '').strip()
-    if q:
-        qs = qs.filter(Q(address__icontains=q) | Q(postcode__icontains=q))
-
-    paginator = Paginator(qs, 25)  # 25 per page
-    page_number = request.GET.get('page')
-    properties = paginator.get_page(page_number)
-
-    return render(request, "reports/property_list.html", {
-        'properties': properties
-    })
-
 
 def property_report_pdf(request, pk):
     """
@@ -868,7 +837,7 @@ def property_report_pdf(request, pk):
             page-break-inside: avoid;
         }
         """
-      
+        
         # Generate PDF using WeasyPrint
         html_obj = HTML(string=html_string, base_url=request.build_absolute_uri('/'))
         css_obj = CSS(string=pdf_css)
@@ -887,313 +856,3 @@ def property_report_pdf(request, pk):
         import traceback
         error_msg = f"Error generating PDF: {str(e)}\n{traceback.format_exc()}"
         return HttpResponse(error_msg, status=500)
-
-
-pdf_css = """
-        @page {
-            size: A4;
-            margin: 0.75cm;
-        }
-        
-        * {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-            color: #333;
-            font-size: 10pt;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background: white;
-        }
-        
-        .no-print {
-            display: none !important;
-        }
-        
-        .report-container {
-            max-width: 100%;
-            margin: 0;
-            background: white;
-            padding: 0;
-        }
-        
-        .report-header {
-            background: #1e88e5;
-            color: white;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            page-break-inside: avoid;
-        }
-        
-        .report-header h1 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.5rem;
-        }
-        
-        .report-header h2 {
-            margin: 0.25rem 0;
-            font-size: 1rem;
-        }
-        
-        .report-header p {
-            margin: 0.25rem 0;
-            font-size: 0.9rem;
-        }
-        
-        .section-card {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 1.25rem;
-            page-break-inside: avoid;
-            background: white;
-        }
-        
-        .section-header {
-            background: #f5f5f5;
-            border-bottom: 1px solid #ddd;
-            padding: 0.85rem;
-            font-weight: 600;
-            color: #1e88e5;
-            page-break-inside: avoid;
-        }
-        
-        .section-body {
-            padding: 1rem;
-        }
-        
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 0.75rem;
-            margin: 1rem 0;
-        }
-        
-        .summary-item {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 0.75rem;
-            text-align: center;
-            page-break-inside: avoid;
-        }
-        
-        .summary-count {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e88e5;
-        }
-        
-        .summary-label {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.25rem;
-        }
-        
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-        }
-        
-        .detail-item {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-left: 3px solid #1e88e5;
-            border-radius: 3px;
-            padding: 0.6rem;
-            page-break-inside: avoid;
-        }
-        
-        .detail-item-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #1e88e5;
-            text-transform: uppercase;
-            margin-bottom: 0.2rem;
-        }
-        
-        .detail-item-value {
-            font-size: 0.9rem;
-            color: #333;
-            word-break: break-word;
-        }
-        
-        .component-container {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            page-break-inside: avoid;
-            background: white;
-        }
-        
-        .component-details {
-            padding: 0.85rem;
-            background: #fafafa;
-        }
-        
-        .component-photos {
-            padding: 0.85rem;
-            background: #f5f5f5;
-            border-top: 1px solid #ddd;
-        }
-        
-        .component-title {
-            font-weight: 700;
-            color: #1e88e5;
-            margin-bottom: 0.5rem;
-        }
-        
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.5rem;
-        }
-        
-        .photo-item {
-            width: 100%;
-            height: 100px;
-            overflow: hidden;
-            border-radius: 3px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-        }
-        
-        .photo-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .signature-section {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 2px dashed #ddd;
-            page-break-inside: avoid;
-        }
-        
-        .signature-header {
-            font-weight: 700;
-            color: #1e88e5;
-            margin-bottom: 1rem;
-        }
-        
-        .signature-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-        }
-        
-        .signature-box {
-            page-break-inside: avoid;
-        }
-        
-        .signature-print-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-        
-        .signature-pad {
-            width: 100%;
-            height: 100px;
-            border: 1px solid #000;
-            background: white;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0.75rem 0;
-            font-size: 0.9rem;
-        }
-        
-        .data-table th {
-            background: #f5f5f5;
-            padding: 0.6rem;
-            text-align: left;
-            font-weight: 600;
-            color: #1e88e5;
-            border: 1px solid #ddd;
-        }
-        
-        .data-table td {
-            padding: 0.6rem;
-            border: 1px solid #ddd;
-            vertical-align: top;
-        }
-        
-        .sub-section {
-            margin-bottom: 1.25rem;
-            page-break-inside: avoid;
-        }
-        
-        .sub-section-header {
-            background: #f5f5f5;
-            padding: 0.6rem 0.85rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: #1e88e5;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .room-card {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 1.25rem;
-            page-break-inside: avoid;
-        }
-        
-        .room-header {
-            background: #e6f0ff;
-            padding: 0.75rem;
-            border-bottom: 1px solid #ddd;
-            font-weight: 600;
-            color: #1e88e5;
-        }
-        
-        .intro-section {
-            background: #f0f8ff;
-            border-left: 4px solid #1e88e5;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            page-break-inside: avoid;
-        }
-        
-        .intro-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 0.85rem;
-            margin-bottom: 0.75rem;
-            page-break-inside: avoid;
-        }
-        
-        .intro-card-header {
-            background: #e6f0ff;
-            border-bottom: 1px solid #ddd;
-            padding: 0.6rem;
-            font-weight: 600;
-            color: #1e88e5;
-            margin-bottom: 0.5rem;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 1rem;
-            border-top: 1px solid #ddd;
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: #666;
-            page-break-inside: avoid;
-        }
-        """
-        

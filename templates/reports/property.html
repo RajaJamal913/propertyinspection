@@ -18,10 +18,10 @@
     --success: #28a745;
     --warning: #ffc107;
     --border: #e2e8f0;
-    --gallery-image-size: 140px;
+    --gallery-image-height: 180px;
     --thumbnail-size: 100px;
-    --display-image-size: 140px;
     --gallery-cols: 4;
+    --image-aspect-ratio: 4/3;
 }
 
 /* Base */
@@ -216,13 +216,13 @@ body {
     align-items: center;
 }
 
-/* ---------- IMAGE GALLERY: CLEAN 4-COLUMN LAYOUT ---------- */
+/* ---------- ENHANCED IMAGE GALLERY SYSTEM ---------- */
 
-/* Main photo gallery - consistent 4 columns */
+/* Main photo gallery - aspect ratio containers */
 .photo-gallery, .sub-entity-gallery {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    gap: 12px;
     margin-top: 1rem;
     margin-bottom: 1.5rem;
     padding: 0;
@@ -230,10 +230,10 @@ body {
     background: transparent;
 }
 
-/* Card layout for gallery items */
+/* Aspect ratio container for images */
 .photo-item, .sub-entity-photo {
     width: 100%;
-    height: var(--gallery-image-size);
+    aspect-ratio: var(--image-aspect-ratio);
     position: relative;
     overflow: hidden;
     border-radius: 6px;
@@ -244,91 +244,100 @@ body {
     justify-content: center;
 }
 
+/* Show entire image without cropping */
 .photo-item img, .sub-entity-photo img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
+    background: #f8f9fa;
+    transition: transform 0.3s ease;
 }
 
-/* Photo labels - clean overlay */
-.photo-label, .sub-entity-label {
+/* Add zoom on hover for better inspection */
+.photo-item:hover img, .sub-entity-photo:hover img {
+    transform: scale(1.05);
+}
+
+/* Semantic figure structure */
+.figure-container {
+    display: contents;
+}
+
+.figure-caption {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.85);
     color: white;
-    padding: 8px 6px;
-    font-size: 0.75rem;
+    padding: 8px 10px;
+    font-size: 0.8rem;
     text-align: center;
-    line-height: 1.2;
+    line-height: 1.3;
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: none; /* HIDE LABELS */
-    -webkit-box: none;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    display: block;
+    max-height: 3.2em;
+    transition: max-height 0.3s ease, padding 0.3s ease;
 }
 
-/* Display tile variants */
-.photo-display-container {
+/* Enhanced hover for captions */
+.photo-item:hover .figure-caption {
+    max-height: 6em;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.95);
+}
+
+/* Image loading and error states */
+.image-loading {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    margin-top: 0.5rem;
-    justify-content: stretch;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.photo-display-item {
-    flex: 0 0 calc(50% - 0px);
-    max-width: calc(50% - 0px);
-    position: relative;
-    page-break-inside: avoid;
-    background: #f8f9fa;
-    border-radius: 4px;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: var(--display-image-size);
-    min-height: var(--display-image-size);
-    margin: 0;
-    border: 1px solid #e9ecef;
-}
-
-.photo-display-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: none;
-    border-radius: 0;
-}
-
-.photo-placeholder {
-    height: var(--gallery-image-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-    border: 1px dashed #dee2e6;
-    border-radius: 8px;
-    color: #6c757d;
     flex-direction: column;
-    width: var(--gallery-image-size);
-    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.9rem;
 }
 
-.photo-placeholder i { font-size: 2rem; margin-bottom: 0.5rem; }
+.image-loading i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+    animation: spin 1s linear infinite;
+}
 
-/* Thumbnail container used in tables */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.image-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #dc3545;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+.image-error i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.image-error::after {
+    content: "Image not available";
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Thumbnail container with aspect ratio */
 .thumbnail-container {
     width: var(--thumbnail-size);
-    height: var(--thumbnail-size);
+    aspect-ratio: var(--image-aspect-ratio);
     position: relative;
     background: #f8f9fa;
     padding: 0;
@@ -343,9 +352,37 @@ body {
 .thumbnail-container img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 0;
     border: none;
+}
+
+/* Flexbox gallery for specific layouts */
+.flex-gallery-2col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.flex-gallery-2col .photo-item {
+    flex: 0 0 calc(50% - 6px);
+    max-width: calc(50% - 6px);
+    aspect-ratio: var(--image-aspect-ratio);
+}
+
+.flex-gallery-3col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.5rem;
+}
+
+.flex-gallery-3col .photo-item {
+    flex: 0 0 calc(33.333% - 5.333px);
+    max-width: calc(33.333% - 5.333px);
+    aspect-ratio: var(--image-aspect-ratio);
 }
 
 /* Room & Utility specifics */
@@ -626,20 +663,65 @@ body {
     }
 }
 
+@media (max-width: 992px) {
+    :root {
+        --gallery-cols: 3;
+    }
+    
+    .photo-gallery, .sub-entity-gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .details-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .intro-card-body {
+        font-size: 0.9rem;
+        padding: 1rem;
+    }
+
+    .intro-card-body ul {
+        list-style-position: inside;
+        margin: 0 !important;
+        padding-left: 0.5rem !important;
+        overflow-wrap: break-word !important;
+    }
+
+    .intro-card-body li {
+        word-break: break-word;
+        overflow-wrap: break-word;
+        margin-bottom: 0.3rem !important;
+        display: list-item !important;
+        padding-left: 0.5rem !important;
+    }
+
+    .intro-card {
+        margin-bottom: 1rem;
+    }
+}
+
 @media (max-width: 768px) {
     :root {
-        --gallery-image-size: 150px;
-        --thumbnail-size: 100px;
-        --display-image-size: 150px;
+        --gallery-cols: 2;
+        --gallery-image-height: 160px;
     }
     
     .photo-gallery, .sub-entity-gallery {
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        gap: 8px;
+    }
+    
+    .flex-gallery-2col .photo-item,
+    .flex-gallery-3col .photo-item {
+        flex: 0 0 calc(50% - 4px);
+        max-width: calc(50% - 4px);
     }
     
     .details-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: 1fr;
         gap: 0.5rem;
     }
 
@@ -714,17 +796,30 @@ body {
     .ms-2 {
         margin-left: 0.5rem !important;
     }
+    
+    .photo-gallery, .sub-entity-gallery {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .photo-item, .sub-entity-photo {
+        aspect-ratio: 16/9;
+    }
 }
 
 /* ENHANCED PRINT STYLES */
 @media print {
     :root {
-        --gallery-image-size: 120px !important;
-        --thumbnail-size: 80px !important;
-        --display-image-size: 130px !important;
+        --gallery-image-height: 70mm !important;
+        --thumbnail-size: 40mm !important;
+        --image-aspect-ratio: 4/3 !important;
     }
 
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    * { 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+        color-adjust: exact !important; 
+    }
 
     html, body { 
         height: auto !important; 
@@ -732,6 +827,7 @@ body {
         margin: 0 !important;
         padding: 0 !important;
         background: white !important;
+        font-size: 11pt !important;
     }
 
     .report-container { 
@@ -750,7 +846,7 @@ body {
     .report-header {
         background: var(--primary) !important; 
         color: white !important;
-        padding: 1.5rem !important; 
+        padding: 1rem !important; 
         position: relative !important; 
         page-break-after: avoid !important;
         page-break-inside: avoid !important;
@@ -761,7 +857,7 @@ body {
     .intro-section { 
         background: #f0f8ff !important; 
         border-left: 4px solid var(--accent) !important; 
-        padding: 1rem !important; 
+        padding: 0.8rem !important; 
         page-break-inside: avoid !important; 
         page-break-after: auto !important;
         margin: 0 !important;
@@ -771,7 +867,7 @@ body {
     .intro-section .row {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
-        gap: 0.5rem !important;
+        gap: 0.4rem !important;
     }
 
     .intro-title {
@@ -798,7 +894,7 @@ body {
     .intro-card-header { 
         background: #e6f2ff !important; 
         border-bottom: 1px solid #ddd !important; 
-        padding: 0.7rem !important;
+        padding: 0.6rem !important;
         font-size: 0.9rem !important;
         font-weight: 600 !important;
         display: flex !important;
@@ -806,7 +902,7 @@ body {
     }
 
     .intro-card-body {
-        padding: 0.7rem !important;
+        padding: 0.6rem !important;
         font-size: 0.85rem !important;
         line-height: 1.4 !important;
         flex: 1 !important;
@@ -825,7 +921,7 @@ body {
         list-style: disc !important;
         list-style-position: inside !important;
         margin: 0 !important;
-        padding-left: 1.1rem !important;
+        padding-left: 1rem !important;
     }
 
     .intro-card-body li {
@@ -834,20 +930,20 @@ body {
     }
 
     .intro-icon {
-        width: 26px !important;
-        height: 26px !important;
-        margin-right: 0.5rem !important;
+        width: 24px !important;
+        height: 24px !important;
+        margin-right: 0.4rem !important;
         flex-shrink: 0 !important;
     }
 
     .disclaimer-box { 
         background: #fff8e6 !important; 
         border: 1px solid #ffecb3 !important; 
-        padding: 0.8rem !important; 
+        padding: 0.7rem !important; 
         page-break-inside: avoid !important;
         margin: 0.8rem 0 !important;
         font-size: 0.85rem !important;
-        line-height: 1.5 !important;
+        line-height: 1.4 !important;
     }
 
     .disclaimer-header {
@@ -863,7 +959,7 @@ body {
     .section-card { 
         box-shadow: none !important; 
         border: 1px solid #ddd !important; 
-        margin-bottom: 1rem !important; 
+        margin-bottom: 0.8rem !important; 
         page-break-inside: avoid !important;
         background: white !important;
     }
@@ -871,8 +967,9 @@ body {
     .section-header { 
         background: #f1f5f9 !important; 
         border-bottom: 1px solid #ddd !important; 
-        padding: 0.8rem 1rem !important;
+        padding: 0.7rem 1rem !important;
         page-break-inside: avoid !important;
+        font-size: 1rem !important;
     }
 
     .section-body {
@@ -883,37 +980,38 @@ body {
 
     .summary-grid { 
         grid-template-columns: repeat(3, 1fr) !important; 
-        gap: 0.5rem !important; 
-        margin: 1rem 0 !important; 
+        gap: 0.4rem !important; 
+        margin: 0.8rem 0 !important; 
     }
 
     .summary-item { 
-        padding: 0.8rem !important; 
+        padding: 0.7rem !important; 
         border: 1px solid #ddd !important; 
         box-shadow: none !important; 
         page-break-inside: avoid !important;
         background: white !important;
     }
 
+    /* PRINT IMAGE GALLERY - OPTIMIZED FOR PAPER */
     .photo-gallery, .sub-entity-gallery {
         display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 6px !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 4mm !important;
         grid-auto-rows: auto !important;
         break-inside: avoid !important;
         page-break-inside: avoid !important;
-        border-radius: 4px !important;
-        overflow: hidden !important;
+        margin: 0.5rem 0 !important;
     }
 
     .photo-item, .sub-entity-photo {
         width: 100% !important;
-        height: var(--gallery-image-size) !important;
-        min-height: var(--gallery-image-size) !important;
+        aspect-ratio: var(--image-aspect-ratio) !important;
+        min-height: 0 !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        border-radius: 4px !important;
-        border: 1px solid #ddd !important;
+        border-radius: 2mm !important;
+        border: 0.5pt solid #ddd !important;
+        background: #f8f9fa !important;
     }
 
     .photo-item img, .sub-entity-photo img {
@@ -921,82 +1019,75 @@ body {
         height: 100% !important;
         max-width: 100% !important;
         max-height: 100% !important;
-        object-fit: cover !important;
+        object-fit: contain !important;
     }
 
-    .photo-display-container {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-        gap: 0 !important;
-        border: 1px solid #ddd !important;
-        border-radius: 4px !important;
-        overflow: hidden !important;
+    .figure-caption {
+        display: block !important;
+        font-size: 9pt !important;
+        padding: 2mm !important;
+        background: rgba(0,0,0,0.9) !important;
+        color: white !important;
+        max-height: none !important;
+        position: relative !important;
+        border-top: 0.5pt solid #666 !important;
     }
 
-    .photo-display-item {
-        flex: 0 0 calc(33.333% - 0px) !important;
-        max-width: calc(33.333% - 0px) !important;
-        height: var(--display-image-size) !important;
-        min-height: var(--display-image-size) !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-        margin: 0 !important;
-        border: 1px solid #ddd !important;
+    .flex-gallery-2col, .flex-gallery-3col {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 4mm !important;
     }
 
-    .photo-display-item img {
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-        object-fit: cover !important;
+    .flex-gallery-2col .photo-item,
+    .flex-gallery-3col .photo-item {
+        flex: none !important;
+        max-width: none !important;
+        aspect-ratio: var(--image-aspect-ratio) !important;
     }
 
     .thumbnail-container { 
-        width: var(--thumbnail-size) !important; 
-        height: var(--thumbnail-size) !important; 
-        border: 1px solid #ddd !important; 
+        width: 40mm !important; 
+        aspect-ratio: var(--image-aspect-ratio) !important; 
+        border: 0.5pt solid #ddd !important; 
     }
 
     .thumbnail-container img { 
         width: 100% !important; 
         height: 100% !important; 
-        max-width: 100% !important; 
-        max-height: 100% !important; 
+        object-fit: contain !important;
     }
 
     .component-container {
         box-shadow: none !important;
         border: 1px solid #ddd !important;
-        margin-bottom: 1rem !important;
+        margin-bottom: 0.8rem !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
     }
 
     .component-details {
-        padding: 0.75rem !important;
+        padding: 0.8rem !important;
         background: white !important;
     }
 
     .component-photos {
-        padding: 0.75rem !important;
+        padding: 0.8rem !important;
         border-top: 1px solid #ddd !important;
         page-break-inside: avoid !important;
     }
 
     .detail-item {
-        padding: 0.5rem 0.75rem !important;
+        padding: 0.4rem 0.6rem !important;
         background: #f8fafc !important;
         border-left: 3px solid var(--accent) !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.4rem !important;
     }
 
     .detail-item-label {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
         font-weight: 700 !important;
-        margin-bottom: 0.2rem !important;
+        margin-bottom: 0.1rem !important;
     }
 
     .detail-item-value {
@@ -1006,27 +1097,27 @@ body {
 
     .sub-section {
         page-break-inside: avoid !important;
-        margin-bottom: 1rem !important;
+        margin-bottom: 0.8rem !important;
     }
 
     .sub-section-header {
         background: #f1f5f9 !important;
-        padding: 0.6rem 0.8rem !important;
-        margin-bottom: 0.8rem !important;
+        padding: 0.5rem 0.7rem !important;
+        margin-bottom: 0.6rem !important;
         border-bottom: 1px solid #ddd !important;
-        font-size: 0.95rem !important;
+        font-size: 0.9rem !important;
     }
 
     .data-table { 
         width: 100% !important;
         border-collapse: collapse !important;
         page-break-inside: auto !important;
+        font-size: 10pt !important;
     }
 
     .data-table th, .data-table td { 
-        padding: 0.5rem !important; 
-        font-size: 11pt !important;
-        border: 1px solid #ddd !important;
+        padding: 0.4rem !important; 
+        border: 0.5pt solid #ddd !important;
     }
 
     .data-table th {
@@ -1035,7 +1126,7 @@ body {
     }
 
     .room-card { 
-        margin-bottom: 1rem !important; 
+        margin-bottom: 0.8rem !important; 
         page-break-inside: avoid !important;
         border: 1px solid #ddd !important;
         background: white !important;
@@ -1053,35 +1144,37 @@ body {
         max-width: 100% !important; 
         max-height: 100% !important; 
         height: auto !important; 
-        object-fit: cover !important; 
+        object-fit: contain !important; 
         page-break-inside: avoid !important;
+        break-inside: avoid !important;
     }
 
     .p-4, .p-lg-5 { 
-        padding: 1rem !important; 
+        padding: 0.8rem !important; 
     }
 
     .utility-card { 
         border: 1px solid #ddd !important; 
-        padding: 1rem !important; 
-        margin-bottom: 1rem !important; 
+        padding: 0.8rem !important; 
+        margin-bottom: 0.8rem !important; 
         page-break-inside: avoid !important;
         background: white !important;
     }
 
     .utility-details { 
         grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 0.5rem !important;
     }
 
     .component-container {
         page-break-inside: avoid !important;
         border: 1px solid #ddd !important;
-        margin-bottom: 1rem !important;
+        margin-bottom: 0.8rem !important;
     }
 
     .sub-section {
         page-break-inside: avoid !important;
-        margin-bottom: 1rem !important;
+        margin-bottom: 0.8rem !important;
     }
 
     .sub-section-header {
@@ -1090,15 +1183,15 @@ body {
     }
 
     .signature-section { 
-        border-top: 2px dashed #ddd !important; 
-        padding-top: 1rem !important; 
+        border-top: 1pt dashed #ddd !important; 
+        padding-top: 0.8rem !important; 
         page-break-inside: avoid !important;
         page-break-before: auto !important;
     }
 
     .signature-pad { 
-        border: 1px solid #000 !important;
-        height: 120px !important;
+        border: 1pt solid #000 !important;
+        height: 30mm !important;
         width: 100% !important;
         display: block !important;
         background: white !important;
@@ -1106,6 +1199,8 @@ body {
 
     .signature-header {
         display: block !important;
+        font-size: 1rem !important;
+        margin-bottom: 0.8rem !important;
     }
 
     .signature-label { 
@@ -1116,8 +1211,9 @@ body {
         display: block !important;
         font-weight: 600 !important;
         color: #1e293b !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.4rem !important;
         text-align: center !important;
+        font-size: 0.9rem !important;
     }
 
     .signature-actions { 
@@ -1129,27 +1225,33 @@ body {
     }
 
     .signature-preview img { 
-        max-height: 90px !important; 
+        max-height: 25mm !important; 
         object-fit: contain !important; 
     }
 
     .signature-name {
-        display: none !important;
+        display: block !important;
+        font-size: 0.9rem !important;
+        margin-top: 0.4rem !important;
+        text-align: center !important;
     }
 
     .signature-date {
-        display: none !important;
+        display: block !important;
+        font-size: 0.8rem !important;
+        text-align: center !important;
+        margin-top: 0.2rem !important;
     }
 
     .signature-container {
         display: flex !important;
         justify-content: space-around !important;
-        gap: 2rem !important;
+        gap: 1rem !important;
     }
 
     .signature-box {
         flex: 1 !important;
-        min-width: 200px !important;
+        min-width: 45% !important;
     }
 
     .alert.alert-info {
@@ -1173,7 +1275,7 @@ body {
 
     .photo-label { 
         font-size: 8pt !important; 
-        padding: 3px !important; 
+        padding: 2mm !important; 
         height: auto !important; 
         line-height: 1.1 !important; 
     }
@@ -1183,12 +1285,15 @@ body {
     }
 
     @page { 
-        margin: 0.3cm !important;
+        margin: 15mm !important;
         size: A4 !important;
     }
 
     /* Prevent orphaned text at page boundaries */
-    body { orphans: 3 !important; widows: 3 !important; }
+    body { 
+        orphans: 3 !important; 
+        widows: 3 !important; 
+    }
     
     p, li, h1, h2, h3, h4, h5, h6 { 
         orphans: 2 !important; 
@@ -1200,23 +1305,43 @@ body {
     .component-container, .subsection { 
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.4rem !important;
     }
 
     /* Adjust spacing to fit more content per page */
-    .report-header { margin-bottom: 0.5rem !important; }
-    .intro-section { margin-bottom: 0.5rem !important; padding: 1rem !important; }
-    .intro-card { margin-bottom: 0.5rem !important; padding: 0.6rem !important; }
-    .section-card { margin-bottom: 0.5rem !important; }
-    .summary-item { padding: 0.6rem !important; margin-bottom: 0.3rem !important; }
+    .report-header { margin-bottom: 0.4rem !important; }
+    .intro-section { margin-bottom: 0.4rem !important; padding: 0.8rem !important; }
+    .intro-card { margin-bottom: 0.4rem !important; }
+    .section-card { margin-bottom: 0.4rem !important; }
+    .summary-item { padding: 0.5rem !important; margin-bottom: 0.2rem !important; }
     
     /* Reduce padding where possible */
-    .section-header { padding: 0.6rem 0.8rem !important; }
+    .section-header { padding: 0.5rem 0.7rem !important; }
     .section-body { padding: 0.8rem !important; }
 }
 
 /* Small utility: remove hairline artifacts if seen */
 .photo-gallery, .photo-gallery * { -webkit-backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0); }
+
+/* Image metadata display */
+.image-meta {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 4px 6px;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.photo-item:hover .image-meta {
+    opacity: 1;
+}
 
 </style>
 </head>
@@ -1234,14 +1359,9 @@ body {
                     </div>
                     
                     <div class="text-end no-print">
-                        <button class="print-btn" id="downloadBtn" type="button" onclick="downloadReport()">
-  <i class="bi bi-download"></i> Download Report
-</button>
-
-<!-- and add a proper Print button if you still want HTML print -->
-<button class="print-btn no-print" type="button" onclick="window.print()">
-  <i class="bi bi-printer"></i> Print (HTML)
-</button>
+                        <button class="print-btn" id="downloadBtn" type="button" onclick="window.print()">
+                            <i class="bi bi-download"></i> Download Report
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1438,12 +1558,20 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     Front View
                 </div>
                 <div class="section-body">
-                    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                    <div class="flex-gallery-2col">
                         {% for url in front_photos %}
                             {% if url %}
-                            <div style="flex: 0 1 calc(33.333% - 8px); min-width: 200px;">
-                                <img src="{{ url }}" alt="Front View" style="width: 100%; height: auto; border-radius: 6px; border: 1px solid #e2e8f0;">
-                            </div>
+                            <figure class="photo-item">
+                                <img src="{{ url }}" 
+                                     alt="Front View {{ forloop.counter }}" 
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                <figcaption class="figure-caption">Front View #{{ forloop.counter }}</figcaption>
+                                <div class="image-meta">
+                                    <span>{{ now|date:"Y-m-d" }}</span>
+                                    <span>Front</span>
+                                </div>
+                            </figure>
                             {% endif %}
                         {% endfor %}
                     </div>
@@ -1461,12 +1589,20 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                     Other Views
                 </div>
                 <div class="section-body">
-                    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                    <div class="flex-gallery-2col">
                         {% for url in other_views %}
                             {% if url %}
-                            <div style="flex: 0 1 calc(33.333% - 8px); min-width: 200px;">
-                                <img src="{{ url }}" alt="Other View" style="width: 100%; height: auto; border-radius: 6px; border: 1px solid #e2e8f0;">
-                            </div>
+                            <figure class="photo-item">
+                                <img src="{{ url }}" 
+                                     alt="Property View {{ forloop.counter }}" 
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                <figcaption class="figure-caption">View #{{ forloop.counter }}</figcaption>
+                                <div class="image-meta">
+                                    <span>{{ now|date:"Y-m-d" }}</span>
+                                    <span>External</span>
+                                </div>
+                            </figure>
                             {% endif %}
                         {% endfor %}
                     </div>
@@ -1607,10 +1743,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% if utility.gasMeterPhoto %}
                                     <div class="photo-gallery">
                                         {% for p in utility.gasMeterPhoto %}
-                                        <div class="photo-item">
-                                            <img src="{{ p }}" alt="Gas meter photo">
-                                            <div class="photo-label">Gas Meter</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ p }}" 
+                                                 alt="Gas meter photo" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">Gas Meter</figcaption>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 {% else %}
@@ -1644,10 +1783,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% if utility.electricityMeterPhoto %}
                                     <div class="photo-gallery">
                                         {% for p in utility.electricityMeterPhoto %}
-                                        <div class="photo-item">
-                                            <img src="{{ p }}" alt="Electricity meter photo">
-                                            <div class="photo-label">Electricity Meter</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ p }}" 
+                                                 alt="Electricity meter photo" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">Electricity Meter</figcaption>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 {% else %}
@@ -1682,10 +1824,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% if utility.waterMeterPhoto %}
                                     <div class="photo-gallery">
                                         {% for p in utility.waterMeterPhoto %}
-                                        <div class="photo-item">
-                                            <img src="{{ p }}" alt="Water meter photo">
-                                            <div class="photo-label">Water Meter</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ p }}" 
+                                                 alt="Water meter photo" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">Water Meter</figcaption>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 {% else %}
@@ -1721,10 +1866,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% if utility.heatMeterPhoto %}
                                     <div class="photo-gallery">
                                         {% for p in utility.heatMeterPhoto %}
-                                        <div class="photo-item">
-                                            <img src="{{ p }}" alt="Heat meter photo">
-                                            <div class="photo-label">Heat Meter</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ p }}" 
+                                                 alt="Heat meter photo" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">Heat Meter</figcaption>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 {% else %}
@@ -1760,10 +1908,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% if utility.otherMeterPhoto %}
                                     <div class="photo-gallery">
                                         {% for p in utility.otherMeterPhoto %}
-                                        <div class="photo-item">
-                                            <img src="{{ p }}" alt="Other meter photo">
-                                            <div class="photo-label">{{ utility.otherMeterType }}</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ p }}" 
+                                                 alt="Other meter photo" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">{{ utility.otherMeterType }}</figcaption>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 {% else %}
@@ -1794,10 +1945,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% if utility.stopcokPhoto %}
                                     <div class="photo-gallery">
                                         {% for p in utility.stopcokPhoto %}
-                                        <div class="photo-item">
-                                            <img src="{{ p }}" alt="Stopcock photo">
-                                            <div class="photo-label">Stopcock</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ p }}" 
+                                                 alt="Stopcock photo" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">Stopcock</figcaption>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 {% else %}
@@ -1827,10 +1981,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                 {% if utility.fuseboxPhoto %}
                                     <div class="photo-gallery">
                                         {% for p in utility.fuseboxPhoto %}
-                                        <div class="photo-item">
-                                            <img src="{{ p }}" alt="Fusebox photo">
-                                            <div class="photo-label">Fusebox</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ p }}" 
+                                                 alt="Fusebox photo" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">Fusebox</figcaption>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 {% else %}
@@ -1970,10 +2127,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% if k.photo %}
                                 <div class="photo-gallery">
                                     {% for photo_url in k.photo %}
-                                    <div class="photo-item">
-                                        <img src="{{ photo_url }}" alt="Key photo">
-                                        <div class="photo-label">{{ k.description }}</div>
-                                    </div>
+                                    <figure class="photo-item">
+                                        <img src="{{ photo_url }}" 
+                                             alt="{{ k.description }}" 
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                        <figcaption class="figure-caption">{{ k.description }}</figcaption>
+                                    </figure>
                                     {% endfor %}
                                 </div>
                             {% else %}
@@ -2018,10 +2178,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% if doc.photo %}
                                 <div class="photo-gallery">
                                     {% for photo_url in doc.photo %}
-                                    <div class="photo-item">
-                                        <img src="{{ photo_url }}" alt="Document photo">
-                                        <div class="photo-label">{{ doc.description }}</div>
-                                    </div>
+                                    <figure class="photo-item">
+                                        <img src="{{ photo_url }}" 
+                                             alt="{{ doc.description }}" 
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                        <figcaption class="figure-caption">{{ doc.description }}</figcaption>
+                                    </figure>
                                     {% endfor %}
                                 </div>
                             {% else %}
@@ -2061,10 +2224,17 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                     </div>
                                     <div class="photo-gallery">
                                         {% for photo_url in r.photo %}
-                                        <div class="photo-item">
-                                            <img src="{{ photo_url }}" alt="Room overview">
-                                            <div class="photo-label">Room Overview</div>
-                                        </div>
+                                        <figure class="photo-item">
+                                            <img src="{{ photo_url }}" 
+                                                 alt="Room overview for {{ r.roomType }}" 
+                                                 loading="lazy"
+                                                 onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                            <figcaption class="figure-caption">{{ r.roomType }} Overview</figcaption>
+                                            <div class="image-meta">
+                                                <span>{{ now|date:"Y-m-d" }}</span>
+                                                <span>{{ r.roomType }}</span>
+                                            </div>
+                                        </figure>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -2117,10 +2287,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if d.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in d.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Door photo">
-                                                        <div class="photo-label">{{ d.doorType }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="{{ d.doorType }} in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ d.doorType }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2189,10 +2362,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if w.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in w.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Window photo">
-                                                        <div class="photo-label">{{ w.windowType }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="{{ w.windowType }} in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ w.windowType }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2245,10 +2421,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if c.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in c.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Ceiling photo">
-                                                        <div class="photo-label">{{ c.ceilingFinish }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="Ceiling in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ c.ceilingFinish }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2293,10 +2472,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if f.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in f.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Floor photo">
-                                                        <div class="photo-label">{{ f.floorFinish }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="Floor in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ f.floorFinish }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2353,10 +2535,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if w.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in w.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Wall photo">
-                                                        <div class="photo-label">{{ w.description }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="Wall in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ w.description }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2433,10 +2618,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if f.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in f.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Fixture photo">
-                                                        <div class="photo-label">{{ f.fixture }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="{{ f.fixture }} in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ f.fixture }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2473,10 +2661,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if furn.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in furn.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Furnishing photo">
-                                                        <div class="photo-label">{{ furn.furnishings }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="{{ furn.furnishings }} in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ furn.furnishings }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2513,10 +2704,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             {% if cup.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in cup.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Cupboard photo">
-                                                        <div class="photo-label">{{ cup.cupboardContent }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="{{ cup.cupboardContent }} in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ cup.cupboardContent }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2575,14 +2769,17 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                                             </div>
                                         </div>
                                         <div class="component-photos">
-                                            <div class="component-title"><i class="bi bi-image\"></i> Photos</div>
+                                            <div class="component-title"><i class="bi bi-image"></i> Photos</div>
                                             {% if a.photo %}
                                                 <div class="photo-gallery">
                                                     {% for photo_url in a.photo %}
-                                                    <div class="photo-item">
-                                                        <img src="{{ photo_url }}" alt="Appliance photo">
-                                                        <div class="photo-label">{{ a.kitchenAppliances }}</div>
-                                                    </div>
+                                                    <figure class="photo-item">
+                                                        <img src="{{ photo_url }}" 
+                                                             alt="{{ a.kitchenAppliances }} in {{ r.roomType }}" 
+                                                             loading="lazy"
+                                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                                        <figcaption class="figure-caption">{{ a.kitchenAppliances }}</figcaption>
+                                                    </figure>
                                                     {% endfor %}
                                                 </div>
                                             {% else %}
@@ -2636,10 +2833,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% if s.photo %}
                                 <div class="photo-gallery">
                                     {% for photo_url in s.photo %}
-                                    <div class="photo-item">
-                                        <img src="{{ photo_url }}" alt="External surface photo">
-                                        <div class="photo-label">{{ s.externalSurfaceType }}</div>
-                                    </div>
+                                    <figure class="photo-item">
+                                        <img src="{{ photo_url }}" 
+                                             alt="{{ s.externalSurfaceType }} at {{ s.location }}" 
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                        <figcaption class="figure-caption">{{ s.externalSurfaceType }}</figcaption>
+                                    </figure>
                                     {% endfor %}
                                 </div>
                             {% else %}
@@ -2688,10 +2888,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% if f.photo %}
                                 <div class="photo-gallery">
                                     {% for photo_url in f.photo %}
-                                    <div class="photo-item">
-                                        <img src="{{ photo_url }}" alt="External feature photo">
-                                        <div class="photo-label">{{ f.externalFeature }}</div>
-                                    </div>
+                                    <figure class="photo-item">
+                                        <img src="{{ photo_url }}" 
+                                             alt="{{ f.externalFeature }}" 
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                        <figcaption class="figure-caption">{{ f.externalFeature }}</figcaption>
+                                    </figure>
                                     {% endfor %}
                                 </div>
                             {% else %}
@@ -2748,10 +2951,13 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                             {% if b.photo %}
                                 <div class="photo-gallery">
                                     {% for photo_url in b.photo %}
-                                    <div class="photo-item">
-                                        <img src="{{ photo_url }}" alt="Boundary photo">
-                                        <div class="photo-label">{{ b.boundaryType }}</div>
-                                    </div>
+                                    <figure class="photo-item">
+                                        <img src="{{ photo_url }}" 
+                                             alt="{{ b.boundaryType }}" 
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                        <figcaption class="figure-caption">{{ b.boundaryType }}</figcaption>
+                                    </figure>
                                     {% endfor %}
                                 </div>
                             {% else %}
@@ -2902,6 +3108,30 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
         setCanvasDisplaySize(tenantCanvas);
         tenantSignaturePad.clear();
         if (tenantData) tenantSignaturePad.fromDataURL(tenantData);
+      });
+      
+      // Image error handling enhancement
+      document.querySelectorAll('img').forEach(img => {
+          img.addEventListener('error', function() {
+              if (!this.parentElement.classList.contains('image-error')) {
+                  this.parentElement.classList.add('image-error');
+                  this.style.display = 'none';
+                  const errorDiv = document.createElement('div');
+                  errorDiv.className = 'image-error';
+                  errorDiv.innerHTML = '<i class="bi bi-image"></i><div>Image not available</div>';
+                  this.parentElement.appendChild(errorDiv);
+              }
+          });
+          
+          // Show loading state
+          img.addEventListener('load', function() {
+              this.parentElement.classList.remove('image-loading');
+          });
+          
+          // Add loading class initially
+          if (!img.complete) {
+              img.parentElement.classList.add('image-loading');
+          }
       });
     });
 
