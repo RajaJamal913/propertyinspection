@@ -416,35 +416,6 @@ def property_list(request):
         'properties': properties
     })
 
-@require_POST
-@login_required
-def property_delete(request, pk):
-    """
-    Delete a single Property (POST only).
-    Uses 'next' hidden field or HTTP_REFERER to redirect back.
-    Only logged-in users may perform the delete.
-    Local import of django.contrib.messages avoids module name collisions.
-    """
-    # Local import ensures we get the real messages API even if the module-level
-    # name 'messages' has been re-bound to something else.
-    from django.contrib import messages as django_messages
-
-    prop = get_object_or_404(Property, pk=pk)
-
-    # OPTIONAL: strict permission check - uncomment and replace 'yourapp' with your app label
-    # if not request.user.has_perm('yourapp.delete_property'):
-    #     django_messages.error(request, "You don't have permission to delete properties.")
-    #     return redirect(request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list'))
-
-    address = getattr(prop, 'address', '')[:80]
-    try:
-        prop.delete()
-        django_messages.success(request, f"Property '{address}' (ID {pk}) deleted.")
-    except Exception as e:
-        django_messages.error(request, f"Error deleting property ID {pk}: {str(e)}")
-
-    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list')
-    return redirect(next_url)
 
 def property_report_pdf(request, pk):
     """
@@ -856,3 +827,33 @@ def property_report_pdf(request, pk):
         import traceback
         error_msg = f"Error generating PDF: {str(e)}\n{traceback.format_exc()}"
         return HttpResponse(error_msg, status=500)
+
+@require_POST
+@login_required
+def property_delete(request, pk):
+    """
+    Delete a single Property (POST only).
+    Uses 'next' hidden field or HTTP_REFERER to redirect back.
+    Only logged-in users may perform the delete.
+    Local import of django.contrib.messages avoids module name collisions.
+    """
+    # Local import ensures we get the real messages API even if the module-level
+    # name 'messages' has been re-bound to something else.
+    from django.contrib import messages as django_messages
+
+    prop = get_object_or_404(Property, pk=pk)
+
+    # OPTIONAL: strict permission check - uncomment and replace 'yourapp' with your app label
+    # if not request.user.has_perm('yourapp.delete_property'):
+    #     django_messages.error(request, "You don't have permission to delete properties.")
+    #     return redirect(request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list'))
+
+    address = getattr(prop, 'address', '')[:80]
+    try:
+        prop.delete()
+        django_messages.success(request, f"Property '{address}' (ID {pk}) deleted.")
+    except Exception as e:
+        django_messages.error(request, f"Error deleting property ID {pk}: {str(e)}")
+
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or reverse('property_list')
+    return redirect(next_url)
