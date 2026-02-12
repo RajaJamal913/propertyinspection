@@ -1,0 +1,30 @@
+*.pyc
+*.DS_Store
+*.egg*
+/dist/
+/.idea
+/docs/_build/
+/node_modules/
+build/
+env
+/staticfiles/
+
+
+#src
+#*.sqlite*
+
+#.env
+node_modules
+
+# Ignore image assets and user uploads
+/static/assets/img/
+/static/assets/img/**
+/media/
+/uploads/
+# Common image file types
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
