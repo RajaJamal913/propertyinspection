@@ -7,739 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-  <style>
-    :root {
-    --primary: #1a4f72;
-    --secondary: #6c757d;
-    --light: #f8fafc;
-    --dark: #343a40;
-    --accent: #1e88e5;
-    --success: #28a745;
-    --warning: #ffc107;
-    --border: #e2e8f0;
-    --gallery-image-height: 180px;
-    --thumbnail-size: 100px;
-    --gallery-cols: 4;
-    --image-aspect-ratio: 4/3;
-}
-
-/* Base */
-body {
-    background: #f8fafc;
-    color: #334155;
-    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.6;
-}
-
-.report-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-
-.report-header {
-    background: linear-gradient(135deg, var(--primary) 0%, #0d3a5d 100%);
-    color: white;
-    padding: 2rem 3rem;
-    position: relative;
-}
-
-.header-content { position: relative; z-index: 2; }
-
-.header-pattern {
-    position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a4f72"/><path d="M0 50 L100 50 M50 0 L50 100" stroke="%231d5680" stroke-width="1" stroke-opacity="0.3"/></svg>');
-    opacity: 0.15;
-}
-
-/* Cards / Sections */
-.section-card {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-    page-break-inside: avoid;
-}
-
-.section-header {
-    background: #f1f5f9;
-    border-bottom: 1px solid var(--border);
-    padding: 1.25rem 1.5rem;
-    font-weight: 600;
-    color: var(--primary);
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-}
-
-.section-icon {
-    background: rgba(30, 136, 229, 0.1);
-    width: 36px; height: 36px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin-right: 12px; color: var(--accent);
-}
-
-.section-body { padding: 1.5rem; }
-
-/* Summary grid */
-.summary-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin: 1.5rem 0;
-}
-
-.summary-item {
-    background: white;
-    border-radius: 10px;
-    padding: 1.25rem;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-}
-
-.summary-icon { font-size: 1.75rem; margin-bottom: 0.75rem; color: var(--accent); }
-.summary-count { font-size: 1.75rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
-.summary-label { color: var(--secondary); font-size: 0.9rem; }
-
-/* Sub-section styling */
-.sub-section {
-    margin-bottom: 2rem;
-}
-
-.sub-section-header {
-    font-weight: 600;
-    color: var(--primary);
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-}
-
-.badge-count {
-    background: var(--accent);
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
-}
-
-/* Details organization */
-.details-section {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-}
-
-.details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.detail-item {
-    padding: 0.75rem 1rem;
-    background: #f8fafc;
-    border-radius: 6px;
-    border-left: 3px solid var(--accent);
-    transition: all 0.2s ease;
-}
-
-.detail-item:hover {
-    background: #f0f5fa;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.detail-item-label {
-    font-size: 0.8rem;
-    color: var(--primary);
-    margin-bottom: 0.3rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-}
-
-.detail-item-value {
-    font-weight: 500;
-    color: var(--dark);
-    font-size: 0.95rem;
-    word-break: break-word;
-}
-
-/* Component organization */
-.component-container {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    transition: all 0.3s ease;
-    page-break-inside: avoid;
-}
-
-.component-container:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    border-color: var(--accent);
-}
-
-.component-photos {
-    width: 100%;
-    background: linear-gradient(135deg, #f8fafc 0%, #f0f5fa 100%);
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.component-details {
-    padding: 1.5rem;
-    background: #fafbfc;
-}
-
-.component-title {
-    font-weight: 700;
-    color: var(--primary);
-    font-size: 1.05rem;
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-}
-
-/* ---------- ENHANCED IMAGE GALLERY SYSTEM – NO WHITE BACKGROUND ---------- */
-
-/* MAIN IMAGE RULES LEFT UNCHANGED - preserved exactly as originally set by you */
-.photo-gallery, .sub-entity-gallery {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 0;
-    border-radius: 8px;
-    background: transparent;
-}
-
-.photo-item, .sub-entity-photo {
-    width: 100%;
-    aspect-ratio: var(--image-aspect-ratio);
-    position: relative;
-    overflow: hidden;
-    border-radius: 6px;
-    border: 1px solid #dee2e6;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.photo-item img, .sub-entity-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    background: transparent;
-    transition: transform 0.3s ease;
-}
-
-.photo-item:hover img, .sub-entity-photo:hover img {
-    transform: scale(1.05);
-}
-
-.figure-container {
-    display: contents;
-}
-
-.figure-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    padding: 8px 10px;
-    font-size: 0.8rem;
-    text-align: center;
-    line-height: 1.3;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-height: 3.2em;
-    transition: max-height 0.3s ease, padding 0.3s ease;
-}
-
-.photo-item:hover .figure-caption {
-    max-height: 6em;
-    padding: 10px 12px;
-    background: rgba(0,0,0,0.95);
-}
-
-/* Image loading and error states */
-.image-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-
-.image-loading i {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: var(--accent);
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.image-error {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #dc3545;
-    font-size: 0.9rem;
-    text-align: center;
-    padding: 1rem;
-}
-
-.image-error i {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-.image-error::after {
-    content: "Image not available";
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-}
-
-/* Thumbnail container with aspect ratio – no white background */
-.thumbnail-container {
-    width: var(--thumbnail-size);
-    aspect-ratio: var(--image-aspect-ratio);
-    position: relative;
-    background: transparent;
-    padding: 0;
-    border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    border: 1px solid #e9ecef;
-}
-
-.thumbnail-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0;
-    border: none;
-}
-
-/* Flexbox gallery for specific layouts */
-.flex-gallery-2col {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 0.5rem;
-    justify-content: center;
-}
-
-.flex-gallery-2col .photo-item {
-    flex: 0 0 calc(50% - 6px);
-    max-width: calc(50% - 6px);
-    aspect-ratio: var(--image-aspect-ratio);
-}
-
-.flex-gallery-3col {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 0.5rem;
-}
-
-.flex-gallery-3col .photo-item {
-    flex: 0 0 calc(33.333% - 5.333px);
-    max-width: calc(33.333% - 5.333px);
-    aspect-ratio: var(--image-aspect-ratio);
-}
-
-/* Room & Utility specifics */
-.room-card {
-    background: #f8fafc;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-    page-break-inside: avoid;
-}
-
-.room-header {
-    background: #e6f0ff;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    font-weight: 600;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-}
-
-.room-icon { margin-right: 10px; color: var(--accent); }
-
-/* Room header colors - different colors for each room */
-.room-card:nth-child(1) .room-header { background: #e3f2fd; color: #1565c0; }
-.room-card:nth-child(2) .room-header { background: #f3e5f5; color: #6a1b9a; }
-.room-card:nth-child(3) .room-header { background: #e8f5e9; color: #2e7d32; }
-.room-card:nth-child(4) .room-header { background: #fff3e0; color: #e65100; }
-.room-card:nth-child(5) .room-header { background: #fce4ec; color: #c2185b; }
-.room-card:nth-child(6) .room-header { background: #e0f2f1; color: #00695c; }
-.room-card:nth-child(7) .room-header { background: #f1f8e9; color: #558b2f; }
-.room-card:nth-child(n+8) .room-header { background: #ede7f6; color: #512da8; }
-
-.utility-card {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-    page-break-inside: avoid;
-}
-
-.utility-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.utility-type { font-weight: 600; color: var(--primary); font-size: 1.1rem; }
-
-.utility-details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.utility-detail {
-    padding: 0.75rem;
-    background: #f8fafc;
-    border-radius: 6px;
-}
-
-.detail-label { font-size: 0.85rem; color: var(--secondary); margin-bottom: 0.25rem; }
-.detail-value { font-weight: 500; }
-
-/* Signature & Footer */
-.signature-section {
-    border-top: 2px dashed var(--border);
-    padding-top: 2rem;
-    margin-top: 2rem;
-    page-break-inside: avoid;
-}
-
-.signature-header { font-weight: 600; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
-
-.signature-container {
-    display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem;
-}
-
-.signature-box { flex: 1; min-width: 300px; max-width: 400px; }
-
-.signature-label { font-weight: 500; margin-bottom: 0.5rem; color: var(--dark); }
-
-.signature-pad {
-    width: 100%;
-    height: 150px;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    background: white;
-    cursor: crosshair;
-    touch-action: none;
-    display: block;
-}
-
-.signature-actions { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-.signature-btn { flex: 1; }
-
-.signature-preview {
-    width: 100%;
-    height: 150px;
-    border: 1px dashed var(--border);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-    overflow: hidden;
-}
-
-.signature-preview img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.signature-date { font-size: 0.9rem; color: var(--secondary); text-align: center; margin-top: 0.5rem; }
-.signature-name { font-weight: 500; text-align: center; margin-top: 0.5rem; color: var(--primary); }
-
-/* Misc */
-.data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-.data-table th {
-    background: #f8fafc;
-    padding: 0.85rem 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: var(--primary);
-    border-bottom: 2px solid var(--border);
-}
-.data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-.data-table tr:last-child td { border-bottom: none; }
-
-.kv { font-weight: 600; width: 35%; color: #475569; }
-.val { color: #1e293b; }
-
-/* ===== ABOUT THIS REPORT – ULTRA COMPACT CARDS (3 COLUMNS × 2 ROWS) ===== */
-.intro-section {
-    background: #f0f8ff;
-    border-left: 4px solid var(--accent);
-    border-radius: 0 8px 8px 0;
-    page-break-inside: avoid;
-    margin-bottom: 1.5rem;
-    padding: 1rem 1.5rem !important;
-}
-
-.intro-section .row.g-3 {
-    --bs-gutter-x: 0.4rem;
-    --bs-gutter-y: 0.4rem;
-}
-
-.intro-title {
-    font-weight: 700;
-    margin-bottom: 0.6rem;
-    margin-top: 0;
-    color: var(--primary);
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 0.3rem;
-    display: block;
-    font-size: 1.1rem;
-}
-
-.intro-card {
-    background: white;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    height: 100%;
-    page-break-inside: avoid;
-    display: flex;
-    flex-direction: column;
-    transition: none;
-    margin-bottom: 0;
-}
-
-.intro-card:hover {
-    transform: none;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-
-.intro-card-header {
-    background: #e6f2ff;
-    padding: 0.5rem 0.6rem;
-    font-weight: 700;
-    color: var(--primary);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    font-size: 0.8rem;
-}
-
-.intro-icon {
-    background: rgba(30, 136, 229, 0.12);
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 5px;
-    color: var(--accent);
-    flex-shrink: 0;
-    font-size: 0.7rem;
-}
-
-.intro-card-body {
-    flex: 1;
-    padding: 0.6rem;
-    font-size: 0.75rem;
-    line-height: 1.4;
-    word-break: break-word;
-    overflow-wrap: break-word;
-}
-
-.intro-card-body p {
-    margin-bottom: 0.3rem;
-}
-
-.intro-card-body p:last-child {
-    margin-bottom: 0;
-}
-
-.intro-card-body ul {
-    list-style-position: inside;
-    margin-bottom: 0;
-    padding-left: 0.8rem;
-    overflow-wrap: break-word;
-}
-
-.intro-card-body li {
-    margin-bottom: 0.15rem;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    display: list-item;
-}
-
-.disclaimer-box {
-    background: #fff8e6;
-    border: 1px solid #ffecb3;
-    border-radius: 8px;
-    padding: 1.25rem;
-    margin-top: 1.5rem;
-    page-break-inside: avoid;
-}
-
-.disclaimer-header {
-    font-weight: 600;
-    color: #e65100;
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.print-btn {
-    background: white;
-    color: var(--primary);
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.print-btn:hover {
-    background: #f0f5fa;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    color: var(--primary);
-}
-
-.print-btn i { margin-right: 8px; }
-
-.footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--secondary);
-    border-top: 1px solid var(--border);
-    background: #f8fafc;
-    page-break-before: avoid;
-}
-
-/* -----------------------
-   FORCE DESKTOP LAYOUT (WITHOUT CHANGING IMAGE STYLING)
-   ----------------------- */
-
-/* Keep details grid as multi-column on small viewports to retain desktop composition */
-.details-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
-    gap: 1rem !important;
-}
-
-/* Prefer horizontal scroll on narrow screens rather than collapsing layout */
-@media (max-width: 1200px) {
-    .report-container {
-        min-width: 1100px; /* preserve desktop width */
-        overflow-x: auto;
-    }
-
-    /* reduce some gaps but DO NOT change image-related rules */
-    .summary-grid { gap: 0.75rem !important; }
-}
-
-/* PRINT: keep on-screen appearance but do not modify image rules */
-@media print {
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-    }
-
-    html, body {
-        background: white !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        font-size: 11pt !important;
-        height: auto !important;
-        overflow: visible !important;
-    }
-
-    .report-container {
-        box-shadow: none !important;
-        margin: 0 !important;
-        border: none !important;
-        border-radius: 0 !important;
-        max-width: 100% !important;
-        overflow: visible !important;
-        page-break-after: avoid !important;
-    }
-
-    /* Ensure text and colors are preserved */
-    .section-card, .component-container, .intro-card, .room-card, .utility-card {
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-        background: white !important;
-    }
-
-    .print-btn, .no-print { display: none !important; visibility: hidden !important; }
-
-    @page {
-        margin: 15mm !important;
-        size: A4 portrait !important;
-    }
-}
-
-/* small helpers */
-.thumbnail-container { width: var(--thumbnail-size) !important; aspect-ratio: var(--image-aspect-ratio) !important; }
-
-/* Post-summary images responsive notes preserved from original but left inactive for forced layout choices */
-.post-summary-sections .photo-gallery { grid-template-columns: repeat(6, 1fr); gap: 8px; }
-
-.post-summary-sections .photo-item { border-radius: 0px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #d1d9e6; }
-
-/* End of stylesheet */
-
-    </style>
-<!-- <style>
+ 
+<style>
   :root {
     --primary: #1a4f72;
     --secondary: #6c757d;
@@ -1599,18 +868,25 @@ body {
     }
 }
 
-/* ========== PRINT STYLES – EXTREMELY COMPACT ========== */
+/* ========== PRINT STYLES – EXTREMELY COMPACT & DESKTOP‑ALIGNED ========== */
 @media print {
     :root {
         --gallery-image-height: 70mm !important;
         --thumbnail-size: 40mm !important;
         --image-aspect-ratio: 4/3 !important;
+        /* 🔧 ADJUST THIS VALUE to match your desktop image size exactly */
+        --print-image-width: 200px;  /* <-- CHANGE THIS NUMBER (e.g., 30mm, 40mm, 45mm) */
     }
 
     * { 
         -webkit-print-color-adjust: exact !important; 
         print-color-adjust: exact !important; 
         color-adjust: exact !important; 
+    }
+
+    @page { 
+        margin: 10mm 8mm !important;
+        size: A4 portrait !important;
     }
 
     html, body { 
@@ -1638,120 +914,104 @@ body {
     .report-header {
         background: var(--primary) !important; 
         color: white !important;
-        padding: 1rem !important; 
+        padding: 0.75rem !important;
         position: relative !important; 
         page-break-after: avoid !important;
         page-break-inside: avoid !important;
+        margin-bottom: 0.4rem !important;
     }
 
     .header-pattern { display: none !important; }
 
-    .intro-section { 
-        background: #f0f8ff !important; 
-        border-left: 4px solid var(--accent) !important; 
-        padding: 0.8rem !important; 
-        page-break-inside: avoid !important; 
-        page-break-after: auto !important;
-        margin: 0 !important;
-        margin-bottom: 0.8rem !important;
-    }
-
-    .intro-section .row {
+    /* ---------- IMAGE GALLERIES – EXACT DESKTOP COLUMN COUNTS + ADJUSTABLE SIZE ---------- */
+    .photo-gallery, 
+    .sub-entity-gallery {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 0.4rem !important;
+        grid-template-columns: repeat(4, minmax(0, var(--print-image-width))) !important;
+        gap: 2mm !important;
+        margin: 0.3rem 0 !important;
+        justify-content: start !important;
     }
 
-    .intro-title {
-        font-size: 1.1rem !important;
-        margin-bottom: 0.8rem !important;
-        margin-top: 0 !important;
-        padding-bottom: 0.4rem !important;
-        display: block !important;
+    .post-summary-sections .photo-gallery {
+        grid-template-columns: repeat(6, minmax(0, calc(var(--print-image-width) * 0.7))) !important;
+        gap: 1.5mm !important;
     }
 
-    .intro-card { 
-        border: 1px solid #ddd !important; 
-        box-shadow: none !important; 
-        margin: 0 !important;
-        padding: 0 !important;
-        page-break-inside: avoid !important;
-        background: white !important;
-        break-inside: avoid !important;
+    /* Flex galleries – use same adjustable width */
+    .flex-gallery-2col,
+    .flex-gallery-3col {
         display: flex !important;
-        flex-direction: column !important;
-        height: auto !important;
+        flex-wrap: wrap !important;
+        gap: 2mm !important;
+    }
+    .flex-gallery-2col .photo-item,
+    .flex-gallery-3col .photo-item {
+        flex: 0 0 var(--print-image-width) !important;
+        max-width: var(--print-image-width) !important;
     }
 
-    .intro-card-header { 
-        background: #e6f2ff !important; 
-        border-bottom: 1px solid #ddd !important; 
-        padding: 0.6rem !important;
-        font-size: 0.9rem !important;
-        font-weight: 600 !important;
-        display: flex !important;
-        align-items: center !important;
+    .photo-item, 
+    .sub-entity-photo {
+        width: 100% !important;
+        aspect-ratio: var(--image-aspect-ratio) !important;
+        border-radius: 1mm !important;
+        border: 0.5pt solid #ddd !important;
+        background: transparent !important;
     }
 
-    .intro-card-body {
-        padding: 0.6rem !important;
-        font-size: 0.85rem !important;
-        line-height: 1.4 !important;
-        flex: 1 !important;
-        margin: 0 !important;
+    .photo-item img, 
+    .sub-entity-photo img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
     }
 
-    .intro-card-body p {
-        margin-bottom: 0.5rem !important;
+    .figure-caption {
+        font-size: 8pt !important;
+        padding: 1.5mm !important;
     }
 
-    .intro-card-body p:last-child {
+    .thumbnail-container { 
+        width: var(--print-image-width) !important; 
+        aspect-ratio: var(--image-aspect-ratio) !important; 
+        border: 0.5pt solid #ddd !important; 
+        background: transparent !important;
+    }
+
+    /* ---------- DETAILS – KEEP GRID LAYOUT (NO BLOCK OVERRIDE) ---------- */
+    .details-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+        gap: 2mm !important;
+        margin-bottom: 0.2rem !important;
+    }
+
+    .detail-item {
+        padding: 0.2rem 0.3rem !important;
         margin-bottom: 0 !important;
-    }
-
-    .intro-card-body ul {
-        list-style: disc !important;
-        list-style-position: inside !important;
-        margin: 0 !important;
-        padding-left: 1rem !important;
-    }
-
-    .intro-card-body li {
-        margin-bottom: 0.3rem !important;
-        line-height: 1.3 !important;
-    }
-
-    .intro-icon {
-        width: 24px !important;
-        height: 24px !important;
-        margin-right: 0.4rem !important;
-        flex-shrink: 0 !important;
-    }
-
-    .disclaimer-box { 
-        background: #fff8e6 !important; 
-        border: 1px solid #ffecb3 !important; 
-        padding: 0.7rem !important; 
+        background: transparent !important;
+        border-left: 1pt solid var(--accent) !important;
         page-break-inside: avoid !important;
-        margin: 0.8rem 0 !important;
-        font-size: 0.85rem !important;
-        line-height: 1.4 !important;
     }
 
-    .disclaimer-header {
-        font-size: 0.9rem !important;
-        font-weight: 600 !important;
-        margin-bottom: 0.5rem !important;
+    .detail-item-label {
+        font-size: 8pt !important;
+        font-weight: 700 !important;
+        margin-bottom: 0.1rem !important;
     }
 
-    .disclaimer-box p {
-        margin-bottom: 0 !important;
+    .detail-item-value {
+        font-size: 9pt !important;
+        font-weight: 500 !important;
+        color: #000 !important;
     }
 
+    /* ---------- TIGHT SPACING EVERYWHERE ---------- */
     .section-card { 
         box-shadow: none !important; 
         border: 1px solid #ddd !important; 
-        margin-bottom: 0.8rem !important; 
+        margin-bottom: 0.6rem !important; 
         page-break-inside: avoid !important;
         background: white !important;
     }
@@ -1759,351 +1019,173 @@ body {
     .section-header { 
         background: #f1f5f9 !important; 
         border-bottom: 1px solid #ddd !important; 
-        padding: 0.7rem 1rem !important;
-        page-break-inside: avoid !important;
-        font-size: 1rem !important;
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.9rem !important;
     }
 
     .section-body {
-        padding: 1rem !important;
+        padding: 0.6rem !important;
     }
 
-    .print-btn { display: none !important; visibility: hidden !important; }
+    .sub-section {
+        margin-bottom: 0.6rem !important;
+        page-break-inside: avoid !important;
+    }
+
+    .sub-section-header {
+        margin-bottom: 0.3rem !important;
+        padding-bottom: 0.2rem !important;
+        font-size: 0.9rem !important;
+    }
 
     .summary-grid { 
+        display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important; 
-        gap: 0.4rem !important; 
-        margin: 0.8rem 0 !important; 
+        gap: 0.3rem !important; 
+        margin: 0.4rem 0 !important; 
     }
 
     .summary-item { 
-        padding: 0.7rem !important; 
+        padding: 0.4rem !important; 
         border: 1px solid #ddd !important; 
         box-shadow: none !important; 
         page-break-inside: avoid !important;
         background: white !important;
     }
+    .summary-count { font-size: 1.2rem !important; }
+    .summary-label { font-size: 0.7rem !important; }
 
-    /* PRINT IMAGE GALLERY - 2 columns, cover fill */
-    .photo-gallery, .sub-entity-gallery {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 4mm !important;
-        grid-auto-rows: auto !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-        margin: 0.5rem 0 !important;
-    }
-
-    .photo-item, .sub-entity-photo {
-        width: 100% !important;
-        aspect-ratio: var(--image-aspect-ratio) !important;
-        min-height: 0 !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-        border-radius: 2mm !important;
-        border: 0.5pt solid #ddd !important;
-        background: transparent !important;
-    }
-
-    .photo-item img, .sub-entity-photo img {
-        width: 100% !important;
-        height: 100% !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-        object-fit: cover !important;
-        border-radius: 0px !important;
-    }
-
-    .figure-caption {
-        display: block !important;
-        font-size: 9pt !important;
-        padding: 2mm !important;
-        background: rgba(0,0,0,0.9) !important;
-        color: white !important;
-        max-height: none !important;
-        position: relative !important;
-        border-top: 0.5pt solid #666 !important;
-    }
-
-    .flex-gallery-2col, .flex-gallery-3col {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 4mm !important;
-    }
-
-    .flex-gallery-2col .photo-item,
-    .flex-gallery-3col .photo-item {
-        flex: none !important;
-        max-width: none !important;
-        aspect-ratio: var(--image-aspect-ratio) !important;
-    }
-
-    .thumbnail-container { 
-        width: 40mm !important; 
-        aspect-ratio: var(--image-aspect-ratio) !important; 
-        border: 0.5pt solid #ddd !important; 
-        background: transparent !important;
-    }
-
-    .thumbnail-container img { 
-        width: 100% !important; 
-        height: 100% !important; 
-        object-fit: cover !important;
-    }
-
-    .component-container {
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-        margin-bottom: 0.8rem !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-    }
-
-    .component-details {
-        padding: 0.8rem !important;
-        background: white !important;
-    }
-
-    .component-photos {
-        padding: 0.8rem !important;
-        border-top: 1px solid #ddd !important;
-        page-break-inside: avoid !important;
-    }
-
-    /* --- PRINT: COMPACT ROWS for details --- */
-    .details-grid {
-        display: block !important;
-    }
-
-    .detail-item {
-        display: flex !important;
-        align-items: baseline;
-        padding: 0.2rem 0.4rem !important;
-        margin-bottom: 0.15rem !important;
-        background: transparent !important;
-        border-left: none !important;
-        page-break-inside: avoid !important;
-        border-radius: 0;
-    }
-
-    .detail-item-label {
-        width: 35%;
-        font-size: 9pt !important;
-        font-weight: 700;
-        color: #1a4f72 !important;
-        margin-bottom: 0 !important;
-        text-transform: uppercase;
-    }
-
-    .detail-item-value {
-        width: 65%;
-        font-size: 10pt !important;
-        color: #000 !important;
-    }
-
-    .sub-section {
-        page-break-inside: avoid !important;
-        margin-bottom: 0.8rem !important;
-    }
-
-    .sub-section-header {
-        background: #f1f5f9 !important;
-        padding: 0.5rem 0.7rem !important;
+    /* ---------- COMPACT "ABOUT THIS REPORT" ---------- */
+    .intro-section {
+        background: #f0f8ff !important;
+        border-left: 4px solid var(--accent) !important;
+        padding: 0.5rem !important;
         margin-bottom: 0.6rem !important;
-        border-bottom: 1px solid #ddd !important;
-        font-size: 0.9rem !important;
+    }
+    .intro-section .row {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.3rem !important;
+    }
+    .intro-title {
+        font-size: 1rem !important;
+        margin-bottom: 0.4rem !important;
+        padding-bottom: 0.2rem !important;
+    }
+    .intro-card {
+        border: 1px solid #ddd !important;
+        margin: 0 !important;
+    }
+    .intro-card-header {
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.8rem !important;
+    }
+    .intro-card-body {
+        padding: 0.3rem !important;
+        font-size: 0.7rem !important;
+        line-height: 1.3 !important;
+    }
+    .intro-card-body ul {
+        padding-left: 0.8rem !important;
+    }
+
+    .disclaimer-box {
+        padding: 0.4rem !important;
+        font-size: 0.7rem !important;
+        margin-top: 0.5rem !important;
+    }
+    .disclaimer-header {
+        font-size: 0.8rem !important;
+        margin-bottom: 0.3rem !important;
+    }
+
+    /* ---------- COMPONENTS & TABLES ---------- */
+    .component-container {
+        margin-bottom: 0.4rem !important;
+        border: 1px solid #ddd !important;
+        page-break-inside: avoid !important;
+    }
+    .component-details {
+        padding: 0.4rem !important;
+    }
+    .component-photos {
+        padding: 0.4rem !important;
     }
 
     .data-table { 
         width: 100% !important;
         border-collapse: collapse !important;
-        page-break-inside: auto !important;
-        font-size: 10pt !important;
+        font-size: 9pt !important;
     }
-
-    .data-table th, .data-table td { 
-        padding: 0.4rem !important; 
+    .data-table th,
+    .data-table td { 
+        padding: 0.3rem !important; 
         border: 0.5pt solid #ddd !important;
     }
 
-    .data-table th {
-        background: #f1f5f9 !important;
-        font-weight: 600 !important;
-    }
-
-    .room-card { 
-        margin-bottom: 0.8rem !important; 
-        page-break-inside: avoid !important;
+    .room-card,
+    .utility-card {
+        margin-bottom: 0.6rem !important;
         border: 1px solid #ddd !important;
-        background: white !important;
-    }
-
-    .summary-count, .section-header, .room-header, .sub-section-header, .badge-count { 
-        color: inherit !important;
-    }
-
-    .text-primary, .text-success, .text-warning, .text-danger, .text-info, .text-secondary, .text-muted { 
-        color: inherit !important;
-    }
-
-    img { 
-        max-width: 100% !important; 
-        max-height: 100% !important; 
-        height: auto !important; 
-        object-fit: cover !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-    }
-
-    .p-4, .p-lg-5 { 
-        padding: 0.8rem !important; 
-    }
-
-    .utility-card { 
-        border: 1px solid #ddd !important; 
-        padding: 0.8rem !important; 
-        margin-bottom: 0.8rem !important; 
-        page-break-inside: avoid !important;
-        background: white !important;
     }
 
     .utility-details { 
         grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 0.5rem !important;
+        gap: 0.3rem !important;
     }
 
-    .signature-section { 
-        border-top: 1pt dashed #ddd !important; 
-        padding-top: 0.8rem !important; 
+    /* ---------- SIGNATURE SECTION ---------- */
+    .signature-section {
+        border-top: 1pt dashed #ddd !important;
+        margin-top: 0.6rem !important;
+        padding-top: 0.6rem !important;
         page-break-inside: avoid !important;
-        page-break-before: auto !important;
     }
-
-    .signature-pad { 
-        border: 1pt solid #000 !important;
-        height: 30mm !important;
-        width: 100% !important;
-        display: block !important;
-        background: white !important;
-    }
-
     .signature-header {
-        display: block !important;
         font-size: 1rem !important;
-        margin-bottom: 0.8rem !important;
+        margin-bottom: 0.6rem !important;
     }
-
-    .signature-label { 
-        display: none !important; 
-    }
-
-    .signature-print-label {
-        display: block !important;
-        font-weight: 600 !important;
-        color: #1e293b !important;
-        margin-bottom: 0.4rem !important;
-        text-align: center !important;
-        font-size: 0.9rem !important;
-    }
-
-    .signature-actions { 
-        display: none !important; 
-    }
-
-    .signature-preview { 
-        display: none !important;
-    }
-
-    .signature-preview img { 
-        max-height: 25mm !important; 
-        object-fit: contain !important; 
-    }
-
-    .signature-name {
-        display: block !important;
-        font-size: 0.9rem !important;
-        margin-top: 0.4rem !important;
-        text-align: center !important;
-    }
-
-    .signature-date {
-        display: block !important;
-        font-size: 0.8rem !important;
-        text-align: center !important;
-        margin-top: 0.2rem !important;
-    }
-
     .signature-container {
-        display: flex !important;
-        justify-content: space-around !important;
-        gap: 1rem !important;
+        gap: 0.8rem !important;
     }
-
     .signature-box {
-        flex: 1 !important;
-        min-width: 45% !important;
+        min-width: 40% !important;
     }
-
+    .signature-pad {
+        height: 25mm !important;
+        border: 1pt solid #000 !important;
+    }
+    .signature-actions,
+    .signature-preview:empty,
     .alert.alert-info {
         display: none !important;
     }
-
-    .alert {
-        page-break-inside: avoid !important;
-        border: 1px solid #ddd !important;
+    .signature-label { display: none !important; }
+    .signature-print-label {
+        display: block !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.3rem !important;
+        text-align: center !important;
+        font-size: 0.8rem !important;
     }
 
-    table { 
-        page-break-inside: auto !important;
-        width: 100% !important;
+    /* ---------- PAGE BREAK CONTROL ---------- */
+    h2, h3, h4, .section-header, .sub-section-header {
+        page-break-after: avoid !important;
     }
-
-    tr { 
-        page-break-inside: avoid !important; 
-        page-break-after: auto !important; 
-    }
-
-    .photo-label { 
-        font-size: 8pt !important; 
-        padding: 2mm !important; 
-        height: auto !important; 
-        line-height: 1.1 !important; 
-    }
-
-    a[href]::after { 
-        content: none !important; 
-    }
-
-    @page { 
-        margin: 15mm !important;
-        size: A4 !important;
-    }
-
-    body { 
-        orphans: 3 !important; 
-        widows: 3 !important; 
-    }
-    
-    p, li, h1, h2, h3, h4, h5, h6 { 
-        orphans: 2 !important; 
-        widows: 2 !important; 
-        page-break-inside: avoid !important;
-    }
-
-    .component-container, .subsection { 
+    .component-container,
+    .room-card,
+    .utility-card,
+    .sub-section,
+    .section-card,
+    .intro-card {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        margin-bottom: 0.4rem !important;
     }
 
-    .report-header { margin-bottom: 0.4rem !important; }
-    .intro-section { margin-bottom: 0.4rem !important; padding: 0.8rem !important; }
-    .intro-card { margin-bottom: 0.4rem !important; }
-    .section-card { margin-bottom: 0.4rem !important; }
-    .summary-item { padding: 0.5rem !important; margin-bottom: 0.2rem !important; }
-    .section-header { padding: 0.5rem 0.7rem !important; }
-    .section-body { padding: 0.8rem !important; }
+    .print-btn { display: none !important; }
+    a[href]::after { content: none !important; }
+    img { max-width: 100% !important; page-break-inside: avoid !important; }
 }
 
 /* Small utility: remove hairline artifacts if seen */
@@ -2163,7 +1245,7 @@ body {
         grid-template-columns: repeat(4, 1fr) !important;
     }
 }
-</style> -->
+</style>
 </head>
 <body>
     <div class="report-container">
