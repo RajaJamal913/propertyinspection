@@ -1089,6 +1089,30 @@ body {
         page-break-inside: avoid !important;
     }
 
+    /* --- FIX: stack label above value in PDF --- */
+    .detail-item {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 0.5rem !important; /* add spacing between items */
+    }
+
+    .detail-item-label,
+    .detail-item-value {
+        display: block !important;
+        width: 100% !important;
+        text-align: left !important;
+    }
+
+    .detail-item-label {
+        font-weight: 700;
+        margin-bottom: 0.1rem;
+    }
+
+    .detail-item-value {
+        margin-bottom: 0.25rem;
+    }
+    /* ------------------------------------------ */
+
     .detail-item-label {
         font-size: 8pt !important;
         font-weight: 700 !important;
