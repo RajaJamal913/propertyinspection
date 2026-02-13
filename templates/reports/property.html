@@ -24,13 +24,14 @@
     --image-aspect-ratio: 4/3;
 }
 
-/* Base (unchanged) – keep all your existing screen styles */
+/* Base */
 body {
     background: #f8fafc;
     color: #334155;
     font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.6;
 }
+
 .report-container {
     max-width: 1200px;
     margin: 2rem auto;
@@ -39,9 +40,936 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     overflow: hidden;
 }
-/* ... all your other screen styles remain exactly as they were ... */
 
-/* ========== PRINT STYLES – COMPACT & FULL‑WIDTH ========== */
+.report-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #0d3a5d 100%);
+    color: white;
+    padding: 2rem 3rem;
+    position: relative;
+}
+
+.header-content { position: relative; z-index: 2; }
+
+.header-pattern {
+    position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a4f72"/><path d="M0 50 L100 50 M50 0 L50 100" stroke="%231d5680" stroke-width="1" stroke-opacity="0.3"/></svg>');
+    opacity: 0.15;
+}
+
+/* Cards / Sections */
+.section-card {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    page-break-inside: avoid;
+}
+
+.section-header {
+    background: #f1f5f9;
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-icon {
+    background: rgba(30, 136, 229, 0.1);
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px; color: var(--accent);
+}
+
+.section-body { padding: 1.5rem; }
+
+/* Summary grid */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.summary-item {
+    background: white;
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.summary-icon { font-size: 1.75rem; margin-bottom: 0.75rem; color: var(--accent); }
+.summary-count { font-size: 1.75rem; font-weight: 700; color: var(--primary); margin-bottom: 0.25rem; }
+.summary-label { color: var(--secondary); font-size: 0.9rem; }
+
+/* Sub-section styling */
+.sub-section {
+    margin-bottom: 2rem;
+}
+
+.sub-section-header {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+}
+
+.badge-count {
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+
+/* Details organization */
+.details-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-item {
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    border-radius: 6px;
+    border-left: 3px solid var(--accent);
+    transition: all 0.2s ease;
+}
+
+.detail-item:hover {
+    background: #f0f5fa;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.detail-item-label {
+    font-size: 0.8rem;
+    color: var(--primary);
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.detail-item-value {
+    font-weight: 500;
+    color: var(--dark);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+/* Component organization */
+.component-container {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+    page-break-inside: avoid;
+}
+
+.component-container:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border-color: var(--accent);
+}
+
+.component-photos {
+    width: 100%;
+    background: linear-gradient(135deg, #f8fafc 0%, #f0f5fa 100%);
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.component-details {
+    padding: 1.5rem;
+    background: #fafbfc;
+}
+
+.component-title {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.05rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+/* ---------- ENHANCED IMAGE GALLERY SYSTEM – NO WHITE BACKGROUND ---------- */
+
+/* Main photo gallery - aspect ratio containers */
+.photo-gallery, .sub-entity-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0;
+    border-radius: 8px;
+    background: transparent;
+}
+
+/* Aspect ratio container for images - transparent background, no white */
+.photo-item, .sub-entity-photo {
+    width: 100%;
+    aspect-ratio: var(--image-aspect-ratio);
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Images fill the container – no letterboxing, no white space */
+.photo-item img, .sub-entity-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: transparent;
+    transition: transform 0.3s ease;
+}
+
+/* Add zoom on hover for better inspection */
+.photo-item:hover img, .sub-entity-photo:hover img {
+    transform: scale(1.05);
+}
+
+/* Semantic figure structure */
+.figure-container {
+    display: contents;
+}
+
+.figure-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    text-align: center;
+    line-height: 1.3;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-height: 3.2em;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+/* Enhanced hover for captions */
+.photo-item:hover .figure-caption {
+    max-height: 6em;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.95);
+}
+
+/* Image loading and error states */
+.image-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.image-loading i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.image-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #dc3545;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+.image-error i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.image-error::after {
+    content: "Image not available";
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+}
+
+/* Thumbnail container with aspect ratio – no white background */
+.thumbnail-container {
+    width: var(--thumbnail-size);
+    aspect-ratio: var(--image-aspect-ratio);
+    position: relative;
+    background: transparent;
+    padding: 0;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    border: 1px solid #e9ecef;
+}
+
+.thumbnail-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+    border: none;
+}
+
+/* Flexbox gallery for specific layouts */
+.flex-gallery-2col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.flex-gallery-2col .photo-item {
+    flex: 0 0 calc(50% - 6px);
+    max-width: calc(50% - 6px);
+    aspect-ratio: var(--image-aspect-ratio);
+}
+
+.flex-gallery-3col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.5rem;
+}
+
+.flex-gallery-3col .photo-item {
+    flex: 0 0 calc(33.333% - 5.333px);
+    max-width: calc(33.333% - 5.333px);
+    aspect-ratio: var(--image-aspect-ratio);
+}
+
+/* Room & Utility specifics */
+.room-card {
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    page-break-inside: avoid;
+}
+
+.room-header {
+    background: #e6f0ff;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+}
+
+.room-icon { margin-right: 10px; color: var(--accent); }
+
+/* Room header colors - different colors for each room */
+.room-card:nth-child(1) .room-header { background: #e3f2fd; color: #1565c0; }
+.room-card:nth-child(2) .room-header { background: #f3e5f5; color: #6a1b9a; }
+.room-card:nth-child(3) .room-header { background: #e8f5e9; color: #2e7d32; }
+.room-card:nth-child(4) .room-header { background: #fff3e0; color: #e65100; }
+.room-card:nth-child(5) .room-header { background: #fce4ec; color: #c2185b; }
+.room-card:nth-child(6) .room-header { background: #e0f2f1; color: #00695c; }
+.room-card:nth-child(7) .room-header { background: #f1f8e9; color: #558b2f; }
+.room-card:nth-child(n+8) .room-header { background: #ede7f6; color: #512da8; }
+
+.utility-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    page-break-inside: avoid;
+}
+
+.utility-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.utility-type { font-weight: 600; color: var(--primary); font-size: 1.1rem; }
+
+.utility-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.utility-detail {
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 6px;
+}
+
+.detail-label { font-size: 0.85rem; color: var(--secondary); margin-bottom: 0.25rem; }
+.detail-value { font-weight: 500; }
+
+/* Signature & Footer */
+.signature-section {
+    border-top: 2px dashed var(--border);
+    padding-top: 2rem;
+    margin-top: 2rem;
+    page-break-inside: avoid;
+}
+
+.signature-header { font-weight: 600; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
+
+.signature-container {
+    display: flex; justify-content: space-around; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem;
+}
+
+.signature-box { flex: 1; min-width: 300px; max-width: 400px; }
+
+.signature-label { font-weight: 500; margin-bottom: 0.5rem; color: var(--dark); }
+
+.signature-pad {
+    width: 100%;
+    height: 150px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    cursor: crosshair;
+    touch-action: none;
+    display: block;
+}
+
+.signature-actions { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.signature-btn { flex: 1; }
+
+.signature-preview {
+    width: 100%;
+    height: 150px;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.signature-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.signature-date { font-size: 0.9rem; color: var(--secondary); text-align: center; margin-top: 0.5rem; }
+.signature-name { font-weight: 500; text-align: center; margin-top: 0.5rem; color: var(--primary); }
+
+/* New signature styles (from improved layout) */
+.signature-meaning {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #f0f7ff;
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.signature-meaning-icon {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.signature-meaning-text {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #2c3e50;
+}
+
+.signature-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+}
+
+.signature-box-title {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.signature-name-line,
+.signature-date-line {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.signature-label {
+    min-width: 100px;
+    color: var(--secondary);
+    font-weight: 500;
+}
+
+.signature-line {
+    flex: 1;
+    border-bottom: 1px solid #aaa;
+    margin-left: 0.5rem;
+    height: 1.2rem;
+}
+
+.signature-date {
+    flex: 1;
+    border-bottom: 1px solid #aaa;
+    margin-left: 0.5rem;
+    min-height: 1.5rem;
+    padding: 0 0.25rem;
+    color: #2c3e50;
+}
+
+.signature-footer-note {
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    background: #fff9e6;
+    border-radius: 6px;
+    color: #856404;
+    font-size: 0.9rem;
+    border-left: 3px solid #ffc107;
+}
+
+/* Print adjustments for signature */
+@media print {
+    .signature-meaning {
+        background: none;
+        border-left: 2px solid #aaa;
+        padding: 0.5rem;
+    }
+    .signature-actions {
+        display: none !important;
+    }
+    .signature-date {
+        border-bottom: 1px solid black;
+    }
+}
+
+/* Misc */
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.data-table th {
+    background: #f8fafc;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary);
+    border-bottom: 2px solid var(--border);
+}
+.data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+
+.kv { font-weight: 600; width: 35%; color: #475569; }
+.val { color: #1e293b; }
+
+/* ===== ABOUT THIS REPORT – ULTRA COMPACT CARDS (3 COLUMNS × 2 ROWS) ===== */
+.intro-section {
+    background: #f0f8ff;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    page-break-inside: avoid;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem !important;
+}
+
+.intro-section .row.g-3 {
+    --bs-gutter-x: 0.4rem;
+    --bs-gutter-y: 0.4rem;
+}
+
+.intro-title {
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    margin-top: 0;
+    color: var(--primary);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.3rem;
+    display: block;
+    font-size: 1.1rem;
+}
+
+.intro-card {
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    height: 100%;
+    page-break-inside: avoid;
+    display: flex;
+    flex-direction: column;
+    transition: none;
+    margin-bottom: 0;
+}
+
+.intro-card:hover {
+    transform: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.intro-card-header {
+    background: #e6f2ff;
+    padding: 0.5rem 0.6rem;
+    font-weight: 700;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.intro-icon {
+    background: rgba(30, 136, 229, 0.12);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    color: var(--accent);
+    flex-shrink: 0;
+    font-size: 0.7rem;
+}
+
+.intro-card-body {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.intro-card-body p {
+    margin-bottom: 0.3rem;
+}
+
+.intro-card-body p:last-child {
+    margin-bottom: 0;
+}
+
+.intro-card-body ul {
+    list-style-position: inside;
+    margin-bottom: 0;
+    padding-left: 0.8rem;
+    overflow-wrap: break-word;
+}
+
+.intro-card-body li {
+    margin-bottom: 0.15rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    display: list-item;
+}
+
+.disclaimer-box {
+    background: #fff8e6;
+    border: 1px solid #ffecb3;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    page-break-inside: avoid;
+}
+
+.disclaimer-header {
+    font-weight: 600;
+    color: #e65100;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.print-btn {
+    background: white;
+    color: var(--primary);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.print-btn:hover {
+    background: #f0f5fa;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    color: var(--primary);
+}
+
+.print-btn i { margin-right: 8px; }
+
+.footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--secondary);
+    border-top: 1px solid var(--border);
+    background: #f8fafc;
+    page-break-before: avoid;
+}
+
+/* ========== RESPONSIVE ========== */
+
+/* Large desktop */
+@media (max-width: 1200px) {
+    .photo-gallery, .sub-entity-gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Tablet / small desktop */
+@media (max-width: 992px) {
+    :root {
+        --gallery-cols: 3;
+    }
+    
+    .photo-gallery, .sub-entity-gallery {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    /* Keep cards compact on tablet */
+    .intro-section .row.g-3 {
+        --bs-gutter-x: 0.5rem;
+        --bs-gutter-y: 0.5rem;
+    }
+    
+    .intro-card-header {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .intro-card-body {
+        padding: 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .intro-card-body ul {
+        padding-left: 0.8rem;
+    }
+    
+    .intro-card-body li {
+        margin-bottom: 0.15rem;
+    }
+
+    /* --- COMPACT ROWS for details on tablet --- */
+    .details-grid {
+        display: block !important;
+    }
+
+    .detail-item {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: baseline;
+        padding: 0.4rem 0.5rem !important;
+        margin-bottom: 0.25rem !important;
+        background: #f8fafc;
+        border-left: none !important;
+        border-radius: 4px;
+    }
+
+    .detail-item-label {
+        width: 38%;
+        font-size: 0.75rem !important;
+        font-weight: 600;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 0 !important;
+    }
+
+    .detail-item-value {
+        width: 62%;
+        font-size: 0.85rem !important;
+        font-weight: 500;
+        color: var(--dark);
+        word-break: break-word;
+    }
+
+    .component-details {
+        padding: 0.8rem !important;
+    }
+
+    .component-container {
+        margin-bottom: 0.75rem !important;
+    }
+}
+
+/* Mobile landscape */
+@media (max-width: 768px) {
+    :root {
+        --gallery-cols: 2;
+        --gallery-image-height: 160px;
+    }
+    
+    .photo-gallery, .sub-entity-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .flex-gallery-2col .photo-item,
+    .flex-gallery-3col .photo-item {
+        flex: 0 0 calc(50% - 4px);
+        max-width: calc(50% - 4px);
+    }
+    
+    /* --- Override details grid to block (rows) --- */
+    .details-grid {
+        display: block !important;
+    }
+
+    .detail-item {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: baseline;
+        padding: 0.4rem 0.5rem !important;
+        margin-bottom: 0.25rem !important;
+        background: #f8fafc;
+        border-left: none !important;
+        border-radius: 4px;
+    }
+
+    .detail-item-label {
+        width: 38%;
+        font-size: 0.75rem !important;
+        font-weight: 600;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 0 !important;
+    }
+
+    .detail-item-value {
+        width: 62%;
+        font-size: 0.85rem !important;
+        font-weight: 500;
+        color: var(--dark);
+        word-break: break-word;
+    }
+
+    .intro-section .row {
+        gap: 0.5rem !important;
+    }
+    
+    .intro-card {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Mobile portrait */
+@media (max-width: 576px) {
+    .row.g-4 {
+        gap: 1rem !important;
+    }
+
+    .intro-card-body {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+    }
+
+    .intro-card-header {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .intro-card-body ul {
+        padding-left: 0.8rem;
+    }
+
+    .intro-card-body li {
+        margin-bottom: 0.2rem;
+    }
+
+    .p-4, .p-lg-5 {
+        padding: 1rem !important;
+    }
+
+    .text-end {
+        text-align: right;
+    }
+
+    .print-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+    }
+
+    .ms-2 {
+        margin-left: 0.5rem !important;
+    }
+    
+    .photo-gallery, .sub-entity-gallery {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .photo-item, .sub-entity-photo {
+        aspect-ratio: 6/9;
+    }
+}
+
+/* ========== PRINT STYLES – EXTREMELY COMPACT & FULL‑WIDTH ========== */
 @media print {
     :root {
         --gallery-image-height: 70mm !important;
@@ -62,16 +990,57 @@ body {
     }
 
     html, body { 
-        margin: 0 !important;        /* was 15mm top – remove top margin as well? keep or set 0 */
+        height: auto !important; 
+        overflow: visible !important;
+        margin: 0 !important; 
         padding: 0 !important;
         background: white !important;
-        font-size: 10pt !important;  /* slightly smaller base font */
-        line-height: 1.3 !important;
+        font-size: 11pt !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
+    /* Force every container to be edge-to-edge */
+    .report-container,
+    .p-4.p-lg-5,
+    .section-body,
+    .intro-section,
+    .disclaimer-box,
+    .component-details,
+    .component-photos,
+    .signature-section,
+    .room-card,
+    .utility-card,
+    .utility-details,
+    .details-grid,
+    [class*="col-"],
+    .row,
+    .container,
+    .container-fluid,
+    .report-header,
+    .section-header,
+    .sub-section-header,
+    .component-title,
+    .summary-grid,
+    .summary-item,
+    .photo-gallery,
+    .sub-entity-gallery,
+    .flex-gallery-2col,
+    .flex-gallery-3col,
+    .property-views-row,
+    .property-views-row > [class*="col-"] {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+
+    /* Ensure the main container spans full width */
     .report-container { 
         box-shadow: none !important; 
-        margin: 0 !important;         /* zero all margins */
+        margin: 0 !important;
         border: none !important; 
         border-radius: 0 !important; 
         width: 100% !important; 
@@ -80,271 +1049,303 @@ body {
         page-break-after: avoid !important;
     }
 
+    /* Preserve internal vertical spacing but no horizontal margins */
+    .section-header, .sub-section-header, .component-title {
+        padding-top: 0.5mm !important;
+        padding-bottom: 0.5mm !important;
+    }
+
+    .detail-item {
+        margin-bottom: 2mm !important;
+        padding: 0.2rem 0 !important; /* keep vertical padding, zero horizontal */
+    }
+
     .no-print, .no-print * { display: none !important; visibility: hidden !important; }
 
     .report-header {
         background: var(--primary) !important; 
         color: white !important;
-        padding: 0.5rem 0.75rem !important;   /* reduced padding */
-        margin-bottom: 0.2rem !important;
+        padding: 0.75rem 0 !important; /* zero horizontal padding */
+        position: relative !important; 
         page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 0.4rem !important;
     }
+
     .header-pattern { display: none !important; }
 
-    /* ---------- IMAGE GALLERIES – 4 COLUMNS ---------- */
+    /* ---------- IMAGE GALLERIES – 4 COLUMNS EVERYWHERE ---------- */
     .photo-gallery,
     .sub-entity-gallery {
         grid-template-columns: repeat(4, 1fr) !important;
-        gap: 3px !important;           /* smaller gap */
-        margin: 0 0 4px 0 !important;
+        gap: 6px !important;
+        margin: 0 0 8px 0 !important;
+        width: 100% !important;
     }
+
     .flex-gallery-2col,
     .flex-gallery-3col {
+        display: flex !important;
+        flex-wrap: wrap !important;
         gap: 2mm !important;
+        justify-content: flex-start !important; /* avoid centering that could add space */
     }
     .flex-gallery-2col .photo-item,
     .flex-gallery-3col .photo-item {
         flex: 0 0 var(--print-image-width) !important;
         max-width: var(--print-image-width) !important;
     }
+
     .photo-item, 
     .sub-entity-photo {
-        border: 0.25pt solid #ccc !important;
-        border-radius: 0.5mm !important;
-    }
-    .photo-item img {
-        object-fit: cover !important;
-    }
-    .figure-caption {
-        font-size: 7pt !important;
-        padding: 1mm !important;
+        width: 100% !important;
+        aspect-ratio: var(--image-aspect-ratio) !important;
+        border-radius: 1mm !important;
+        border: 0.5pt solid #ddd !important;
+        background: transparent !important;
     }
 
-    /* ---------- DETAILS – STACKED BUT COMPACT ---------- */
+    .photo-item img, 
+    .sub-entity-photo img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    .figure-caption {
+        font-size: 8pt !important;
+        padding: 1.5mm !important;
+    }
+
+    .thumbnail-container { 
+        width: var(--print-image-width) !important; 
+        aspect-ratio: var(--image-aspect-ratio) !important; 
+        border: 0.5pt solid #ddd !important; 
+        background: transparent !important;
+    }
+
+    /* ---------- DETAILS – KEEP GRID LAYOUT ---------- */
     .details-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
         gap: 2mm !important;
-        margin-bottom: 0 !important;
+        margin-bottom: 0.2rem !important;
     }
+
     .detail-item {
+        background: transparent !important;
+        border-left: 1pt solid var(--accent) !important;
+        page-break-inside: avoid !important;
         display: block !important;
         width: 100% !important;
-        padding: 0.1rem 0.2rem !important;
-        margin-bottom: 0.1rem !important;
-        background: transparent !important;
-        border-left: 0.5pt solid var(--accent) !important;
-        page-break-inside: avoid !important;
+        margin-bottom: 0.5rem !important;
     }
-    .detail-item-label {
-        font-size: 7pt !important;
-        font-weight: 700 !important;
-        margin-bottom: 0 !important;
-    }
+
+    .detail-item-label,
     .detail-item-value {
+        display: block !important;
+        width: 100% !important;
+        text-align: left !important;
+    }
+
+    .detail-item-label {
         font-size: 8pt !important;
+        font-weight: 700 !important;
+        margin-bottom: 0.1rem !important;
+    }
+
+    .detail-item-value {
+        font-size: 9pt !important;
         font-weight: 500 !important;
         color: #000 !important;
-        margin-bottom: 0 !important;
+        margin-bottom: 0.25rem !important;
     }
 
     /* ---------- TIGHT SPACING EVERYWHERE ---------- */
     .section-card { 
-        margin-bottom: 0.3rem !important;    /* was 0.6rem */
-        page-break-inside: auto !important;  /* allow breaking inside to fill pages */
-        border: 0.5pt solid #ddd !important;
+        box-shadow: none !important; 
+        border: 1px solid #ddd !important; 
+        margin-bottom: 0.6rem !important; 
+        page-break-inside: avoid !important;
+        background: white !important;
     }
+
     .section-header { 
-        padding: 0.2rem 0.5rem !important;
-        font-size: 9pt !important;
-        border-bottom: 0.5pt solid #ddd !important;
+        background: #f1f5f9 !important; 
+        border-bottom: 1px solid #ddd !important; 
+        padding: 0.4rem 0 !important; /* zero horizontal */
+        font-size: 0.9rem !important;
     }
+
     .section-body {
-        padding: 0.3rem !important;          /* was 0.6rem */
+        padding: 0.6rem 0 !important; /* zero horizontal */
     }
 
     .sub-section {
-        margin-bottom: 0.3rem !important;
-        page-break-inside: auto !important;
+        margin-bottom: 0.6rem !important;
+        page-break-inside: avoid !important;
     }
+
     .sub-section-header {
-        margin-bottom: 0.2rem !important;
-        padding-bottom: 0.1rem !important;
-        font-size: 9pt !important;
-        border-bottom: 0.5pt solid #ccc !important;
+        margin-bottom: 0.3rem !important;
+        padding-bottom: 0.2rem !important;
+        font-size: 0.9rem !important;
     }
 
     .summary-grid { 
+        display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important; 
-        gap: 0.1rem !important; 
-        margin: 0.2rem 0 !important; 
+        gap: 0.3rem !important; 
+        margin: 0.4rem 0 !important; 
     }
+
     .summary-item { 
-        padding: 0.2rem !important; 
-        border: 0.5pt solid #ddd !important; 
+        padding: 0.4rem 0 !important; /* zero horizontal */
+        border: 1px solid #ddd !important; 
         box-shadow: none !important; 
+        page-break-inside: avoid !important;
+        background: white !important;
     }
-    .summary-count { font-size: 1rem !important; }
-    .summary-label { font-size: 0.6rem !important; }
+    .summary-count { font-size: 1.2rem !important; }
+    .summary-label { font-size: 0.7rem !important; }
 
     /* ---------- COMPACT "ABOUT THIS REPORT" ---------- */
     .intro-section {
         background: #f0f8ff !important;
-        border-left: 2pt solid var(--accent) !important;
-        padding: 0.3rem !important;
-        margin-bottom: 0.3rem !important;
+        border-left: 4px solid var(--accent) !important;
+        padding: 0.5rem 0 !important; /* zero horizontal */
+        margin-bottom: 0.6rem !important;
     }
     .intro-section .row {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr) !important;
-        gap: 0.1rem !important;
+        gap: 0.3rem !important;
     }
     .intro-title {
-        font-size: 0.9rem !important;
-        margin-bottom: 0.2rem !important;
-        padding-bottom: 0.1rem !important;
+        font-size: 1rem !important;
+        margin-bottom: 0.4rem !important;
+        padding-bottom: 0.2rem !important;
     }
     .intro-card {
-        border: 0.5pt solid #ddd !important;
+        border: 1px solid #ddd !important;
         margin: 0 !important;
     }
     .intro-card-header {
-        padding: 0.2rem 0.3rem !important;
-        font-size: 0.7rem !important;
+        padding: 0.3rem 0 !important; /* zero horizontal */
+        font-size: 0.8rem !important;
     }
     .intro-card-body {
-        padding: 0.2rem !important;
-        font-size: 0.65rem !important;
-        line-height: 1.2 !important;
+        padding: 0.3rem 0 !important; /* zero horizontal */
+        font-size: 0.7rem !important;
+        line-height: 1.3 !important;
     }
     .intro-card-body ul {
-        padding-left: 0.6rem !important;
+        padding-left: 0.8rem !important; /* keep list indentation */
     }
 
     .disclaimer-box {
-        padding: 0.3rem !important;
-        font-size: 0.65rem !important;
-        margin-top: 0.3rem !important;
-        border: 0.5pt solid #ffecb3 !important;
+        padding: 0.4rem 0 !important; /* zero horizontal */
+        font-size: 0.7rem !important;
+        margin-top: 0.5rem !important;
     }
     .disclaimer-header {
-        font-size: 0.7rem !important;
-        margin-bottom: 0.2rem !important;
+        font-size: 0.8rem !important;
+        margin-bottom: 0.3rem !important;
     }
 
     /* ---------- COMPONENTS & TABLES ---------- */
     .component-container {
-        margin-bottom: 0.3rem !important;    /* reduced */
-        page-break-inside: auto !important;  /* allow split */
-        border: 0.5pt solid #ddd !important;
+        margin-bottom: 0.4rem !important;
+        border: 1px solid #ddd !important;
+        page-break-inside: avoid !important;
     }
     .component-details,
     .component-photos {
-        padding: 0.3rem !important;          /* was 0.4rem */
-    }
-    .component-title {
-        font-size: 0.8rem !important;
-        margin-bottom: 0.2rem !important;
+        padding: 0.4rem 0 !important; /* zero horizontal */
     }
 
     .data-table { 
-        font-size: 8pt !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 9pt !important;
     }
     .data-table th,
     .data-table td { 
-        padding: 0.2rem !important; 
-        border: 0.25pt solid #ddd !important;
+        padding: 0.3rem 0 !important; /* zero horizontal, but keep cell borders */
+        border: 0.5pt solid #ddd !important;
     }
 
     .room-card,
     .utility-card {
-        margin-bottom: 0.3rem !important;
-        page-break-inside: auto !important;
-        border: 0.5pt solid #ddd !important;
+        margin-bottom: 0.6rem !important;
+        border: 1px solid #ddd !important;
     }
 
     .utility-details { 
         grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 0.2rem !important;
+        gap: 0.3rem !important;
     }
 
     /* ---------- SIGNATURE SECTION ---------- */
     .signature-section {
-        border-top: 0.5pt dashed #aaa !important;
-        margin-top: 0.3rem !important;
-        padding-top: 0.3rem !important;
-        page-break-inside: avoid !important;  /* keep signature together */
+        border-top: 1pt dashed #ddd !important;
+        margin-top: 0.6rem !important;
+        padding-top: 0.6rem !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        page-break-inside: avoid !important;
     }
     .signature-header {
-        font-size: 0.9rem !important;
-        margin-bottom: 0.3rem !important;
+        font-size: 1rem !important;
+        margin-bottom: 0.6rem !important;
     }
     .signature-container {
-        gap: 0.5rem !important;
+        gap: 0.8rem !important;
     }
     .signature-box {
         min-width: 40% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
     .signature-pad {
-        height: 20mm !important;              /* smaller */
-        border: 0.5pt solid #000 !important;
-    }
-    .signature-name-line,
-    .signature-date-line {
-        font-size: 0.7rem !important;
-        margin-top: 0.2rem !important;
-    }
-    .signature-line {
-        border-bottom: 0.5pt solid #000 !important;
-        height: 0.8rem !important;
-    }
-    .signature-date {
-        border-bottom: 0.5pt solid #000 !important;
-        min-height: 0.8rem !important;
+        height: 25mm !important;
+        border: 1pt solid #000 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
     .signature-actions,
     .signature-preview:empty,
     .alert.alert-info {
         display: none !important;
     }
-
-    /* ---------- REMOVE BOTTOM MARGINS FROM LAST ELEMENTS ---------- */
-    .section-body:last-child,
-    .component-container:last-child,
-    .room-card:last-child,
-    .sub-section:last-child,
-    .intro-card:last-child {
-        margin-bottom: 0 !important;
+    .signature-label { display: none !important; }
+    .signature-print-label {
+        display: block !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.3rem !important;
+        text-align: center !important;
+        font-size: 0.8rem !important;
     }
 
-    /* ---------- PAGE BREAK CONTROL – let content flow ---------- */
+    /* ---------- PAGE BREAK CONTROL ---------- */
     h2, h3, h4, .section-header, .sub-section-header {
         page-break-after: avoid !important;
-        margin-bottom: 0.1rem !important;
     }
-
-    /* Allow most containers to break inside to fill pages */
     .component-container,
     .room-card,
     .utility-card,
     .sub-section,
-    .section-card {
-        page-break-inside: auto !important;
-        break-inside: auto !important;
-    }
-
-    /* But keep small cards together if possible */
-    .intro-card,
-    .summary-item,
-    .detail-item {
+    .section-card,
+    .intro-card {
         page-break-inside: avoid !important;
+        break-inside: avoid !important;
     }
 
     .print-btn { display: none !important; }
     a[href]::after { content: none !important; }
     img { max-width: 100% !important; page-break-inside: avoid !important; }
 
-    /* Full width property views */
+    /* ===== FIX FOR PROPERTY VIEWS – SIDE BY SIDE IN PRINT (NO EXTRA SPACING) ===== */
     .property-views-row {
         display: flex !important;
         flex-wrap: nowrap !important;
@@ -353,16 +1354,35 @@ body {
     .property-views-row > [class*="col-"] {
         flex: 0 0 50% !important;
         max-width: 50% !important;
-        padding: 0 2px !important;
+        padding: 0 !important;
     }
+}
 
-    /* Footer minimal */
-    .footer {
-        padding: 0.2rem 0 !important;
-        margin-top: 0.2rem !important;
-        border-top: 0.5pt solid #ddd !important;
-        background: transparent !important;
-    }
+/* Small utility: remove hairline artifacts if seen */
+.photo-gallery, .photo-gallery * { 
+    -webkit-backface-visibility: hidden; 
+    -webkit-transform: translateZ(0); 
+    transform: translateZ(0); 
+}
+
+/* Image metadata display */
+.image-meta {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 4px 6px;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.photo-item:hover .image-meta {
+    opacity: 1;
 }
 </style>
 </head>
