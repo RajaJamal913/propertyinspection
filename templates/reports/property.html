@@ -873,9 +873,8 @@ body {
     :root {
         --gallery-image-height: 70mm !important;
         --thumbnail-size: 40mm !important;
-        --image-aspect-ratio: 6/3 !important;
-        /* 🔧 ADJUST THIS VALUE to match your desktop image size exactly */
-        --print-image-width: 200px;  /* <-- CHANGE THIS NUMBER (e.g., 30mm, 40mm, 45mm) */
+        --image-aspect-ratio: 4/3 !important;   /* ← matches browser */
+        --print-image-width: 130px;              /* adjust to taste */
     }
 
     * { 
@@ -885,22 +884,23 @@ body {
     }
 
     @page { 
-        margin: 10mm 8mm !important;
+        margin: 0 !important;
         size: A4 portrait !important;
     }
 
     html, body { 
         height: auto !important; 
         overflow: visible !important;
-        margin: 0 !important;
-        padding: 0 !important;
+         margin: 15mm 0 0 0 !important; 
+    padding: 0 !important;
         background: white !important;
         font-size: 11pt !important;
     }
 
     .report-container { 
         box-shadow: none !important; 
-        margin: 0 !important; 
+        
+        margin: 15mm 0 0 0 !important;
         border: none !important; 
         border-radius: 0 !important; 
         width: 100% !important; 
@@ -923,22 +923,16 @@ body {
 
     .header-pattern { display: none !important; }
 
-    /* ---------- IMAGE GALLERIES – EXACT DESKTOP COLUMN COUNTS + ADJUSTABLE SIZE ---------- */
-    .photo-gallery, 
+    /* ---------- IMAGE GALLERIES – 4 COLUMNS EVERYWHERE (NO EXCEPTIONS) ---------- */
+    .photo-gallery,
     .sub-entity-gallery {
-        display: grid !important;
-        grid-template-columns: repeat(4, minmax(0, var(--print-image-width))) !important;
-        gap: 2mm !important;
-        margin: 0.3rem 0 !important;
-        justify-content: start !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
+        margin: 0 0 8px 0 !important;
+        width: 100% !important;
     }
 
-    .post-summary-sections .photo-gallery {
-        grid-template-columns: repeat(6, minmax(0, calc(var(--print-image-width) * 0.7))) !important;
-        gap: 1.5mm !important;
-    }
-
-    /* Flex galleries – use same adjustable width */
+    /* Flex galleries – 2 columns for front/other views */
     .flex-gallery-2col,
     .flex-gallery-3col {
         display: flex !important;
@@ -1213,37 +1207,6 @@ body {
 
 .photo-item:hover .image-meta {
     opacity: 1;
-}
-
-/* ---------- POST‑SUMMARY IMAGES: SMALLER & EXTRA ROUNDED ---------- */
-.post-summary-sections .photo-gallery {
-    grid-template-columns: repeat(6, 1fr) !important;
-    gap: 8px;
-}
-
-.post-summary-sections .photo-item {
-    border-radius: 0px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    border: 1px solid #d1d9e6;
-}
-
-/* Keep responsive behaviour – reduce columns on smaller viewports */
-@media (max-width: 992px) {
-    .post-summary-sections .photo-gallery {
-        grid-template-columns: repeat(4, 1fr) !important;
-    }
-}
-
-@media (max-width: 768px) {
-    .post-summary-sections .photo-gallery {
-        grid-template-columns: repeat(3, 1fr) !important;
-    }
-}
-
-@media (max-width: 576px) {
-    .post-summary-sections .photo-gallery {
-        grid-template-columns: repeat(4, 1fr) !important;
-    }
 }
 </style>
 </head>
