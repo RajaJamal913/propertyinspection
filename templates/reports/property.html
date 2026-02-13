@@ -589,21 +589,6 @@ body {
     border-left: 3px solid #ffc107;
 }
 
-/* Print adjustments for signature */
-@media print {
-    .signature-meaning {
-        background: none;
-        border-left: 2px solid #aaa;
-        padding: 0.5rem;
-    }
-    .signature-actions {
-        display: none !important;
-    }
-    .signature-date {
-        border-bottom: 1px solid black;
-    }
-}
-
 /* Misc */
 .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 .data-table th {
@@ -969,39 +954,56 @@ body {
     }
 }
 
-/* ========== PRINT STYLES – EXTREMELY COMPACT & FULL‑WIDTH ========== */
+/* ========== PRINT STYLES – MATCH BROWSER APPEARANCE ========== */
 @media print {
-    :root {
-        --gallery-image-height: 70mm !important;
-        --thumbnail-size: 40mm !important;
-        --image-aspect-ratio: 4/3 !important;
-        --print-image-width: 130px;
+    /* Preserve colors exactly as on screen */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
     }
 
-    * { 
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important; 
-        color-adjust: exact !important; 
+    /* Set page margins – adjust as needed (e.g., 0.5in or 1cm) */
+    @page {
+        margin: 0.5in;
+        size: A4 portrait;
     }
 
-    @page { 
-        margin: 0 !important;
-        size: A4 portrait !important;
+    /* Ensure the body and html use the same base styles as screen,
+       but slightly adjust font size for comfortable reading */
+    html, body {
+        height: auto;
+        overflow: visible;
+        margin: 0;
+        padding: 0;
+        background: white;
+        font-size: 11pt; /* Slightly smaller than screen’s 16px for print */
+        line-height: 1.5;
     }
 
-    html, body { 
-        height: auto !important; 
-        overflow: visible !important;
-        margin: 0 !important; 
-        padding: 0 !important;
-        background: white !important;
-        font-size: 11pt !important;
-        width: 100% !important;
-        max-width: 100% !important;
+    /* Remove shadows, borders, and unnecessary visual effects */
+    .report-container {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
     }
 
-    /* Force every container to be edge-to-edge */
-    .report-container,
+    /* Hide interactive elements that are not needed in print */
+    .no-print,
+    .print-btn,
+    .signature-actions,
+    .signature-preview:empty,
+    .alert.alert-info {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Keep all screen padding, margins, and gaps – do NOT override them */
+    /* Remove the global padding resets from earlier print styles */
     .p-4.p-lg-5,
     .section-body,
     .intro-section,
@@ -1013,99 +1015,141 @@ body {
     .utility-card,
     .utility-details,
     .details-grid,
-    [class*="col-"],
+    [class*="col-"] {
+        padding-left: inherit;
+        padding-right: inherit;
+    }
+
+    /* Keep row gutters as they are on screen */
     .row,
     .container,
-    .container-fluid,
-    .report-header,
-    .section-header,
-    .sub-section-header,
-    .component-title,
-    .summary-grid,
-    .summary-item,
-    .photo-gallery,
-    .sub-entity-gallery,
-    .flex-gallery-2col,
-    .flex-gallery-3col,
-    .property-views-row,
-    .property-views-row > [class*="col-"] {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        border-left: none !important;
-        border-right: none !important;
+    .container-fluid {
+        margin-left: inherit;
+        margin-right: inherit;
     }
 
-    /* Ensure the main container spans full width */
-    .report-container { 
-        box-shadow: none !important; 
+    /* ===== ABOUT THIS REPORT – keep browser spacing ===== */
+    .intro-section {
+        background: #f0f8ff !important;
+        border-left: 4px solid var(--accent) !important;
+        border-radius: 0 8px 8px 0 !important;
+        padding: 1rem 1.5rem !important;   /* screen padding */
+        margin-bottom: 1.5rem !important;
+        page-break-inside: avoid;
+    }
+
+    .intro-section .row {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0 !important;   /* same as screen's g-3 gutter */
         margin: 0 !important;
-        border: none !important; 
-        border-radius: 0 !important; 
-        width: 100% !important; 
-        max-width: 100% !important; 
-        overflow: visible !important;
-        page-break-after: avoid !important;
     }
 
-    /* Preserve internal vertical spacing but no horizontal margins */
-    .section-header, .sub-section-header, .component-title {
-        padding-top: 0.5mm !important;
-        padding-bottom: 0.5mm !important;
+    .intro-card {
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        background: white !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04) !important;
+        margin: 0 !important;
+        page-break-inside: avoid;
     }
 
-    .detail-item {
-        margin-bottom: 2mm !important;
-        padding: 0.2rem 0 !important; /* keep vertical padding, zero horizontal */
+    .intro-card-header {
+        background: #e6f2ff !important;
+        padding: 0.5rem 0.6rem !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        color: var(--primary) !important;
+        border-bottom: 1px solid var(--border) !important;
+        display: flex !important;
+        align-items: center !important;
     }
 
-    .no-print, .no-print * { display: none !important; visibility: hidden !important; }
-
-    .report-header {
-        background: var(--primary) !important; 
-        color: white !important;
-        padding: 0.75rem 0 !important; /* zero horizontal padding */
-        position: relative !important; 
-        page-break-after: avoid !important;
-        page-break-inside: avoid !important;
-        margin-bottom: 0.4rem !important;
+    .intro-icon {
+        background: rgba(30, 136, 229, 0.12) !important;
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-right: 5px !important;
+        color: var(--accent) !important;
+        font-size: 0.7rem !important;
     }
 
-    .header-pattern { display: none !important; }
+    .intro-card-body {
+        padding: 0.6rem !important;
+        font-size: 0.75rem !important;
+        line-height: 1.4 !important;
+    }
 
-    /* ---------- IMAGE GALLERIES – 4 COLUMNS EVERYWHERE ---------- */
+    .intro-card-body p {
+        margin-bottom: 0.3rem !important;
+    }
+
+    .intro-card-body ul {
+        padding-left: 0.8rem !important;
+        margin-bottom: 0 !important;
+    }
+
+    .intro-card-body li {
+        margin-bottom: 0.15rem !important;
+    }
+
+    .disclaimer-box {
+        background: #fff8e6 !important;
+        border: 1px solid #ffecb3 !important;
+        border-radius: 8px !important;
+        padding: 1.25rem !important;
+        margin-top: 1.5rem !important;
+        page-break-inside: avoid;
+    }
+
+    /* ===== GALLERIES – maintain screen layout ===== */
     .photo-gallery,
     .sub-entity-gallery {
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 6px !important;
-        margin: 0 0 8px 0 !important;
-        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important; /* as on large screens */
+        gap: 12px !important;
+        margin-top: 1rem !important;
+        margin-bottom: 1.5rem !important;
+        padding: 0 !important;
+        border-radius: 8px !important;
+        background: transparent !important;
     }
 
     .flex-gallery-2col,
     .flex-gallery-3col {
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 2mm !important;
-        justify-content: flex-start !important; /* avoid centering that could add space */
-    }
-    .flex-gallery-2col .photo-item,
-    .flex-gallery-3col .photo-item {
-        flex: 0 0 var(--print-image-width) !important;
-        max-width: var(--print-image-width) !important;
+        gap: 12px !important;
+        margin-top: 0.5rem !important;
     }
 
-    .photo-item, 
+    .flex-gallery-2col .photo-item {
+        flex: 0 0 calc(50% - 6px) !important;
+        max-width: calc(50% - 6px) !important;
+        aspect-ratio: var(--image-aspect-ratio) !important;
+    }
+
+    .flex-gallery-3col .photo-item {
+        flex: 0 0 calc(33.333% - 5.333px) !important;
+        max-width: calc(33.333% - 5.333px) !important;
+        aspect-ratio: var(--image-aspect-ratio) !important;
+    }
+
+    .photo-item,
     .sub-entity-photo {
         width: 100% !important;
         aspect-ratio: var(--image-aspect-ratio) !important;
-        border-radius: 1mm !important;
-        border: 0.5pt solid #ddd !important;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 6px !important;
         background: transparent !important;
+        overflow: hidden !important;
     }
 
-    .photo-item img, 
+    .photo-item img,
     .sub-entity-photo img {
         width: 100% !important;
         height: 100% !important;
@@ -1113,248 +1157,139 @@ body {
     }
 
     .figure-caption {
-        font-size: 8pt !important;
-        padding: 1.5mm !important;
+        font-size: 0.8rem !important;
+        padding: 8px 10px !important;
+        background: rgba(0,0,0,0.85) !important;
+        color: white !important;
     }
 
-    .thumbnail-container { 
-        width: var(--print-image-width) !important; 
-        aspect-ratio: var(--image-aspect-ratio) !important; 
-        border: 0.5pt solid #ddd !important; 
-        background: transparent !important;
-    }
-
-    /* ---------- DETAILS – KEEP GRID LAYOUT ---------- */
+    /* ===== DETAILS GRID – keep as screen ===== */
     .details-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
-        gap: 2mm !important;
-        margin-bottom: 0.2rem !important;
-    }
-
-    .detail-item {
-        background: transparent !important;
-        border-left: 1pt solid var(--accent) !important;
-        page-break-inside: avoid !important;
-        display: block !important;
-        width: 100% !important;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+        gap: 1rem !important;
         margin-bottom: 0.5rem !important;
     }
 
-    .detail-item-label,
-    .detail-item-value {
-        display: block !important;
-        width: 100% !important;
-        text-align: left !important;
+    .detail-item {
+        padding: 0.75rem 1rem !important;
+        background: #f8fafc !important;
+        border-left: 3px solid var(--accent) !important;
+        border-radius: 6px !important;
+        page-break-inside: avoid !important;
     }
 
     .detail-item-label {
-        font-size: 8pt !important;
+        font-size: 0.8rem !important;
         font-weight: 700 !important;
-        margin-bottom: 0.1rem !important;
+        margin-bottom: 0.3rem !important;
+        color: var(--primary) !important;
     }
 
     .detail-item-value {
-        font-size: 9pt !important;
+        font-size: 0.95rem !important;
         font-weight: 500 !important;
-        color: #000 !important;
-        margin-bottom: 0.25rem !important;
+        color: var(--dark) !important;
     }
 
-    /* ---------- TIGHT SPACING EVERYWHERE ---------- */
-    .section-card { 
-        box-shadow: none !important; 
-        border: 1px solid #ddd !important; 
-        margin-bottom: 0.6rem !important; 
-        page-break-inside: avoid !important;
+    /* ===== OTHER SECTIONS – preserve screen appearance ===== */
+    .section-card {
+        border: 1px solid var(--border) !important;
+        border-radius: 10px !important;
+        margin-bottom: 1.5rem !important;
         background: white !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+        page-break-inside: avoid;
     }
 
-    .section-header { 
-        background: #f1f5f9 !important; 
-        border-bottom: 1px solid #ddd !important; 
-        padding: 0.4rem 0 !important; /* zero horizontal */
-        font-size: 0.9rem !important;
+    .section-header {
+        background: #f1f5f9 !important;
+        border-bottom: 1px solid var(--border) !important;
+        padding: 1.25rem 1.5rem !important;
+        font-size: 1.1rem !important;
+        color: var(--primary) !important;
     }
 
     .section-body {
-        padding: 0.6rem 0 !important; /* zero horizontal */
+        padding: 1.5rem !important;
     }
 
-    .sub-section {
-        margin-bottom: 0.6rem !important;
-        page-break-inside: avoid !important;
-    }
-
-    .sub-section-header {
-        margin-bottom: 0.3rem !important;
-        padding-bottom: 0.2rem !important;
-        font-size: 0.9rem !important;
-    }
-
-    .summary-grid { 
+    .summary-grid {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important; 
-        gap: 0.3rem !important; 
-        margin: 0.4rem 0 !important; 
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+        gap: 1rem !important;
+        margin: 1.5rem 0 !important;
     }
 
-    .summary-item { 
-        padding: 0.4rem 0 !important; /* zero horizontal */
-        border: 1px solid #ddd !important; 
-        box-shadow: none !important; 
-        page-break-inside: avoid !important;
+    .summary-item {
+        padding: 1.25rem !important;
+        background: white !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05) !important;
+        text-align: center !important;
+    }
+
+    /* ===== SIGNATURE SECTION ===== */
+    .signature-section {
+        border-top: 2px dashed var(--border) !important;
+        padding-top: 2rem !important;
+        margin-top: 2rem !important;
+        page-break-inside: avoid;
+    }
+
+    .signature-pad {
+        height: 150px !important;
+        border: 2px solid var(--border) !important;
+        border-radius: 8px !important;
         background: white !important;
     }
-    .summary-count { font-size: 1.2rem !important; }
-    .summary-label { font-size: 0.7rem !important; }
 
-    /* ---------- COMPACT "ABOUT THIS REPORT" ---------- */
-    .intro-section {
-        background: #f0f8ff !important;
-        border-left: 4px solid var(--accent) !important;
-        padding: 0.5rem 0 !important; /* zero horizontal */
-        margin-bottom: 0.6rem !important;
-    }
-    .intro-section .row {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 0.3rem !important;
-    }
-    .intro-title {
-        font-size: 1rem !important;
-        margin-bottom: 0.4rem !important;
-        padding-bottom: 0.2rem !important;
-    }
-    .intro-card {
-        border: 1px solid #ddd !important;
-        margin: 0 !important;
-    }
-    .intro-card-header {
-        padding: 0.3rem 0 !important; /* zero horizontal */
-        font-size: 0.8rem !important;
-    }
-    .intro-card-body {
-        padding: 0.3rem 0 !important; /* zero horizontal */
-        font-size: 0.7rem !important;
-        line-height: 1.3 !important;
-    }
-    .intro-card-body ul {
-        padding-left: 0.8rem !important; /* keep list indentation */
+    .signature-label {
+        display: inline !important;  /* keep labels visible */
+        min-width: 100px !important;
+        color: var(--secondary) !important;
+        font-weight: 500 !important;
     }
 
-    .disclaimer-box {
-        padding: 0.4rem 0 !important; /* zero horizontal */
-        font-size: 0.7rem !important;
-        margin-top: 0.5rem !important;
-    }
-    .disclaimer-header {
-        font-size: 0.8rem !important;
-        margin-bottom: 0.3rem !important;
+    .signature-line,
+    .signature-date {
+        border-bottom: 1px solid #aaa !important;
     }
 
-    /* ---------- COMPONENTS & TABLES ---------- */
-    .component-container {
-        margin-bottom: 0.4rem !important;
-        border: 1px solid #ddd !important;
-        page-break-inside: avoid !important;
-    }
-    .component-details,
-    .component-photos {
-        padding: 0.4rem 0 !important; /* zero horizontal */
+    .signature-footer-note {
+        background: #fff9e6 !important;
+        border-left: 3px solid #ffc107 !important;
+        padding: 0.75rem !important;
+        margin-top: 1.5rem !important;
     }
 
-    .data-table { 
-        width: 100% !important;
-        border-collapse: collapse !important;
-        font-size: 9pt !important;
-    }
-    .data-table th,
-    .data-table td { 
-        padding: 0.3rem 0 !important; /* zero horizontal, but keep cell borders */
-        border: 0.5pt solid #ddd !important;
-    }
-
-    .room-card,
-    .utility-card {
-        margin-bottom: 0.6rem !important;
-        border: 1px solid #ddd !important;
-    }
-
-    .utility-details { 
-        grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 0.3rem !important;
-    }
-
-    /* ---------- SIGNATURE SECTION ---------- */
-    .signature-section {
-        border-top: 1pt dashed #ddd !important;
-        margin-top: 0.6rem !important;
-        padding-top: 0.6rem !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        page-break-inside: avoid !important;
-    }
-    .signature-header {
-        font-size: 1rem !important;
-        margin-bottom: 0.6rem !important;
-    }
-    .signature-container {
-        gap: 0.8rem !important;
-    }
-    .signature-box {
-        min-width: 40% !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-    .signature-pad {
-        height: 25mm !important;
-        border: 1pt solid #000 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-    }
-    .signature-actions,
-    .signature-preview:empty,
-    .alert.alert-info {
-        display: none !important;
-    }
-    .signature-label { display: none !important; }
-    .signature-print-label {
-        display: block !important;
-        font-weight: 600 !important;
-        margin-bottom: 0.3rem !important;
-        text-align: center !important;
-        font-size: 0.8rem !important;
-    }
-
-    /* ---------- PAGE BREAK CONTROL ---------- */
+    /* ===== PAGE BREAK CONTROL ===== */
     h2, h3, h4, .section-header, .sub-section-header {
-        page-break-after: avoid !important;
+        page-break-after: avoid;
     }
+
     .component-container,
     .room-card,
     .utility-card,
     .sub-section,
     .section-card,
     .intro-card {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
     }
 
-    .print-btn { display: none !important; }
-    a[href]::after { content: none !important; }
-    img { max-width: 100% !important; page-break-inside: avoid !important; }
-
-    /* ===== FIX FOR PROPERTY VIEWS – SIDE BY SIDE IN PRINT (NO EXTRA SPACING) ===== */
-    .property-views-row {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        margin: 0 !important;
+    /* Ensure images don't break across pages */
+    img {
+        max-width: 100% !important;
+        page-break-inside: avoid;
     }
-    .property-views-row > [class*="col-"] {
-        flex: 0 0 50% !important;
-        max-width: 50% !important;
-        padding: 0 !important;
+
+    /* Remove underlines from links and don't show URLs */
+    a {
+        text-decoration: none !important;
+    }
+    a[href]::after {
+        content: none !important;
     }
 }
 
