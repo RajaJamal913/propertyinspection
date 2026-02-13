@@ -24,7 +24,7 @@
     --image-aspect-ratio: 4/3;
 }
 
-/* Base styles (unchanged) */
+/* Base */
 body {
     background: #f8fafc;
     color: #334155;
@@ -963,25 +963,21 @@ body {
         color-adjust: exact !important;
     }
 
-    /* Set page margins – adjust as needed (e.g., 0.5in or 1cm) */
     @page {
         margin: 0.5in;
         size: A4 portrait;
     }
 
-    /* Ensure the body and html use the same base styles as screen,
-       but slightly adjust font size for comfortable reading */
     html, body {
         height: auto;
         overflow: visible;
         margin: 0;
         padding: 0;
         background: white;
-        font-size: 11pt; /* Slightly smaller than screen’s 16px for print */
+        font-size: 11pt;
         line-height: 1.5;
     }
 
-    /* Remove shadows, borders, and unnecessary visual effects */
     .report-container {
         box-shadow: none;
         border: none;
@@ -992,7 +988,6 @@ body {
         padding: 0;
     }
 
-    /* Hide interactive elements that are not needed in print */
     .no-print,
     .print-btn,
     .signature-actions,
@@ -1002,8 +997,7 @@ body {
         visibility: hidden !important;
     }
 
-    /* Keep all screen padding, margins, and gaps – do NOT override them */
-    /* Remove the global padding resets from earlier print styles */
+    /* Keep all screen padding, margins, and gaps – do NOT override them globally */
     .p-4.p-lg-5,
     .section-body,
     .intro-section,
@@ -1020,7 +1014,6 @@ body {
         padding-right: inherit;
     }
 
-    /* Keep row gutters as they are on screen */
     .row,
     .container,
     .container-fluid {
@@ -1028,21 +1021,22 @@ body {
         margin-right: inherit;
     }
 
-    /* ===== ABOUT THIS REPORT – keep browser spacing ===== */
+    /* ===== ABOUT THIS REPORT – FORCE CARDS TO TOUCH ===== */
     .intro-section {
         background: #f0f8ff !important;
         border-left: 4px solid var(--accent) !important;
         border-radius: 0 8px 8px 0 !important;
-        padding: 1rem 1.5rem !important;   /* screen padding */
+        padding: 1rem 1.5rem !important;
         margin-bottom: 1.5rem !important;
         page-break-inside: avoid;
     }
 
+    /* Remove any row negative margins and set columns to zero padding */
     .intro-section .row {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 0 !important;   /* same as screen's g-3 gutter */
         margin: 0 !important;
+    }
+    .intro-section [class*="col-"] {
+        padding: 0 !important;
     }
 
     .intro-card {
@@ -1110,7 +1104,7 @@ body {
     .photo-gallery,
     .sub-entity-gallery {
         display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important; /* as on large screens */
+        grid-template-columns: repeat(4, 1fr) !important;
         gap: 12px !important;
         margin-top: 1rem !important;
         margin-bottom: 1.5rem !important;
@@ -1245,7 +1239,7 @@ body {
     }
 
     .signature-label {
-        display: inline !important;  /* keep labels visible */
+        display: inline !important;
         min-width: 100px !important;
         color: var(--secondary) !important;
         font-weight: 500 !important;
@@ -1278,13 +1272,11 @@ body {
         break-inside: avoid;
     }
 
-    /* Ensure images don't break across pages */
     img {
         max-width: 100% !important;
         page-break-inside: avoid;
     }
 
-    /* Remove underlines from links and don't show URLs */
     a {
         text-decoration: none !important;
     }
