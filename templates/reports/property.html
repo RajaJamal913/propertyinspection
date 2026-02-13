@@ -503,6 +503,107 @@ body {
 .signature-date { font-size: 0.9rem; color: var(--secondary); text-align: center; margin-top: 0.5rem; }
 .signature-name { font-weight: 500; text-align: center; margin-top: 0.5rem; color: var(--primary); }
 
+/* New signature styles (from improved layout) */
+.signature-meaning {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #f0f7ff;
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.signature-meaning-icon {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.signature-meaning-text {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #2c3e50;
+}
+
+.signature-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+}
+
+.signature-box-title {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.signature-name-line,
+.signature-date-line {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.signature-label {
+    min-width: 100px;
+    color: var(--secondary);
+    font-weight: 500;
+}
+
+.signature-line {
+    flex: 1;
+    border-bottom: 1px solid #aaa;
+    margin-left: 0.5rem;
+    height: 1.2rem;
+}
+
+.signature-date {
+    flex: 1;
+    border-bottom: 1px solid #aaa;
+    margin-left: 0.5rem;
+    min-height: 1.5rem;
+    padding: 0 0.25rem;
+    color: #2c3e50;
+}
+
+.signature-footer-note {
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    background: #fff9e6;
+    border-radius: 6px;
+    color: #856404;
+    font-size: 0.9rem;
+    border-left: 3px solid #ffc107;
+}
+
+/* Print adjustments for signature */
+@media print {
+    .signature-meaning {
+        background: none;
+        border-left: 2px solid #aaa;
+        padding: 0.5rem;
+    }
+    .signature-actions {
+        display: none !important;
+    }
+    .signature-date {
+        border-bottom: 1px solid black;
+    }
+}
+
 /* Misc */
 .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 .data-table th {
@@ -873,8 +974,8 @@ body {
     :root {
         --gallery-image-height: 70mm !important;
         --thumbnail-size: 40mm !important;
-        --image-aspect-ratio: 4/3 !important;   /* ← matches browser */
-        --print-image-width: 130px;              /* adjust to taste */
+        --image-aspect-ratio: 4/3 !important;
+        --print-image-width: 130px;
     }
 
     * { 
@@ -891,15 +992,14 @@ body {
     html, body { 
         height: auto !important; 
         overflow: visible !important;
-         margin: 15mm 0 0 0 !important; 
-    padding: 0 !important;
+        margin: 15mm 0 0 0 !important; 
+        padding: 0 !important;
         background: white !important;
         font-size: 11pt !important;
     }
 
     .report-container { 
         box-shadow: none !important; 
-        
         margin: 15mm 0 0 0 !important;
         border: none !important; 
         border-radius: 0 !important; 
@@ -1180,6 +1280,18 @@ body {
     .print-btn { display: none !important; }
     a[href]::after { content: none !important; }
     img { max-width: 100% !important; page-break-inside: avoid !important; }
+
+    /* ===== FIX FOR PROPERTY VIEWS – SIDE BY SIDE IN PRINT ===== */
+    .property-views-row {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        margin: 0 -5px !important;
+    }
+    .property-views-row > [class*="col-"] {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+        padding: 0 5px !important;
+    }
 }
 
 /* Small utility: remove hairline artifacts if seen */
@@ -1238,7 +1350,6 @@ body {
                 <i class="bi bi-info-circle me-2"></i>About This Inventory Report
             </h3>
             
-            <!-- CHANGED: gap reduced from g-4 to g-3 -->
             <div class="row g-3">
                 <!-- Card 1: What is this report? -->
                 <div class="col-md-6 col-lg-4">
@@ -1414,63 +1525,67 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
                 </div>
             </div>
 
-            <!-- Front View - Only show if photos exist -->
-            {% if front_photos and front_photos|length > 0 %}
+            <!-- ========== COMBINED PROPERTY VIEWS SECTION WITH PRINT FIX ========== -->
+            {% if front_photos and front_photos|length > 0 or other_views and other_views|length > 0 %}
             <div class="section-card">
                 <div class="section-header">
                     <div class="section-icon">
-                        <i class="bi bi-camera"></i>
+                        <i class="bi bi-images"></i>
                     </div>
-                    Front View
+                    Property Views
                 </div>
                 <div class="section-body">
-                    <div class="flex-gallery-2col">
-                        {% for url in front_photos %}
-                            {% if url %}
-                            <figure class="photo-item">
-                                <img src="{{ url }}" 
-                                     alt="Front View {{ forloop.counter }}" 
-                                     loading="lazy"
-                                     onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                               
-                                <div class="image-meta">
-                                    <span>{{ now|date:"Y-m-d" }}</span>
-                                    <span>Front</span>
-                                </div>
-                            </figure>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
+                    <!-- Added class "property-views-row" for print control -->
+                    <div class="row g-4 property-views-row">
+                        <!-- Front View Column -->
+                        {% if front_photos and front_photos|length > 0 %}
+                        <div class="col-md-6">
+                            <h5 class="sub-section-header">
+                                <i class="bi bi-camera me-2"></i>Front View
+                            </h5>
+                            <div class="flex-gallery-2col">
+                                {% for url in front_photos %}
+                                    {% if url %}
+                                    <figure class="photo-item">
+                                        <img src="{{ url }}" 
+                                             alt="Front View {{ forloop.counter }}" 
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                        <div class="image-meta">
+                                            <span>{{ now|date:"Y-m-d" }}</span>
+                                            <span>Front</span>
+                                        </div>
+                                    </figure>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
 
-            <!-- Other Views - Only show if photos exist -->
-            {% if other_views and other_views|length > 0 %}
-            <div class="section-card">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="bi bi-camera2"></i>
-                    </div>
-                    Other Views
-                </div>
-                <div class="section-body">
-                    <div class="flex-gallery-2col">
-                        {% for url in other_views %}
-                            {% if url %}
-                            <figure class="photo-item">
-                                <img src="{{ url }}" 
-                                     alt="Property View {{ forloop.counter }}" 
-                                     loading="lazy"
-                                     onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
-                               
-                                <div class="image-meta">
-                                    <span>{{ now|date:"Y-m-d" }}</span>
-                                    <span>External</span>
-                                </div>
-                            </figure>
-                            {% endif %}
-                        {% endfor %}
+                        <!-- Other Views Column -->
+                        {% if other_views and other_views|length > 0 %}
+                        <div class="col-md-6">
+                            <h5 class="sub-section-header">
+                                <i class="bi bi-camera2 me-2"></i>Other View
+                            </h5>
+                            <div class="flex-gallery-2col">
+                                {% for url in other_views %}
+                                    {% if url %}
+                                    <figure class="photo-item">
+                                        <img src="{{ url }}" 
+                                             alt="Property View {{ forloop.counter }}" 
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.parentElement.classList.add('image-error');">
+                                        <div class="image-meta">
+                                            <span>{{ now|date:"Y-m-d" }}</span>
+                                            <span>External</span>
+                                        </div>
+                                    </figure>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -2839,50 +2954,64 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
             </div>
             {% endif %}
 
-            <!-- Signature Section -->
+            <!-- Signature Section (Improved) -->
             <div class="signature-section">
                 <h4 class="signature-header">
                     <i class="bi bi-pen me-2"></i>
                     Signatures
                 </h4>
-                
+
+                <!-- Explanation box (inspired by image) -->
+                <div class="signature-meaning">
+                    <span class="signature-meaning-icon">①</span>
+                    <div class="signature-meaning-text">
+                        <strong>What This Signature Means:</strong> By signing this document, you are confirming that you have reviewed this property inventory report and agree that the condition, contents, and details documented here are accurate. This protects both the landlord and tenant by providing a legally binding record of the property's condition at the start of the tenancy.
+                    </div>
+                </div>
+
+                <hr class="signature-divider">
+
                 <div class="signature-container">
-                    <!-- Landlord Signature -->
+                    <!-- Landlord/Agent Signature -->
                     <div class="signature-box">
-                        <div class="signature-label">Landlord/Agent Signature</div>
-                        <div class="signature-print-label">Landlord / Agent</div>
+                        <h5 class="signature-box-title">Landlord/Agent Signature</h5>
                         <canvas class="signature-pad" id="landlord-signature-pad"></canvas>
                         <div class="signature-actions">
-                            <button class="btn btn-secondary signature-btn" id="landlord-clear">Clear</button>
-                            <button class="btn btn-primary signature-btn" id="landlord-save">Save Signature</button>
+                            <button class="btn btn-sm btn-outline-secondary" id="landlord-clear">Clear</button>
+                            <button class="btn btn-sm btn-outline-primary" id="landlord-save">Save Signature</button>
                         </div>
-                        <div class="signature-preview" id="landlord-preview">
-                            <span class="text-muted">Signature will appear here</span>
+                        <div class="signature-name-line">
+                            <span class="signature-label">Landlord / Agent:</span>
+                            <span class="signature-line">_________________________</span>
                         </div>
-                        <div class="signature-name">Landlord / Agent: _________________________</div>
-                        <div class="signature-date" id="landlord-date"></div>
+                        <div class="signature-date-line">
+                            <span class="signature-label">Date:</span>
+                            <span class="signature-date" id="landlord-date"></span>
+                        </div>
                     </div>
 
                     <!-- Tenant Signature -->
                     <div class="signature-box">
-                        <div class="signature-label">Tenant Signature</div>
-                        <div class="signature-print-label">Tenant</div>
+                        <h5 class="signature-box-title">Tenant Signature</h5>
                         <canvas class="signature-pad" id="tenant-signature-pad"></canvas>
                         <div class="signature-actions">
-                            <button class="btn btn-secondary signature-btn" id="tenant-clear">Clear</button>
-                            <button class="btn btn-primary signature-btn" id="tenant-save">Save Signature</button>
+                            <button class="btn btn-sm btn-outline-secondary" id="tenant-clear">Clear</button>
+                            <button class="btn btn-sm btn-outline-primary" id="tenant-save">Save Signature</button>
                         </div>
-                        <div class="signature-preview" id="tenant-preview">
-                            <span class="text-muted">Signature will appear here</span>
+                        <div class="signature-name-line">
+                            <span class="signature-label">Tenant:</span>
+                            <span class="signature-line">_________________________</span>
                         </div>
-                        <div class="signature-name">Tenant: _________________________</div>
-                        <div class="signature-date" id="tenant-date"></div>
+                        <div class="signature-date-line">
+                            <span class="signature-label">Date:</span>
+                            <span class="signature-date" id="tenant-date"></span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="alert alert-info mt-4">
-                    <i class="bi bi-info-circle me-2"></i> 
-                    By signing this document, you acknowledge that you have reviewed and agree with the contents of this property inventory report.
+
+                <div class="signature-footer-note">
+                    <i class="bi bi-info-circle me-2"></i>
+                    By signing above, you acknowledge that you have reviewed and agree with the contents of this property inventory report.
                 </div>
             </div>
 
@@ -2932,28 +3061,26 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
         penColor: 'rgb(0, 0, 0)'
       });
 
-      // Buttons
+      // Clear buttons
       document.getElementById('landlord-clear').addEventListener('click', function() {
         landlordSignaturePad.clear();
-        document.getElementById('landlord-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
         document.getElementById('landlord-date').textContent = '';
       });
 
       document.getElementById('tenant-clear').addEventListener('click', function() {
         tenantSignaturePad.clear();
-        document.getElementById('tenant-preview').innerHTML = `<span class="text-muted">Signature will appear here</span>`;
         document.getElementById('tenant-date').textContent = '';
       });
 
+      // Save buttons
       document.getElementById('landlord-save').addEventListener('click', function() {
         if (landlordSignaturePad.isEmpty()) {
           alert("Please provide a signature first.");
           return;
         }
-        const dataURL = landlordSignaturePad.toDataURL();
-        document.getElementById('landlord-preview').innerHTML = `<img src="${dataURL}" alt="Landlord Signature">`;
-        document.getElementById('landlord-date').textContent = 'Date: ' + new Date().toLocaleDateString();
-        // optionally store in hidden input for server submission
+        const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        document.getElementById('landlord-date').textContent = today;
+        // Optionally store signature data in a hidden field here
       });
 
       document.getElementById('tenant-save').addEventListener('click', function() {
@@ -2961,9 +3088,8 @@ The tenant and/or landlord has seven (7) days from receipt of this report to not
           alert("Please provide a signature first.");
           return;
         }
-        const dataURL = tenantSignaturePad.toDataURL();
-        document.getElementById('tenant-preview').innerHTML = `<img src="${dataURL}" alt="Tenant Signature">`;
-        document.getElementById('tenant-date').textContent = 'Date: ' + new Date().toLocaleDateString();
+        const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        document.getElementById('tenant-date').textContent = today;
       });
 
       // Preserve drawing on resize: save dataURL, resize, then re-load
