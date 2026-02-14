@@ -974,8 +974,8 @@ body {
         margin: 0;
         padding: 0;
         background: white;
-        font-size: 11pt;
-        line-height: 1.5;
+        font-size: 10.5pt; /* slightly smaller to pack more */
+        line-height: 1.4;
     }
 
     .report-container {
@@ -988,6 +988,7 @@ body {
         padding: 0;
     }
 
+    /* Hide interactive elements */
     .no-print,
     .print-btn,
     .signature-actions,
@@ -997,7 +998,7 @@ body {
         visibility: hidden !important;
     }
 
-    /* Keep all screen padding, margins, and gaps – do NOT override them globally */
+    /* Keep screen padding and margins – do not override */
     .p-4.p-lg-5,
     .section-body,
     .intro-section,
@@ -1021,17 +1022,16 @@ body {
         margin-right: inherit;
     }
 
-    /* ===== ABOUT THIS REPORT – FORCE CARDS TO TOUCH ===== */
+    /* ===== ABOUT THIS REPORT – flush cards ===== */
     .intro-section {
         background: #f0f8ff !important;
         border-left: 4px solid var(--accent) !important;
         border-radius: 0 8px 8px 0 !important;
         padding: 1rem 1.5rem !important;
         margin-bottom: 1.5rem !important;
-        page-break-inside: avoid;
+        page-break-inside: avoid; /* keep intro together */
     }
 
-    /* Remove any row negative margins and set columns to zero padding */
     .intro-section .row {
         margin: 0 !important;
     }
@@ -1105,7 +1105,7 @@ body {
     .sub-entity-gallery {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
-        gap: 12px !important;
+        gap: 10px !important;   /* slightly reduced */
         margin-top: 1rem !important;
         margin-bottom: 1.5rem !important;
         padding: 0 !important;
@@ -1117,19 +1117,19 @@ body {
     .flex-gallery-3col {
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 12px !important;
+        gap: 10px !important;
         margin-top: 0.5rem !important;
     }
 
     .flex-gallery-2col .photo-item {
-        flex: 0 0 calc(50% - 6px) !important;
-        max-width: calc(50% - 6px) !important;
+        flex: 0 0 calc(50% - 5px) !important;
+        max-width: calc(50% - 5px) !important;
         aspect-ratio: var(--image-aspect-ratio) !important;
     }
 
     .flex-gallery-3col .photo-item {
-        flex: 0 0 calc(33.333% - 5.333px) !important;
-        max-width: calc(33.333% - 5.333px) !important;
+        flex: 0 0 calc(33.333% - 4px) !important;
+        max-width: calc(33.333% - 4px) !important;
         aspect-ratio: var(--image-aspect-ratio) !important;
     }
 
@@ -1160,13 +1160,13 @@ body {
     /* ===== DETAILS GRID – keep as screen ===== */
     .details-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
-        gap: 1rem !important;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; /* slightly smaller */
+        gap: 0.75rem !important; /* reduced */
         margin-bottom: 0.5rem !important;
     }
 
     .detail-item {
-        padding: 0.75rem 1rem !important;
+        padding: 0.6rem 0.8rem !important; /* slightly reduced */
         background: #f8fafc !important;
         border-left: 3px solid var(--accent) !important;
         border-radius: 6px !important;
@@ -1174,14 +1174,14 @@ body {
     }
 
     .detail-item-label {
-        font-size: 0.8rem !important;
+        font-size: 0.75rem !important;
         font-weight: 700 !important;
-        margin-bottom: 0.3rem !important;
+        margin-bottom: 0.2rem !important;
         color: var(--primary) !important;
     }
 
     .detail-item-value {
-        font-size: 0.95rem !important;
+        font-size: 0.9rem !important;
         font-weight: 500 !important;
         color: var(--dark) !important;
     }
@@ -1193,37 +1193,72 @@ body {
         margin-bottom: 1.5rem !important;
         background: white !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-        page-break-inside: avoid;
+        /* Allow sections to break across pages */
+        page-break-inside: auto !important;
     }
 
     .section-header {
         background: #f1f5f9 !important;
         border-bottom: 1px solid var(--border) !important;
-        padding: 1.25rem 1.5rem !important;
-        font-size: 1.1rem !important;
+        padding: 1rem 1.25rem !important; /* slightly reduced */
+        font-size: 1rem !important;
         color: var(--primary) !important;
+        page-break-after: avoid; /* keep header with its content */
     }
 
     .section-body {
-        padding: 1.5rem !important;
+        padding: 1.25rem !important; /* slightly reduced */
     }
 
     .summary-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
-        gap: 1rem !important;
-        margin: 1.5rem 0 !important;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+        gap: 0.75rem !important;
+        margin: 1rem 0 !important;
     }
 
     .summary-item {
-        padding: 1.25rem !important;
+        padding: 1rem !important;
         background: white !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
         box-shadow: 0 4px 8px rgba(0,0,0,0.05) !important;
         text-align: center !important;
     }
 
-    /* ===== SIGNATURE SECTION ===== */
+    .summary-icon {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .summary-count {
+        font-size: 1.5rem !important;
+    }
+    .summary-label {
+        font-size: 0.85rem !important;
+    }
+
+    /* Keep individual components together */
+    .component-container,
+    .room-card,
+    .utility-card {
+        page-break-inside: avoid !important;
+    }
+
+    /* Sub‑section headers stay with content */
+    .sub-section-header {
+        page-break-after: avoid;
+    }
+
+    /* Allow sub‑sections to break if needed */
+    .sub-section {
+        page-break-inside: auto !important;
+    }
+
+    /* ===== ROOM HEADINGS ===== */
+    h2, h3, h4 {
+        page-break-after: avoid;
+    }
+
+    /* ===== SIGNATURE SECTION – keep together ===== */
     .signature-section {
         border-top: 2px dashed var(--border) !important;
         padding-top: 2rem !important;
@@ -1257,21 +1292,13 @@ body {
         margin-top: 1.5rem !important;
     }
 
-    /* ===== PAGE BREAK CONTROL ===== */
-    h2, h3, h4, .section-header, .sub-section-header {
-        page-break-after: avoid;
+    /* ===== WIDOWS & ORPHANS ===== */
+    p, li, .detail-item-value {
+        widows: 3;
+        orphans: 3;
     }
 
-    .component-container,
-    .room-card,
-    .utility-card,
-    .sub-section,
-    .section-card,
-    .intro-card {
-        page-break-inside: avoid;
-        break-inside: avoid;
-    }
-
+    /* Ensure images don't break */
     img {
         max-width: 100% !important;
         page-break-inside: avoid;
@@ -1282,6 +1309,27 @@ body {
     }
     a[href]::after {
         content: none !important;
+    }
+
+    /* ===== ADDITIONAL RULES TO AVOID HEADINGS ALONE ===== */
+    /* Keep main room heading with its first component */
+    h2 {
+        page-break-after: avoid !important;
+    }
+
+    /* Keep all h3 room headings with their content (exclude the intro-title) */
+    h3:not(.intro-title) {
+        page-break-after: avoid !important;
+    }
+
+    /* Keep alert boxes (room notes) together with the heading */
+    .alert {
+        page-break-inside: avoid !important;
+    }
+
+    /* Keep signature box titles attached to the signature area */
+    .signature-box-title {
+        page-break-after: avoid !important;
     }
 }
 
